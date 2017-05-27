@@ -1,0 +1,21 @@
+export(SeerMapper, SeerMapper2010, SeerMapper2000, SeerMapper.Version)
+exportPattern("^[st|co][0-9]{2}[_d][00|10]$")
+export(SM_Build, SM_Mapper, SM_GlobInit)
+importFrom("RColorBrewer", "brewer.pal", "brewer.pal.info")
+importFrom("graphics", "arrows", "boxplot", axis, points, lines, 
+  mtext, par, legend, polygon, rect, strheight, strwidth, symbols, 
+  text, plot, plot.default, plot.design, plot.function, plot.new, 
+  plot.xy, plot.window, abline, axTicks, barplot, title)
+importFrom("stringr", "str_sub", "str_trim", "str_match")
+importFrom("stats", "quantile", "na.omit")
+importFrom("grDevices","colors","dev.cur","grey","col2rgb","rgb")
+importFrom("utils","data","str","tail","head","installed.packages")
+import("maptools")
+import("sp")
+import("rgdal")
+import("SeerMapperRegs")
+import("SeerMapperEast")
+import("SeerMapperWest")
+import("SeerMapper2010Regs")
+import("SeerMapper2010East")
+import("SeerMapper2010West")

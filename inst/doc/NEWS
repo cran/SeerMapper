@@ -1,0 +1,15 @@
+NciMapper - Release 1.1.0 - March 19, 2014
+
+First packaged version release of the MiniNciMapper 
+function package with U.S. 18 Seer Area boundary data for use by
+the NCI investigators.
+
+March 3, 2016 - updated for public release.
+
+Changes made to boundary data packaging and call parameters.
+
+July 7, 2016 - update documentation to reference 2000 and 2010 U. S. Census boundary data
+and product a common documentation for SeerMapper and Seer2010Mapper packages for 
+the 2000 and 2010 U. S. Census years.
+
+TBD.
