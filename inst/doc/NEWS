@@ -1,4 +1,4 @@
-NciMapper - Release 1.1.0 - March 19, 2014
+NciMapper - Release 1.2.2 - Feb 27, 2019
 
 First packaged version release of the MiniNciMapper 
 function package with U.S. 18 Seer Area boundary data for use by
@@ -12,4 +12,21 @@ July 7, 2016 - update documentation to reference 2000 and 2010 U. S. Census boun
 and product a common documentation for SeerMapper and Seer2010Mapper packages for 
 the 2000 and 2010 U. S. Census years.
 
-TBD.
+March 22, 2018 - 
+	- Added "proj4" call parameter to allow user to specify
+          the projection used in drawing the maps.  
+	- Added the NCI adjusted Health Service Areas to the boundary
+	  collection.  Can be used in place of counties within a state.
+	  New parameters = HsaB and the use of the HSA Numbers as the 
+	  area IDs.  CountyB, TractB and clipTo parameters were extended to handle
+	  the HSA boundaries.
+	- Hatching based on two data values is not supported via the 
+	  hatch2 parameter.
+
+February 27, 2019 - 
+	- Remove non status debug output prints.
+	- Fixed categ=c(a,b,c,d) to not required user to but Inf as last
+	  value in list.  All values are the top value of the category xxx].
+	  The last category is ended by Inf or the largest value in the data.
+	  
+	  

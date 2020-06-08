@@ -1,5 +1,4 @@
-\name{rg99_dXX}
-\alias{rg99_dXX}
+\name{rg99_d00}
 \alias{rg99_d00}
 \docType{data}
 \title{U. S. 2000 or 2010 Census Regional Boundary Definitions}
@@ -11,11 +10,11 @@
  This dataset contain a single SpatialPolygonsDataFrame type object that contains
  the boundary polygon definitions for the 5 U. S. Census Regions for the year 2000 or 2010 and 
  an extra region covering Alaska, Hawaii and Puerto Rico. 
- The U. S. Census web site defines the continental regions with values of 1 through 4 as
+ The U. S. Census website defines the continental regions with values of 1 through 4 as
  NorthEast, South, MidWest and West.  The states of Alaska, Hawaii, and the territory of Puerto
  Rico were assign regional values of 0, effectively a 5th region - offshore.
  The regional boundary data is the same for both the 2000 and 2010 census.
- This dataset maintains the codes as published by the U. S. Census Bureau.  
+ This dataset maintains the codes as published by the U. S. Census Buearu.  
  The regions are keyed using the U. S. 2000 or 2010 Census region codes based on which package
  being used. The \var{SeerMapper} package supports the 2000 and 2010 boundaries. Only one dataset is 
  required: rg99_d00.
@@ -29,7 +28,7 @@
       3 - MidWest
       4 - West
   
-  The U. S. States/Territories in the Offshore region (code = 0) are"
+  The U. S. States/Terr. in the Offshore region (code = 0) are"
       02 - Alaska
       15 - Hawaii
       72 - Puerto Rico
@@ -99,36 +98,54 @@ The ".rda" datasets are compressed using the "xz" method to reduce the disk spac
 The region boundary data was created from the state boundary data used in 
 this package to ensure the borders lined up.  The state boundary data
 was created from county and census tract boundary data processed 
-by "www.MapShaper.org" web site version 01.15 using modified Visvalingam 
+by "www.MapShaper.org" website version 01.15 using modified Visvalingam 
 method with intersection repair enabled and prevent shape removal enabled and 
 simplified to 13%. This reduced the space requirements by about 90% 
 while maintaining a visually usable boundary image and edge alignments.
+
+The PROJ.4 projection used for these boundaries is:
+
+"+proj=aea +lat_1=33 +lat_2=49 +lat_0=39 +lon_0=96W +ellps=WGS84"
 
 The dataset provide a good functional characterization of the 5 regions.
 
 The @data structure of the saved SpatialPolygonsDataFrame contains the following 
 information for use by the SeerMapper function:
 \describe{
-  \item{rgName}{a character vector containing the region name.
+  \item{row.names}{ a character vector of the region number (0-4) 
+   }
+  \item{ID}{ a character vector of the region number (0-4).  Save as the row.names of 
+    the SPDF
    }
   \item{rgID}{a character vector containing the 1 digit U. S. region number
    from the U. S. 2000 or 2010 census state boundary datasets. (0 to 4)  This field 
    is also used as the row.names for the SpatialPolygons.
    }
-  \item{tracts}{an integer value of the number of census tracts in the region.
+  \item{rgName}{a character vector containing the region name.
+   }
+  \item{tracts00}{an integer value of the number of census tracts in the region for 
+    the census year 2000.
+   }
+  \item{tracts10}{an integer value of the number of census tracts in the region for 
+    the census year 2010.
+   }
+  \item{county00}{an integer value of the number of counties in the region for 
+    the census year 2000.
+   }
+  \item{county10}{an integer value of the number of counties in the region for 
+    the census year 2010.
+   }
+  \item{states}{an integer value of the number of states in the region for 
+    both the census years.
    }
  }
 }
 \source{
-The US 2000 and 2010 Regional Census boundaries are based on the CENSUS.GOV web site 
+The US 2000 and 2010 Regional Census boundaries are based on the CENSUS.GOV website 
 state, county and census tract boundary shapefiles for the 2000 and 2010 Census.
 }
-\author{
-Jim Pearson \email{jpearson@statnetconsulting.com}\cr 
-Maintainer: "Jim Pearson" \email{jpearson@statnetconsulting.com}\cr 
-}
 \examples{
-   data(rg99_d00)
+data(rg99_d00)
 }
 \keyword{datasets}
 \keyword{SeerMapper}

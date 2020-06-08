@@ -1,11 +1,9 @@
 \name{area_Metro_XX_Data}
 \alias{area_Metro_XX_Data}
 \alias{WashBaltMetro_Co_Data}
-\alias{WashBaltMetro_Tr_Data}
 \alias{KCMetro_Co_Data}
 \alias{KCMetro_Tr_Data}
 \alias{WashBaltMetro10_Co_Data}
-\alias{WashBaltMetro10_Tr_Data}
 \alias{KCMetro10_Co_Data}
 \alias{KCMetro10_Tr_Data}
 \docType{data}
@@ -15,14 +13,14 @@
    They represent demographic data at the county level and census tract level for the 
    Washington-Baltimore and Kansas City Metro Combined Statistical areas for 
    the 2000 and 2010 census years.
-   Each metro area consists of counties or tracts in multiple states.
+   Each metro area cosists of counties or tracts in multiple states.
    The Washington-Baltimore Metro CSA consists of an area that covers 5 states/districts
-   (Maryland, Virginia, Pennsylvania, West Virginia, and the District of Columbia) 
+   (Maryland, Virginia, Pennsylvania, West Virinia, and the District of Columbia) 
    and includes 40 counties and 2178 census tracts.  The Kansas City Metro CSA
    consists of an area that covers 2 states (Kansas and Missouri) and 22 counties 
    and 604 census tracts.
 }
-\usage{data(WashBaltMetro_Tr_Data)}
+\usage{data(WashBaltMetro_Co_Data)}
 \format{
    The format of each datasets is the same. The only difference is the location 
    ID used in each data set and the number of records and census year of the data.  
@@ -40,25 +38,22 @@
     at the county and census tract level contains the following demographic 
     data for each sub-area. The data contains 9 columns:
     \describe{
-     \item{ID}{is a character vector of the U.S. State/County/Tract FIPS code (11 digits)
+     \item{FIPS}{is a character vector of the U.S. State/County/Tract FIPS code (11 digits)
       }
-     \item{pop2000}{is a numeric containing the 2000 tract population.
+     \item{pop2000}{is an integer containing the 2000 tract population.
       }
-     \item{age.65.up}{is a numeric representing the population of the people 
+     \item{age.65.up}{is an integer representing the population of the people 
        with the age of 65 or higher.
       }
-     \item{hh.units}{is a numeric representing the number of physical household units
+     \item{hh.units}{is an integer representing the number of physical household units
         in the census tract.
       }
-     \item{hh.occupied}{is a numeric representing the number of hh.units that are
+     \item{hh.occupied}{is an integer representing the number of hh.units that are
         occupied.    (hh.units-hh.occupied) equals the number of households vacant.
       }
-     \item{hh.owner}{is a numeric representing the number of occupied household 
+     \item{hh.owner}{is an integer representing the number of occupied household 
         units owned by the occupants.  (hh.occupied-hh.owner) equals the number of 
         units that are occupied by renters.
-      }
-     \item{hispanic}{is the number of people that indicated hispanic race 
-        in the census tract.
       }
      \item{areasm}{is a numeric area of the tract in square miles.
       }
@@ -67,16 +62,11 @@
   }
 }
 \source{
-  The Maryland, Pennsylvania, Delaware, New Jersey, West Virginia, Kansas, and Missouri
-  2000 and 2010 Census demographics at the county and census tract levels
-  are based on the U. S. Census Bureau census demographic data for census years 2000 and 2010:
-  https://www2.census.gov/census_2000/datasets/Summary_File_1/ and 
-  https://www2.census.gov/census_2010/04-Summary_File_1/
-  Only the variables listed about were kept and included in these sample datasets.
-  }
-\author{
-Jim Pearson \email{jpearson@statnetconsulting.com}\cr 
-Maintainer: "Jim Pearson" \email{jpearson@statnetconsulting.com}\cr 
+The U. S. Census Bureau 2000 and 2010 census tract demographic dataset from the 
+CENSUS.GOV website demographic data files for the 2000 census as 
+pulled on February, 2017.  The R package UScensus2000tract
+was used to get the census tract data based on the 2001 release.  The dataset
+was then aggregated to create the county dataset.
 }
 \keyword{datasets}
 \keyword{SeerMapper}

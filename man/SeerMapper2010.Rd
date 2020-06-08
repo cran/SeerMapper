@@ -19,10 +19,9 @@ All of the \var{SeerMapper} call parameters can be specified and are passed alon
    }
 }
 \details{
- For details on the supported call parameters, see the \var{SeerMapper} section of this
- document.
+For details on the supported call parameters, see the \var{SeerMapper} section of this
+doccument.
 }
 \author{
- Jim Pearson \email{jpearson@statnetconsulting.com}\cr 
- Maintainer: "Jim Pearson" \email{jpearson@statnetconsulting.com}\cr 
+James B Pearson and Linda Pickle, StatNet Consulting, LLC, Gaithersburg, MD
 }

@@ -102,7 +102,7 @@ other states use the "00" version for both census years.
     referenced states. The multiple sate boundary data maybe accumulated 
     by the package and used for mapping.
 
-    The data formats are the same for each county boundary .rda in this package, a single
+    The data formats are the same for each county boundry .rda in this package, a single
     SpatialPolygons variable.  
     The format of the dataset names is "co", the two digit state FIPS code, "_d", 
     the two digit census year (00 or 10), and ".rda".     
@@ -111,8 +111,8 @@ other states use the "00" version for both census years.
     additional boundary datasets for the three states where the counties changed in the 
     2010 census.  
     
-    Each row.names of the SpatialPolygons is a polygons slot in the data structure 
-    and represents a set of Polygons that form the county.  The row.names used are
+    Each row.name of the SpatialPolygons is a polygons slot in the data structure 
+    and represents a set of Polygons that form the county.  The row.names used are the 
     the 5 digit FIPS state/county code associated with the county.  
     
     The county information that may normally be carried as a data.frame with a 
@@ -120,17 +120,22 @@ other states use the "00" version for both census years.
     This allows the package to all of the county information without having to load
     the boundary data.
     
-    The county boundary information has been transformed from the U. S. Census boundary 
-    data's lat/long values to equal area cartesian coordinates based on the 
-    proj4 string "+proj=eqdc +lat_1=33 +lat_2=49 +lat_0=39 +lon_0=96w +units=m" for mapping.
-    All boundary data used by \var{SeerMapper} has been transformed to this projection 
-    when the package is constructed.
+    The county boundary information has been transformed from 
+    the U. S. Census boundary data's lat/long coordinates under NAD83
+    to the Alber equal area cartisian coordinates.
+        
+    The PROJ.4 projection used for transformation of these boundaries is:
+        
+    "+proj=aea +lat_1=33 +lat_2=49 +lat_0=39 +lon_0=96W +ellps=WGS84"
     
+    All boundary data used by \var{SeerMapper} were transformed 
+    to this projection when the package is constructed.
+        
     All the ".rda" files are compressed using the "xy" method to reduce the 
     disk space requirements.
 
-    All of the boundary shape file data was imported from the U. S. Census web site
-    on July 3, 2016, processed by the url{http://www.MapShaper.org} web site 
+    All of the boundary shape file data was imported from the U. S. Census website
+    on July 3, 2016, processed by the url{http://www.MapShaper.org} website 
     version 01.15 using modified Visvalingam method with intersection repair enabled, 
     prevent shape removal enabled, and a coordinate precision value of 0.0 to simplify
     the boundaries from 100% to 13%.  This process reduced the memory and disk 
@@ -140,16 +145,13 @@ other states use the "00" version for both census years.
 }
 
 \source{
-   The county boundary files were obtained from the Census.gov web site for the 
-   2000 and 2010 year census under the Map & Data category, cartographic boundaries. 
-   The shapefiles used to create these boundaries were downloaded for the U. S. Census
-   web site URL{http://www.census.gov/geo/maps-data/data/cbf/cbf_counties.html} 
+   The county boundary files were obtained from the Census.gov website for the 
+   2000 and 2010 year census under the Map & Data category, cartagraphic boundaries. 
+   The shapefiles used to create these boundaries were downlaoded for the U. S. Census
+   website URL{http://www.census.gov/geo/maps-data/data/cbf/cbf_counties.html} 
    on July 3, 2016.
-}
-\author{
-Jim Pearson \email{jpearson@statnetconsulting.com}\cr 
-Maintainer: "Jim Pearson" \email{jpearson@statnetconsulting.com}\cr 
 }
 \keyword{Census2000}
 \keyword{Census2010}
 \keyword{datasets}
+\keyword{U. S.}

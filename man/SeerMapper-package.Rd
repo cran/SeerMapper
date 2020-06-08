@@ -17,21 +17,24 @@ Seer registry areas, county or census tract levels}
  packages containing the census tracts for 
  any state with a Seer Registry for years 2000 and 2010, \var{SeerMapperEast} and \var{SeerMapper2010East}
  containing the census tracts for states east of the Mississippi river that don't have
- registries for years 2000 and 2010, and \var{SeerMapperWest} and \var{SeerMapper2010West}
- containing the census tract boundary data for states without registries west of the 
+ registries for years 2000 and 2010, and \var{SeerMapperWest} and \var{SeerMapperWest}
+ containing the census tract boundary data for states without registries weat of the 
  Mississippi for years 2000 and 2010. 
  When \var{SeerMapper} is installed, the other six(6) packages are also installed.
  When \var{SeerMapper} is executing, it manages the loading of the six packages based on 
  the level of map being requested by the caller.
  
- To map at the state level, data must use the 2 digit U. S. state FIPS codes 
+ To map at the state level, data must use the 2 digit U. S. state fips codes 
  as the location identifiers.  
  
+ To map at the HSA level, data must use the 3 digit HSA numbers as the location 
+ identifiers.
+ 
  To map at the county level, data must use the 5 digit U. S. state/county 
- FIPS codes as the location identifiers.  
+ fips codes as the location identifiers.  
  
  To map at the census tract level, data must use the 11 digit U. S. 
- state/county/tract FIPS codes as the location identifiers.   
+ state/county/tract fips codes as the location identifiers.   
  
  To map at the U. S. NCI Seer registry area level, the location identifier must be 
  the Seer Registry abbreviation (see documentation on the Seer registry boundary files
@@ -39,15 +42,15 @@ Seer registry areas, county or census tract levels}
  for the states which contain Seer Registries.  
  
  The goal was to allow 
- a user the simplest way to create maps of data and rates in the states, counties, 
+ a user the simpliest way to create maps of data and rates in the states, counties, 
  Seer Registries, and census tracts in states with Seer Registries using one package for 
  one census year.  If additional states required census tract mapping, this is not 
  precluded, just requires a little more setup work.  Because of the numerous
- changes in the FIPS codes, census tracts boundaries and even county boundaries between
+ changes in the fips codes, census tracts boundaries and even county boundaries between
  2000 and 2010, it was necessary to keep the boundary datasets separate.  
  The result is two sets of packages.
- Make sure the location identifiers in your data match census year of 
- the base package your are using.  If mismatches are detected, warnings are 
+ Make sure the location identifiers in your data match census year of the 
+ the base package your are using.  If mis-matches are detected, warnings are 
  generated document the missing or additional areas to help the user 
  handle the situation.  As much of the map is still generated as possible.
  
@@ -60,7 +63,7 @@ Seer registry areas, county or census tract levels}
  for more details.
  
  A hatching option controls how the package will overlay hatching of areas 
- based on a criteria and value. The default setting handle P Values in the range of 0 to 1,
+ based on a critria and value. The default setting handle P Values in the range of 0 to 1,
  with a test value of 0.05 and areas hatched if their value is greater than the test value (>).
  See the documentation on the \option{hatch} call parameter for more details.  
  
@@ -75,8 +78,8 @@ Seer registry areas, county or census tract levels}
     \tabular{ll}{
       Package:  \tab SeerMapper\cr
       Type:     \tab Package\cr
-      Version:  \tab 1.2.0\cr
-      Date:     \tab 2017-05-26\cr
+      Version:  \tab 1.2.2\cr
+      Date:     \tab 2020-05-20\cr
       License:  \tab GPL (>=2)\cr
       LazyLoad: \tab no\cr
     } 
@@ -106,10 +109,10 @@ Seer registry areas, county or census tract levels}
  If the data is for states, state/counties, state/county/census traces, 
  the area's (location) identify must be the U.S. FIPS codes. 
  If the data is for U.S. Seer registry areas, the area identify is the 
- Seer registry area abbreviation (See the \var{st99_d00} dataset documentation for more details.)
+ Seer registry area abbreviation (See the \var{st99_d00} dataset documenation for more details.)
  
- The boundary dataset for the Seer Registry are contained in this 
- package are as the 2000 Census and are the same for 2010 Census mapping.  
+ The boundary dataset for the Seer registry area is contained in this 
+ package as the 2000 Census.  
 
  The typical call sequence is:
  \preformatted{
@@ -163,6 +166,7 @@ The base package contains boundary information for:
 \itemize{
    \item all states and DC,
    \item all Seer Registries, 
+   \item all Health Service Areas (HSA) for all states and DC,   
    \item counties in all states,
 }
 The "Regs" boundary package contains the 2000 or 2010 census tract boundary data for 15 states: 
@@ -181,7 +185,7 @@ The "East" boundary package contains the 2000 or 2010 census tract boundary data
    
 The "West" boundary package contains the 2000 or 2010 census tract boundary data for 14 states:
 
-   Arkansas, Colorado, Idaho, Kansas, Minnesota, 
+   Arkansas, Colorado, Idaho, Kansas, Minnisota, 
    Missouri, Montana, Nebraska, Nevada, North Dakota, 
    Oregon, South Dakota, Texas, and Wyoming. 
    
@@ -195,9 +199,9 @@ If a package is missing or cannot be loaded, the caller will be given a message 
 and all of the boundary information is will be available.
 }  
 \author{
-  Jim Pearson \email{jpearson@statnetconsulting.com}\cr 
-  Maintainer: "Jim Pearson" \email{jpearson@statnetconsulting.com}\cr 
-  Package compiled by "Jim Pearson" \email{jpearson@statnetconsulting.com}
+James B Pearson, Jr \email{jpearson@statnetconsulting.com}\cr 
+Maintainer: "James B. Pearson Jr." \email{jpearson@statnetconsulting.com}\cr 
+Package compiled by "James B, Pearson, Jr." \email{jpearson@statnetconsulting.com}
 }
 
 

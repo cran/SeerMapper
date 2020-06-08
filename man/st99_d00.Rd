@@ -70,25 +70,24 @@ several attributes: Boundary Box, Label Point, Area, and ID.
       72 - Puerto Rico
     }
 
-The .rda file was compressed using the "xz" method to reduce the disk space requirements.
+As of Version 1.0 of \var{SeerMapper} package, 
+the .rda files are compressed using the "xz" method to reduce the disk space requirements.
 
 The \var{SeerMapper} package contains the state boundary files from the U. S. 2000 Census 
 state boundary data. Since the U. S. 2000 state boundaries are very similar to the 
 U. S. 2010 state boundaries, the U. S. 2000 state boundaries are used for mapping data
 for both census years.
 
-The \var{censusYear} call parameter is used or the \var{SeerMapper2010} function 
-(forcing censusYear to be set to "2010") is called, the package selects the 
-appropriate census year boundaries and location ids to use during the mapping.
-In the case of the state boundaries, they are the same.  Only three states had different county
-boundary data in census year 2010 and have additional 2010 counties boundary files.  
-There are no boundary differences for the NCI Seer Registries in the different census
-years.  The census tract boundary data is provided in two sets of three supplemental 
-boundary data packages, one for each census year.
+The \var{censusYear} call parameter or using the \var{SeerMapper2010} function call
+informs the package which census year boundaries to use during the mapping.
+In the case of the state boundaries, they are the same.  Three states changed counties 
+and have additional 2010 counties boundary files.  Most of the change
+was with the tract boundaries, so there are two set of three supplemental packages 
+containing the tract boundaries for each state.  
 
 The state, county and tract boundary shape file data was downloaded from 
-the U. S. census web site on July 3, 2016.  The shapefiles were uploaded
-to the "www.MapShaper.org" web site and using the modified Visvalingam method 
+the U. S. census website on July 3, 2016.  The shapefiles were uploaded
+to the "www.MapShaper.org" website and using the modified Visvalingam method 
 with intersection repair enabled, prevent shape removal enabled, and 
 coordinate precision set to 0.0, the boundaries were simplified from 100% down to 13% of
 the original.  This reduced the space requirements 
@@ -96,8 +95,8 @@ by 90% while maintaining a visually usable boundary image and edge alignments.
 The shapefiles were downloaded and converted to SpatialPolygons structures and saved as
 one county dataset per state, one tract dataset per state and census year 
 and the state boundary set (st99_d00).  The coordinates started as 
-lat/long values and have been transformed to a cartesian coordinates system based
-on proj4 string "+proj=eqdc +lat_1=33 +lat_2=45 +lat_0=39 +lon_0=96w +units=m" 
+lat/long values and have been transformed to a cartisian coordinates system based
+on proj4 string "+proj=eqdc +lat_1=33 +lat_2=49 +lat_0=39 +lon_0=96w +units=m" 
 for mapping.  All boundary data used by the \var{SeerMapper} package is pre-transformed
 to this project for better visualization and to reduce the time required to build each 
 map.
@@ -125,7 +124,7 @@ contains the following information for use by the \var{SeerMapper} function:
    }
   \item{rgName}{ = A character vector of the name of the region containing the state.
    }
-  \item{dvID}{ = a value representing the U. S. census regional division containing
+  \item{dvID}{ = An integer representing the U. S. census regional division containing
      the state.
    }
   \item{dvName}{ = A character vector of the name of the regional division 
@@ -151,16 +150,16 @@ contains the following information for use by the \var{SeerMapper} function:
      boundary data projection.  All boundaries are transformed to an equal area
      projection for the mapping. (Not used by \var{SeerMapper}.)
    }
-  \item{county00}{ = A integer value of the number of counties in the state
+  \item{county00}{ = An integer value of the number of counties in the state
      during the 2000 census year.
    }
-  \item{county10}{ = A integer value of the number of counties in the state
+  \item{county10}{ = An integer value of the number of counties in the state
      during the 2010 census year. 
    }
-  \item{tracts00}{ = A integer value of the number of 2000 census tracts 
+  \item{tracts00}{ = An integer value of the number of 2000 census tracts 
      contained in the state.
    }
-  \item{tracts10}{ = A integer value of the number of 2010 census tracts 
+  \item{tracts10}{ = An integer value of the number of 2010 census tracts 
      contained in the state.
    }
   \item{change10}{ = A logical value (T/F) indicateing (if TRUE), the states 
@@ -187,18 +186,13 @@ contains the following information for use by the \var{SeerMapper} function:
  to create the state boundary and added to this state boundary dataset.
 }
 \source{
- The US State boundary SpatialPolygon structures are generated by collapsing 
- the census tract bountaries from the U. S. Census website  
- url{http://www.census.gov/geo/maps-data/data/cbf/cbf_tracts.html} for the 
- appropriate census year - 2000 or 2010. 
- The shapefiles were downloaded on July 3, 2016.
+The US State boundary SpatialPolygon structures are generated by collapsing 
+the census tract bountaries from the U. S. Census website  
+url{http://www.census.gov/geo/maps-data/data/cbf/cbf_tracts.html} for the 
+appropriate census year - 2000 or 2010. 
+The shapefiles were downloaded on July 3, 2016.
 }
 \examples{
   data(st99_d00)
 }
-\author{
- Jim Pearson \email{jpearson@statnetconsulting.com}\cr 
- Maintainer: "Jim Pearson" \email{jpearson@statnetconsulting.com}\cr 
-}
 \keyword{datasets}
-\keyword{SeerMapper}

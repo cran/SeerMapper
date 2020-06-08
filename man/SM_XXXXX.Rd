@@ -45,7 +45,5 @@
   and a named list of the graphic x and y limits used in the mapping.
 }
 \author{
- Jim Pearson \email{jpearson@statnetconsulting.com}\cr 
- Maintainer: "Jim Pearson" \email{jpearson@statnetconsulting.com}\cr 
+James B Pearson and Linda Pickle, StatNet Consulting, LLC, Gaithersburg, MD
 }
-\keyword{SeerMapper}

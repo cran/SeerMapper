@@ -1,5 +1,4 @@
-\name{co99_dXX}
-\alias{co99_dXX}
+\name{co99_d00}
 \alias{co99_d00}
 \docType{data}
 \title{Information table for the counties in the US. Links the county FIPS code to Registries.}
@@ -19,7 +18,7 @@
   2000 and 2010 census years. 
   
   Since a registry area may contain multiple counties, this data.frame is used
-  to mark each county with the Seer Registry abbreviation it is a member.
+  to mark each county with the Seer Registry abbrevation it is a member.
   The 20 U. S. Seer registry areas are identify by the following character abbreviations (\var{saID}):
  
   \tabular{lll}{
@@ -39,7 +38,7 @@
       KY\tab        21\tab	Kentucky\cr
       LA\tab	22\tab	Louisiana\cr
       MI-DET\tab	26\tab	Michigan Detroit\cr
-      NJ\tab	34\tab	New Jersey\cr
+      NJ\tab	34\tab	New Jersery\cr
       NM\tab	35\tab	New Mexico\cr
       OK-CHE\tab    40\tab	Oklahoma Cherokee Nation\cr
       UT\tab	49\tab	Utah\cr
@@ -50,60 +49,42 @@ registry resides.  For more information on the NCI Seer Registry boundary data a
 to the document section on the \var{sa99_d00} dataset.
 }
 \details{
-The co99_d00 dataset contains the following fields (columns):
+The \var{co99_d00} dataset contains the following fields (columns):
  \describe{
    \item{row.names}{ = a character vector equal to the 5 digit U. S. 
      state and county FIPS code.
      }
-   \item{ID}{ = a character vector of the 5 digit FIPS code for the 
-     state and county. Same as the row.names.
-    }
-   \item{stID}{the state 2 digit FIPS code.
-    }
-   \item{stAbbr}{ = A character vector of the 2 letter state abbreviation.
-    }
-   \item{stName}{ = A character vector of the state full name.
-    }
-   \item{stcoID}{ = a character vector of the 5 digit FIPS code for the 
-     state and county.
-    }
-   \item{coID}{ = a character vector of the 3 digit county FIPS code.
-    }
    \item{coName}{ = a character vector of the county's name.
-    }
-   \item{stcotrID}{ = a character vector of the 11 digit FIPS code for the 
-     state and county and tract (Set to NA in the co99_d00 dataset).
     }
    \item{saID}{ = a character vector identifying the Seer Registry Abbreviation
      containing the county.  If the county is not a member of a registry, then the 
      field is set to NA.
     }
-   \item{c_X}{ = A numeric value of the X coordinate of the centroid of the county in 
+   \item{c_X_00}{ = A numeric value of the X coordinate of the centroid of the county in 
      the 2000 census.
     }
-   \item{c_Y}{ = A numeric value of the Y coordinate of the centroid of the county in
+   \item{c_Y_00}{ = A numeric value of the Y coordinate of the centroid of the county in
      the 2000 census.
     }
-   \item{c_X10}{ = A numeric value of the X coordinate of the centroid of the county in 
+   \item{c_X_10}{ = A numeric value of the X coordinate of the centroid of the county in 
      the 2010 census.
     }
-   \item{c_Y10}{ = A numeric value of the Y coordinate of the centroid of the county in 
+   \item{c_Y_10}{ = A numeric value of the Y coordinate of the centroid of the county in 
      the 2010 census.
     }
-   \item{tracts00}{ = A integer value of the number of 2000 census tracts 
+   \item{tracts00}{ = An integer value of the number of 2000 census tracts 
       contained in the county.
     }
-   \item{tracts10}{ = A integer value of the number of 2010 census tracts 
+   \item{tracts10}{ = An integer value of the number of 2010 census tracts 
       contained in the county.
     }
-   \item{Yr}{ = A character value of the census year the county record was first used. 
-     "00" = 2000, "10" = 2010.
+   \item{y}{ = An integer indicating which census years the county was present. 1 = 2000,
+      2 = 2010, and 3 = both.
+    }
+   \item{HSAID}{ = A character vector containing the 3 digit HSA number that contains 
+     the county. 
     }
   }
-}
-\author{
-Jim Pearson \email{jpearson@statnetconsulting.com}\cr 
-Maintainer: "Jim Pearson" \email{jpearson@statnetconsulting.com}\cr 
 }
 \keyword{Census2000}
 \keyword{Census2010}

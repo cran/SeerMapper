@@ -5,16 +5,16 @@
 \alias{Kentucky_CM_Co_Data}
 \alias{California_CM_Co_Data}
 \docType{data}
-\title{County Level Cancer Mortality Rates for selected state for 2009 to 2013}
+\title{County Level Cancer Mortality Rates for se;ected state for 2009 to 2013}
 \description{
    These datasets containing the cancer mortality
-   rates from the State Cancer Profile web site at the county level 
+   rates from the State Cancer Profile website at the county level 
    for several states containing Seer Registries for the period of 
    2009 to 2013.  The county level data for Georgia, Washington, California, 
    and Kentucky have been included to support examples demonstrating 
    difference features of the \var{SeerMapper} package.
-   It was obtained through the State Cancer Profiles web site 
-   at url{www.statecancerprofile.gov}.  This data represents
+   It was obtained through the State Cancer Profiles website 
+   at www.statecancerprofiles.cancer.gov.  This data represents
    all races and sexes for all sites of cancer.  The data was edited to 
    remove the recent trend data and to add a pseudo-pValue based on the 
    US age adjusted rate (AA_Rate = 168.5) and the abbreviation of the associated 
@@ -70,8 +70,8 @@
 }
 \source{
  The State Cancer Mortality data for the years 2009 to 2013 for all races and sexes
- for each county for all cancer sites was exported from the State Cancer Profile web site
- \url{www.statecancerprofiles.gov} on September 2, 2016.  The data was modified to include
+ for each county for all cancer sites was exported from the State Cancer Profile website
+ www.statecancerprofiles.cancer.gov on September 2, 2016.  The data was modified to include
  the pValue, county's Seer Registry Abbreviation (if associated), and a stripped down
  county name.  Data was collected for the counties of Georgia, California, Kentucky, 
  and Washington.

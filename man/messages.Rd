@@ -36,7 +36,7 @@
   in message below as <nnnnn> strings. The following is a list of the 
   possible <nnnnn> strings the message may contain and their definition.
   
-  The <nnnnn> string will be replaced with a value relevant to the \var{SeerMapper}
+  The <nnnnn> string will be replaced with a value relevent to the \var{SeerMapper}
   function call being serviced. 
   \describe{
     \item{<badColors>}{a list of the bad colors found in the \var{dataCol} when 
@@ -58,7 +58,7 @@
         are supported.
      }
     \item{<color>}{A character vector representating the name of a colors from the \var{colors()} 
-       function or a 6 or 8 digit hexadecimal value (e.g., "#rrggbb" or "#rrggbbaa"). In the
+       function or a 6 or 8 digit hexidecimal value (e.g., "#rrggbb" or "#rrggbbaa"). In the
        warning/error message this string is a color value that is not valid.
      }
     \item{<dataBCol>}{A character vector defining the color to be used as the borders 
@@ -73,9 +73,9 @@
      }
     \item{<hatch:dataCol>}{a column name or number provided in the hatching \var{dataCol} option.
         It identifies the column in the \var{<ndfName>} data.frame, that contains the data to be 
-        used to determine if hatching should be done over a sub-area.  
+        used to determine if hatchings should be done over a sub-area.  
      }
-    \item{<high value>}{the numerical value. Represents the high end of a range. 
+    \item{<high value>}{the numerical value. Represents the hign end of a range. 
      }
     \item{<idCol>}{The value of the \option{idCol} call parameter.  It is the 
        location id column name or number in the \var{<ndfName>} data.frame
@@ -181,32 +181,32 @@
      \item{022}{\bold{includePR parameter is not a logical value of TRUE or FALSE. 
          The default of FALSE will be used.}
          
-         The \option{includePR} must be a logical TRUE or FALSE.
+         The \option{includePR} must be a logicial TRUE or FALSE.
       }
      \item{030}{\bold{The first parameter should be the statistics data.frame, 
          but is missing or NULL.}
      
          The first call parameter is not a data.frame or is missing.  Verify the 
          \var{<ndfName>} variable exists and is a data.frame with the correct structure.
-         The '\code{str(<ndrName>)} R command can be used to help.
+         The 'str(<ndrName>)' R command can be used to help.
       }
-     \item{031}{\bold{\var{<ndfName>} parameter is not a correctly formed data.frame.}
+     \item{031}{\bold{\var{<ndfName>} parameter is not a corrrectly formed data.frame.}
      
          The first call parameter is not a properly formed data.frame. It must have
-         at least one row and one column.  Inspect the variable using 
-         \code{str(\var{<ndfName>})} and correct the problem.
+         at least one row and one column.  Inspect the variable using 'str(\var{<ndfName>})'
+         and correct the problem.
       }
-     \item{032}{\bold{<ndfName> data.frame must have at least one column for Data.}
+     \item{032}{\bold{<ndfName> data.frame muat have at least one column for Data.}
 
          The \var{<ndfName>} data.frame is using the row.names of the data.frame for the 
          location id. One column must be present to provide the data for the categorization
-         or color for the sub-area.  Inspect the data.frame using \code{str(\var{<ndfName>})}
+         or color for the sub-area.  Inspect the data.frame using 'str(\var{<ndfName>})'
          and correct the problem.
       }
-     \item{033}{\bold{<ndfName> data.frame must have at least two columns for ID and Data.}
+     \item{033}{\bold{<ndfName> data.frame muat have at least two columns for ID and Data.}
 
          The \var{<ndfName>} data.frame must have at least two columns. One for the location ID and
-         one for the data. Inspect the data.frame using \code{str(\var{<ndfName>})}
+         one for the data. Inspect the data.frame using 'str(\var{<ndfName>})'
          and correct the problem.
       }
      \item{034}{\bold{<ndfName> data.frame does not have any data rows. 
@@ -248,7 +248,7 @@
           all of the state fips codes are correct.  This message identifies 
           the row entry(ies) where the first to digits of the FIPS code is not a 
           valid state Fips code.  Review the IDs on the supplied data and 
-          correct any invalid ID codes.
+          correct any invalid ID codees.
       }
      \item{050}{\bold{\var{dataCol} parameter is out of range. It must be a column 
           number between 1 and <maxColumnN>.}
@@ -282,7 +282,7 @@
           column name of '<default>' will be used.}
          
           The \var{dataCol} call parameter is missing, NULL or set to NA.
-          The default of <default> will be used.  The default is specified by <default> and
+          The default of <default> witl be used.  The default is specified by <default> and
           is the column name of 'Rate'.  If \var{dataCol} is not specified, make
           sure the data is placed in the \var{<ndfName>} data.frame column named 'RATE'.
       }
@@ -320,7 +320,7 @@
          
          The value provided at the \var{dataCol} call parameter is not a numeric 
          or character value. It may be a 'logical' or other type of value
-         that cannot be used to identify the data column in the 
+         that cannot be used to to identify the data column in the 
          \var{<ndrName>} data.frame  Execution is stopped.
       }
      \item{065}{\bold{Data in column (<dataCol>) in \var{<ndfName>} data.frame 
@@ -331,7 +331,7 @@
         one or more of the values in the \var{<dataCol>} column are not 
         valid colors.  The data must be character vectors and either the
         name of a color that matches one returned by the \var{colors()} function
-        or a 6 or 8 digit hexadecimal character vector (e.g., "#rrggbb" or "#rrggbbaa")
+        or a 6 or 8 digit hexidecimal character vector (e.g., "#rrggbb" or "#rrggbbaa")
       
         The sub-areas with invalided colors will be drawn filled with "white".
       }
@@ -370,33 +370,54 @@
          a value of "NONE", "DATA", "STATE" or "ALL".  It is set to the default based on the 
          data being mapped. <default> indicates the default being used, either "NONE" or "DATA".
       }
-     \item{086}{\bold{The countyB call parameter is <string> and must 
+     \item{085}{\bold{The hsaB call parameter is <string> and must be 'NONE', 
+         'DATA', or 'STATE'. The default of '<default>' will be used.}
+         
+         The boundary control \option{seerB} must be a character vector and have
+         a value of "NONE", "DATA", "STATE" or "ALL".  It is set to the default based on the 
+         data being mapped. <default> indicates the default being used, either "NONE" or "DATA".
+      }
+     \item{087}{\bold{The countyB call parameter is <string> and must 
          be 'NONE', 'DATA', 'SEER', or 'STATE'. The default of '<default>' will be used.}
          
          The boundary control \option{countyB} must be a character vector and have
-         a value of "NONE", "DATA", "SEER", or "STATE".  It is set to the default based on the 
+         a value of 'NONE', 'DATA', 'HSA', 'SEER', or 'STATE'.  It is set to the default based on the 
          data being mapped. <default> indicates the default being used, either "NONE" or "DATA".
       }
      \item{089}{\bold{tractB call parameter is <string> and must be 
-         'NONE', 'DATA', 'COUNTY', 'SEER' or 'STATE'. The default of '<default>' will be used.}
+         'NONE', 'DATA', 'COUNTY', 'HSA','SEER' or 'STATE'. The default of '<default>' will be used.}
          
          The boundary control \option{tractB} must be a character vector and have
-         a value of "NONE", "DATA", "COUNTY", "SEER", or "STATE".  It is set to the default based on the 
+         a value of "NONE", "DATA", "COUNTY", "HSA", "SEER", or "STATE".  It is set to the default based on the 
          data being mapped. <default> indicates the default being used, either "NONE" or "DATA".
       }
+     \item{092}{\bold{The fillTo call parameter is <string> and must be 'NONE', 'COUNTY', 
+         'SEER', or 'STATE'. The default of 'NONE' will be used."}
+         
+         The boundary control \option{fillTo} must be a character vector and have
+         a value of "NONE", "COUNTY", "SEER",  or "STATE".  
+         It is set to the default of "NONE",   This parameter is being retired.
+      }
      \item{094}{\bold{The clipTo call parameter is <string> and must be 'NONE', 'DATA', 
-         'SEER', 'STATE' or 'TRUE'/'FALSE'. The default of 'NONE' will be used."}
+         'HSA', 'SEER', 'STATE', 'REGION' or 'TRUE'/'FALSE'. The default of 'NONE' will be used."}
          
          The boundary control \option{clipTo} must be a character vector and have
-         a value of "NONE", "DATA", "SEER", or "STATE" or a logical value of 
+         a value of "NONE", "DATA", "HSA", "SEER", "STATE" or "REGION" or a logical value of 
          \var{TRUE} or \var{FALSE}.  It is set to the default of "NONE",
+      }
+    \item{096}{\bold{The clipTo value specifies a geographic level lower than the data level. 
+        The clipTo value set to 'DATA'.}
+        
+        The clipTo value must be set to value higher than the geographic level of the data being mapped.
+        If the data being mapped is at the HSA level, clipTo can only be set to "NONE", "DATA", "SEER",
+        "STATE", or "REGION".
       }
      \item{100}{\bold{The dataBCol call parameter is not a valid color: <dataBCol>.  
          The default of 'black' will be used.}
 
         The \var{dataBCol} call parameter value is not a valid color.  The parameter
         was set to "<dataBCol>".  The value must be the name of a color from the set of 
-        names returned by the \var{colors()} function or a 6 or 8 digit hexadecimal 
+        names returned by the \var{colors()} function or a 6 or 8 digit hexidecimal 
         character string (e.g., "#rrggbb" or "#rrggbbaa").  The default color of 'black'
         is will be used.
      }
@@ -411,7 +432,7 @@
      \item{105}{\bold{The 'mTitle' option can only contain one or two strings.
          Only the first two will be used.}
       
-        The \var{mTitle} option can consist of one or two character vectors (e.g.
+        The \var{mTitle} option can consist of one or two charactor vectors (e.g.
         mTitle=c("Title Line 1","Sub-title line 2").  However, when checking the 
         \var{mTitle} option it's length is > 2.  
         Only the first two title lines will be used.  For future maps, reduce the 
@@ -441,132 +462,157 @@
         \var{mTitle.cex} was set to the default value of 1.   
         Correct or remove the call parameter for future maps.
      }
-     \item{110}{\bold{hatching:dataCol parameter is out of range. It must be a column 
+     \item{110}{\bold{hatch:dataCol parameter is out of range. It must be a column 
           number between 1 and <maxColumnN>.}
 
-          The \option{hatching:dataCol} call parameter is specified as the column number in 
-          the \var{<ndfName>} data.frame.  However, the row number value is out of range 
-          (< 1 or > the number of columns in the data.frame <maxColumnN>.)  The hatching 
-          data for the comparison cannot be found.  Hatching is disabled.
-          Correct the \option{hatching:dataCol} call parameter and rerun.
+          The \option{hatch:dataCol} call parameter is specified as the column number in 
+          the \var{<ndfName>} data.frame. However, the row number value 
+          is out of range (< 1 or > the number of columns in the data.frame <maxColumnN>.)  
+          The hatching data for the comparison cannot be found.  Hatching is disabled.
+          Correct the \option{hatch:dataCol} call parameter and rerun.
       }
-     \item{111}{\bold{hatching:dataCol parameter is not a valid column name 
+     \item{111}{\bold{hatch:dataCol parameter is not a valid column name 
           (<dataCol>) in the <ndfName> data.frame.}
      
-          The \option{hatching:dataCol} hatch option is specified as the column name in 
-          the \var{<ndfName>} data.frame.  However, the column name provided does not exist in 
-          the \var{<ndfName>} data.frame.  The hatching data for the comparison cannot be found.  
-          Hatching is disabled.
-          Correct the \option{hatching:dataCol} call parameter and rerun.
+          The \option{hatch:dataCol} hatch option is specified as the column name in 
+          the \var{<ndfName>} data.frame.   However, the column name provided 
+          does not exist in the \var{<ndfName>} data.frame.  The hatching data for the 
+          comparison cannot be found. Hatching is disabled.
+          Correct the \option{hatch:dataCol} call parameter and rerun.
       }
-     \item{112}{\bold{hatching:dataCol parameter is not the correct data type (<typeof>). 
+     \item{112}{\bold{hatch:dataCol parameter is not the correct data type (<typeof>). 
           Must be numeric or character.}
       
-          The data type of the \option{hatching:dataCol} hatch option was found to be <typeof>.
+          The data type of the \option{hatch:dataCol} hatch option was found to be <typeof>.
           It must be a numeric or character value to be able to reference the hatch data column
-          in the \var{<ndfName>} data.frame.  Since the hatch data column cannot be found, 
-          hatching is disabled.
-          Correct the \option{hatching:dataCol} call parameter and rerun.
+          in the \var{<ndfName>} data.frame.   Since the hatch data column cannot 
+          be found, hatching is disabled.
+          Correct the \option{hatch:dataCol} call parameter and rerun.
       }
-     \item{113}{\bold{hatching:dataCol parameter is a character string, but is empty.}
+     \item{113}{\bold{hatch:dataCol parameter is a character string, but is empty.}
       
-          The \option{hatching:dataCol} call parameter is a character vector (string), but 
-          is empty ("").  The hatch data column in the \var{<ndfName>} data.frame cannot be found. 
-          Hatching is disabled.
-          Correct the \option{hatching:dataCol} call parameter and rerun.
+          The \option{hatch:dataCol} call parameter is a character vector (string), but 
+          is empty ("").    The hatch data column in the 
+          \var{<ndfName>} data.frame cannot be found. Hatching is disabled.
+          Correct the \option{hatch:dataCol} call parameter and rerun.
       }
-     \item{115}{\bold{The following hatch settings are not valid 
-          and will be ignored: <badOptions>}
+     \item{114}{\bold{The data column for the hatch comparison could not be found.  
+          The hatch parameter has been disabled.}
+      
+          The \option{hatch} dataCol option could not be found. Cannot preform the comparison
+          to determine if sub-area should be hatched.  The \option{hatch} hatching 
+          has been disabled.  Correct the \option{hatch:dataCol} call parameter and rerun.
+      }
+     \item{115}{\bold{The following hatch options are not valid and will be ignored: <badOptions>}
         
-          When validating the list of options in the \var{hatch} call parameter list, several
-          invalid options were found.  The '<badOptions>' contains a list of the 
-          invalid variables.  These options will be ignored.  Remove these items from the 
+          When validating the list of options in the \var{hatch} 
+          call parameter list, several invalid options were found.  The '<badOptions>' 
+          contains a list of the invalid variables.  These options will be ignored.  
+          Remove these items from the 
           \var{hatch} call parameter named list or correct the entries.
-          The list of valid \var{hatch} options are: dataCol, ops, value, col, lty, lwd, den, 
-          angle, and range.  
+          The list of valid hatching options are: dataCol, ops, value, range, col, lwd, den, 
+          angle, and incAngle.  
        }
-     \item{117}{\bold{Hatching range values out of order.  First value 
+     \item{116}{\bold{The hatch option dataCol is not a character vector or numeric. 
+         The default value of 'pValue' will be used.}
+         
+         The name or number of the \var{hatch} dataCol, is not a valid column name or number.
+         The default value of "pValue" as the column name will be used.
+      }
+      \item{117}{\bold{The hatch option range values out of order.  First value 
           must be less than second value. Reversed.}
            
           The low and high values in the hatch range option are out of order.  There have been 
           sorted.
-      }
-     \item{118}{\bold{The hatching range option is not valid. It must be NA or a
+        }
+       \item{118}{\bold{The hatch option range is not valid. It must be NA or a
          vector containing 2 numeric values (low and high limits) for the range.  
          Range checking is disabled.}
 
-         The hatching range checking parameter must be "NA" to disable range changing
+         The hatching 'hatch' range checking parameter must be "NA" to disable range changing
+         or a vector of two numeric values representing the low and high limits
+         of the range.  If the values are out of order, they will be reversed.
+         If either value is an NA, range checking will be disabled.  An example of
+         the use of the hatching option is:  range=c(0,20)  for a range change
+         of 0 to 20.
+       }
+      \item{119}{\bold{The comparison operator provided in the hatch \option{ops} options -
+          <string> - is not valid. Hatching disabled.}
+         
+          The \var{hatch} call parameter contains a \option{ops} options of <string> that is 
+          not valid.  
+         
+          The allowed \var{hatch} \option{ops} is not a valid operation.  The allowed 
+          comparision operation values are: "eq","==", "=", "ne", "<>", "!=", "lt", "<", 
+          "le", "<=", "=<", "gt", ">", "ge", ">=", and "=>".  The comparison is 
+          <hatch:dataCol-value> <ops> <hatch:value>.
+       }
+      \item{120}{\bold{The following hatch2 options are not valid 
+          and will be ignored: <badOptions>}
+        
+          When validating the list of options in the \var{hatch2} 
+          call parameter list, several invalid options were found.  The '<badOptions>' 
+          contains a list of the invalid variables.  These options will be ignored.  
+          Remove these items from the 
+          \var{hatch2} call parameter named list or correct the entries.
+          The list of valid hatching options are: dataCol, ops, value, and range.
+       }
+      \item{121}{\bold{The hatch2 option dataCol is not a character vector or numeric. 
+         The default value of 'pValue' will be used.}
+         
+         The name or number of the \var{hatch2} dataCol, is not a valid column name or number.
+         The default value of "pValue" as the column name will be used.
+      }
+      \item{122}{\bold{The hatch2 range option values out of order.  First value 
+          must be less than second value. Reversed.}
+           
+          The low and high values in the hatch2 range option are out of order.  There have been 
+          sorted.
+      }
+      \item{123}{\bold{The hatch2 range option is not valid. It must be NA or a
+         vector containing 2 numeric values (low and high limits) for the range.  
+         Range checking is disabled.}
+
+         The 'hatch2' range checking parameter must be "NA" to disable range changing
          or a vector of two numeric values representing the low and high limits
          of the range.  If the values are out of order, they will be reversed.
          If either value is an NA, range checking will be disabled.  An example of
          the use of the hatching option is:  range=c(0,20)  for a range change
          of 0 to 20.
       }
-     \item{119}{\bold{Hatching dataCol is not a character vector or numeric. 
-         The default value of 'pValue' will be used.}
-         
-         The name or number of the \var{hatch} dataCol, is not a valid column name or number.
-         The default value of "pValue" as the column name will be used.
-      }
-     \item{120}{\bold{The hatch logical operator provided in the \option{ops} option -
+     \item{124}{\bold{The comparison operator provided in the hatch2 \var{ops} option -
           <string> - is not valid. Hatching disabled.}
          
-          The \var{hatch} call parameter contains a \option{ops} options of <string> that is 
+          The \var{hatch2} call parameter contains a \option{ops} options of <string> that is 
           not valid.  
          
-          The allowed hatch \option{ops} is not a valid operation.  The allowed 
+          The allowed \var{hatch2} \option{ops} is not a valid operation.  The allowed 
           comparision operation values are: "eq","==", "=", "ne", "<>", "!=", "lt", "<", 
           "le", "<=", "=<", "gt", ">", "ge", ">=", and "=>".  The comparison is 
-          <hatch:dataCol-value> <ops> <hatch:value>.
-         
+          <hatch:dataCol-value> <ops> <hatch2:value>.
       }
-     \item{123}{\bold{The hatch col setting is not a valid color : <color>. 
+    \item{125}{\bold{The hatch col option is not a valid color : <color>. 
         The default will be used.}
        
         The \var{hatch} \option{col} does not specify a valid color.  It must be 
-        a name that matches the color names in \var{colors()} or a 6 or 8 digit 
-        hexadecimal color value
-        (e.g., "#rrggbb" or "#rrggbbaa".)  The default hatch color value 
-        of "grey(0.66)" will be used.
+        a name that matches the color names in \var{colors()} or a 6 or 8 digit hexidecimal color value
+        (e.g., "#rrggbb" or "#rrggbbaa".)  The default hatch color value of "grey(0.66)" will be used.
       }
-     \item{126}{\bold{The hatch lwd setting is not numeric - <value> The default 
+     \item{126}{\bold{The hatch lwd option is not numeric - <value> The default 
          will be used.}
         
          The \var{hatch} call parameter \option{lwd} option value is not a numeric value.
          The line weight values for the hatch lines must a numeric value > 0.  The 
          default value of 0.85 is used.
       }      
-     \item{128}{\bold{The hatch lwd setting is out of the range of >0 to <= 5. 
+     \item{127}{\bold{The hatch lwd option is out of the range of >0 to <= 5. 
          The default will be used.}
        
          The \var{hatch} call parameter \option{lwd} option value is out of range. 
          It must be in a range > 0 and <= 5. Correct the call and re-run.  The 
          default value of 0.85 will be is used.
       }
-     \item{130}{\bold{The hatch lty setting is not valid. Check the 
-         par(lty) variable for acceptable values. The default will be used.}
-       
-         The \var{hatch} call parameter \option{lty} option value is not a valid line type 
-         name.  It must be a numeric value or character vector value.
-         If numeric, it must be in the range 0 to 6 or the type name: "blank", "solid" (default),
-         "dashed", "dotted", "dotdash", "longdash", and "twodash".  
-         The default value of 1 is used.
-      }
-      \item{131}{\bold{&The hatch lty setting is not numeric. The default will be used.}
-      
-          The \var{hatch} call parameter \option{lty} option is not a numeric value.
-          It must be a integer value from 0 to 6.  The default value of 1 will be used.
-          Valid values are: 0=blank, 1=solid (default), 2=dashed, 3=dotted, 4=dotdash, 
-          5=longdash, and 6=twodash.
-       }
-      \item{133}{\bold{The hatch lty setting is out of the range of 0 to 6. 
-          The default value of 'solid' will be used.}
-          
-          The \var{hatch} call parameter \option{lty} option is numeric, but out of range.
-          It must be between 0 and 6.  Correct the option value and re-run.
-          The default value of 1 is used.
-       }
-      \item{135}{\bold{The hatch density setting is not numeric - <value>  
+      \item{128}{\bold{The hatch density option is not numeric - <value>  
           The default value of 25 will be used.}
       
           The \var{hatch} call parameter \option{den} option is not a numeric value. 
@@ -574,48 +620,123 @@
           hatching in number of lines per inch.  The default is 25 lines per inch.
           The density may need to be adjusted if the size of the graphic space is not 7.5 x 10 inches.
        }
-      \item{136}{\bold{The hatch density setting is <value> and is out of 
+      \item{129}{\bold{The hatch density option is <value> and is out of 
           the range of > 4 to <= 64 lines per inch.  The default value of 25 will be used.}
       
           The \var{hatch} call parameter \option{den} option is out of range.  It must be
           a numeric value > 4 and <= 64 lines per inch.  The default value of 25 lines
           per inch will be used.
        }
-      \item{137}{\bold{The hatch angle setting is not numeric. The default will be used.}
+      \item{130}{\bold{The hatch angle option is not numeric. The default will be used.}
       
           The \var{hatch} call parameter \option{angle} option is not a numeric value.
           The value is the degrees the hatching lines will be draw over the sub-area.
-          The default value of 45 degrees will be used.
+          The default value of 45 degress will be used.
        }
-      \item{138}{\bold{The hatch angle setting is out of the range 
+      \item{131}{\bold{The hatch angle option is out of the range 
           of => -360 to <= 360 degrees. The default will be used.}
       
           The \var{hatch} call parameter \option{angle} option is out of range.  It must be
-          a numeric value between -360 and 360 degrees.  The default value of 45 degrees
+          a numeric value between -360 and 360 degrees.  The default value of 45 degress
           will be used.
        }
-      \item{139}{\bold{Hatching parameter error detected. Hatching disable. 
+      \item{132}{\bold{The hatch incremental angle option (incAngle) is not numeric. The default will be used.}
+      
+          The \var{hatch} call parameter \option{incAngle} option is not a numeric value.
+          The value is the degrees the hatching lines are shifted for each 
+          additional hatching overlay.
+          The default value of 60 degress will be used.
+       }
+      \item{133}{\bold{The hatch incremental angle option (incAngle) is out of the range 
+          of => -120 to <= 120 degrees. The default will be used.}
+      
+          The \var{hatch} call parameter \option{incAngle} option is out of range.  It must be
+          a numeric value between -120 and 120 degrees.  The default value of 60 degress
+          will be used.
+       }
+      \item{134}{\bold{A hatch call parameter error was detected. The hatch parameter is disabled. 
           See previous messages for details.}
       
           Previous message detail the errors detected in processing the \var{hatch} call
           parameter options list.  Since errors were detected, hatching will be disabled.
           Correct the identified problems and re-run.
        }
-      \item{140}{\bold{The hatch call parameter must be a logical value (T/F) 
+      \item{135}{\bold{The hatch call parameter must be a logical value (T/F) 
            or a list of options. Parameter is ignored.}
            
           The \var{hatch} call parameter can be a logical TRUE/FALSE value of a named list
           of hatch options.  The \var{hatch} call parameter was neither a logical variable or a list.
           Hatching is disabled.  
        }
-      \item{144}{\bold{The hatch data column <hatch:dataCol> does not contain numbers. 
-          Hatching disabled.}
+      \item{136}{\bold{A hatch2 call parameter error was detected. The hatch2 parameter is disabled. 
+          See previous messages for details.}
+      
+          Previous message detail the errors detected in processing the \var{hatch2} call
+          parameter options list.  Since errors were detected, hatching will be disabled.
+          Correct the identified problems and re-run.
+       }
+      \item{137}{\bold{The hatch2 call parameter must a list of options. }
+           
+          The \var{hatch2} call parameter can be a logical TRUE/FALSE value of a named list
+          of hatch options.  The \var{hatch} call parameter was neither a logical variable or a list.
+          Hatching is disabled.  
+       }
+     \item{140}{\bold{hatch2:dataCol parameter is out of range. It must be a column 
+          number between 1 and <maxColumnN>.}
+
+          The \option{hatch2:dataCol} call parameter is specified as the column number in 
+          the \var{<ndfName>} data.frame. However, the row number value 
+          is out of range (< 1 or > the number of columns in the data.frame <maxColumnN>.)  
+          The hatching data for the comparison cannot be found.  Hatching is disabled.
+          Correct the \option{hatch2:dataCol} call parameter and rerun.
+      }
+     \item{141}{\bold{hatch2:dataCol parameter is not a valid column name 
+          (<dataCol>) in the <ndfName> data.frame.}
+     
+          The \option{hatch2:dataCol} hatch option is specified as the column name in 
+          the \var{<ndfName>} data.frame.   However, the column name provided 
+          does not exist in the \var{<ndfName>} data.frame.  The hatching data for the 
+          comparison cannot be found. Hatching is disabled.
+          Correct the \option{hatch2:dataCol} call parameter and rerun.
+      }
+     \item{142}{\bold{hatch2:dataCol parameter is not the correct data type (<typeof>). 
+          Must be numeric or character.}
+      
+          The data type of the \option{hatch2:dataCol} hatch option was found to be <typeof>.
+          It must be a numeric or character value to be able to reference the hatch data column
+          in the \var{<ndfName>} data.frame.   Since the hatch data column cannot 
+          be found, hatching is disabled.
+          Correct the \option{hatch2:dataCol} call parameter and rerun.
+      }
+     \item{143}{\bold{hatch2:dataCol parameter is a character string, but is empty.}
+      
+          The \option{hatch2:dataCol} call parameter is a character vector (string), but 
+          is empty ("").    The hatch data column in the 
+          \var{<ndfName>} data.frame cannot be found. Hatching is disabled.
+          Correct the \option{hatch2:dataCol} call parameter and rerun.
+      }
+     \item{144}{\bold{The hatch/hatch2 data column <dataCol> does not contain numbers. 
+          Parameter hatch/hatch2 disabled.}
           
           The column identified to be used for the hatch data comparison, <hatch:dataCol>,
           does not contain numbers.  Only numerical comparisons are supported.
-          Hatching is disabled.
+          The hatch or hatch2 parameter is disabled.
        }
-      \item{146}{\bold{Hatching data provided is not within the allowed range : 
+      \item{145}{\bold{The hatch/hatch2 data is not numeric. Parameter hatch/hatch2 disabled.}
+          
+          The column identified to be used for the hatch/hatch2 data comparison 
+          does not contain numbers.  Only numerical comparisons are supported.
+          The hatch or hatch2 parameter is disabled.
+       }
+      \item{146}{\bold{The hatch/hatch2 data column <dataCol> does not contain valid numbers.
+          The hatch/hatch2 parameter is disabled.}
+      
+          The the data found in the dataCol option was not good numerical data.
+          Cannot preform the comparison to determine if sub-area should be hatched.  
+          The \option{hatch} or \option{hatch2} parameter is disabled.
+          Correct the data and rerun.
+      }
+      \item{147}{bold{Hatching data provided is not within the allowed range : 
           <low value> to <high value>. Hatching disabled.}
 
           Range checking of the hatch data is enabled.  The hatch data in the <hatch:dataCol> 
@@ -764,17 +885,19 @@
          Install and load via the 'library' command
          the packages in this list and re-run the mapping request.
       }
-     \item{198}{\bold{The following supplemental SeerMapper Census Tract boundary packages are missing and must be installed:}
+     \item{198}{\bold{The following supplemental SeerMapper Census Tract boundary packages are missing and must be installed and loaded:}
          
-         \var{SeerMapper} requires supplemental census tract boundary packages to map data at the census tract level.
-         The package has determined one or more of the three supplemental packages for the census were 
-         not installed when the \var{SeerMapperr} package was install.  This should not happen. 
-         Each package can be installed on it's own, if this occurs.  There are three census tract boundary 
-         packages for each census year (2000 and 2010).  For 2000, the packages are: \var{SeerMapperRegs}, 
-         \var{SeerMapperEast} and \var{SeerMapperWest}.  For 2010, the packages are: \var{SeerMapper2010Regs},
-         \var{SeerMapper2010East} and \var{SeerMapper2010West}.  If the packages are installed, 
-         \var{SeerMapper} will dynamically load the required supplemental package and read in the needed
-         census tract boundary datasets.
+         \var{SeerMapper} requires suppliemental census tract boundary packages to map data 
+         at the census tract level. When tract boundaries are required, the package
+         determines where packages are required to load the boundary datasets.
+         These supplement packages should have been loaded into their own
+         namespace when \var{SeerMapper} was first called.  The names of the required
+         packages do not appear in the list of loaded packages (loadedNamespace()).
+         A list of missing packages is presented in message # 199, below.
+         Make sure the packages are in the current R library and can be loaded with library(x) 
+         R commands.  The main package and six supplemental packages are: \var{SeerMapper},
+         \var{SeerMapperRegs}, \var{SeerMapperEast}, \var{SeerMapperWest},
+         \var{SeerMapper2010Regs}, \var{SeerMapper2010East}, and \var{SeerMapper2010West}.
          
          Install these packages and load them via 'library' commands when mapping census tracts for 
          states east and west of the Mississippi that do not contain Seer Registries.
@@ -783,7 +906,8 @@
      
          The message provides a list of the SeerMapper packages with supplemental census tract
          boundary data that must be installed from CRAN to be able to map the census tracts in 
-         the data.  The supplemental packages are \var{SeerMapperEast}, \var{SeerMapperWest}, 
+         the data.  The supplemental packages are \var{SeerMapperRegs}, 
+         \var{SeerMapperEast}, \var{SeerMapperWest}, \var{SeerMapper2010Regs},
          \var{SeerMapper2010East}, and var{SeerMapper2010West}.  
       }
      \item{200}{\bold{After cleaning up <ndfName> data.frame to remove detected errors,  
@@ -810,7 +934,15 @@
          } 
          Review and correct the contains of the data.frame and re-run.
       }
-
+     \item{206}{\bold{The location IDs contain invalid state IDs.  Assuming the Location IDs are HSA numbers.}
+     
+         The location ID in the dataframe could be either state location IDs or HSA locations IDs.
+         Because the location ID provided contains invalid state IDs, the package is assuming
+         the location IDs are really HSA IDs.  Invalid state IDs are: 03, 07, 14, 43, 52, and values
+         greater then 56 except for 72.   If the location ID is really state IDs, correct the location IDs
+         in the data frame and rerun.
+      }
+ 
      \item{220}{\bold{Some of the data rows in the <ndfName> data.frame have location IDs with missing values (NA). These rows will be removed. Correct and rerun.}
      
          The location IDs in the \var{idCol} column of the \var{ndfName} data.frame
@@ -991,7 +1123,7 @@
          This is an informative message when \option{debug} is \var{TRUE} to indicate the 
          number of rows of data in the supplied data.frame.
       }
-     \item{300}{\bold{The following Seer Registry identifiers do not match 
+     \item{300}{\bold{The following Seer Registry idenifiers do not match 
          the abbreviations or aliases:}
          
          Messages 300, 301, and 302 are components of one message on three lines.
@@ -1052,6 +1184,43 @@
          <idList> is the contains of the tractPList vector.
          The execution was stopped.
       }
+     \item{389}{\bold{Internal Error - hsaPList contains a NA in list: <idList>.}
+     
+         The tractPList vector of Location IDs should not contain any missing values.
+         <idList> is the contains of the tractPList vector.
+         The execution was stopped.
+      }
+     \item{900}{\bold{The provided proj4 string encountered an error when converted 
+       to the internal CRS parameter.  The following error was reported, plesae correct and rerun.
+       <CRS Error Message>}
+       
+       The package attempted to convert the provided PROJ.4 projection string into a CRS
+       object for the boundary transformation.  The CRS function reported the <CRS Error Message>.
+       The proj4 call parameter is ignored.
+      }
+     \item{901}{\bold{The provided proj4 string encountered an warning when converted 
+       to the internal CRS parameter.  The following warning was reported, plesae correct and rerun.
+       <CRS Warning Message>}
+       
+       The package attempted to convert the provided PROJ.4 projection string into a CRS
+       object for the boundary transformation.  The CRS function reported the <CRS Warning Message>.
+       The proj4 call parameter is ignored.
+      }
+     \item{902}{\bold{Unpredicted results when proj4 was translated to CRS format. Unknown problem.
+       <CRS Message>}
+       
+       The package attempted to convert the provided PROJ.4 projection string into a CRS
+       object for the boundary transformation.  The CRS function reported an unexpected error
+       and <CRS Message>.
+       The proj4 call parameter is ignored.
+      }
+     \item{909}{\bold{Error on processing the proj4 parameter. No user specified projection will be done.}
+       
+       The package attempted to convert the provided PROJ.4 projection string into a CRS
+       object for the boundary transformation.  The CRS function could not translate the PROJ.4 string
+       without any issues. See above messages.
+       The proj4 call parameter is ignored.
+      }
      \item{980}{\bold{ Package: <packageName> failed to load into the system. Verify package 
          was installed and try manually executing a 'library(<packageName>)' command.}
      
@@ -1099,9 +1268,6 @@
  
  End of Messages.
  }
-\author{
-Jim Pearson \email{jpearson@statnetconsulting.com}\cr 
-Maintainer: "Jim Pearson" \email{jpearson@statnetconsulting.com}\cr 
-}
+
 \keyword{datasets}
 

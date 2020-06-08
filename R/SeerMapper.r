@@ -1,68 +1,74 @@
 #
 #
-#  Function to map seer areas and color them based on ratings of the data.
-#  The areas can also be hatched based on their reliability based on P_value.
+#  Function to map seer areas and color them based on ratings 
+#  of the data.  The areas can also be hatched based on their 
+#  reliability based on P_value.
 #
-#  This is an extension of the SeerTractMapper, but 
-#  Seer Areas instead of counties, for the entire US.
+#  This is an extension of the SeerTractMapper, but Seer Areas 
+#  instead of counties for the entire US.
 #
 
 #####
 #
-#   Quick Mapper self-contained Function for R data analysis of Seer Areas, States,
-#     State/Counties and State/County/Census Traces over US.
+#   Quick Mapper Function for R data analysis of Seer Areas, 
+#   States, Health Service Areas, State/Counties and 
+#   State/County/Census Traces over US.
 #
-#   The package uses census 2000 and 2010 census boundary files.  
-#   An option will be specify which census year's boundary and fips code 
-#   files to use.  However, the boundary files
-#   and fips code indexes have not been created to date.
-#   
-#   Simplified state, regional, seer registry and county boundary data
-#   is included with this base "SeerMapper" package for 2000 and 2010 
-#   census years.  
-#   
-#   The boundary data for the census tracts are made available
-#   as supplemental boundary data packages (6) and built for integrating 
-#   with the SeerMapper package.
+#   The package can use either the 2000 or 2010 census boundary 
+#   files.  By default it will use the 2000 census information.
+#   The "censusYear" call parameter is available to specify 
+#   which census year's boundary and fips code files to use.  
 #
-#   This package does contain the 2000 and 2010 census boundary data and 
-#   fips codes for all U. S. states, DC and PR, the counties in all of 
-#   the U. S. states, and the 21 U. S. Seer Registries boundary data.
+#   The package contains the 2000 and 2010 information at the 
+#   4 census regional, 51 states and D.C. and PR, 
+#   21 U. S. Seer Registry, 942 U. S. Health Service Area, 
+#   and county level.  
+#   The information for the census tracts mapping 
+#   has been made available as 6 supplemental boundary data 
+#   packages (3 for each census year).  The 6 packages are
+#   automatically downloaded when "SeerMapper" is installed.
+#   They are dynamically loaded into memory based on the 
+#   areas of the U. S. being mapped at the tract level.
 #
-#   The boundary data for the U. S. 2000 and 2010 census tracts are divided 
-#   into three supplemental packages for each census year: SeerMapperRegs, 
-#   SeerMapperEast, and SeerMapperWest for 2000 and SeerMapper2010Regs, 
-#   SeerMapper2010East, and SeerMapper2010West for 2010.
+#   The boundary data for the U. S. census tracts are divided 
+#   into three (3) supplemental packages for each year: 
+#   SeerMapperRegs, SeerMapperEast, and SeerMapperWest.
 #
-#   The SeerMapperRegs and SeerMapper2010Regs packages contain the census 
-#   tract boundary data for the states containing a Seer Registries:
-#      Alaska (Native), Arizona (Indian), California, Utah, New Mexico,
-#      New Jersey, Connecticut, Hawaii, Iowa, Michigan (Detroit),
-#      Oklahoma (Cherokee Nation), Louisiana, Kentucky, Georgia,
-#      Washington (Seattle-Puget) (15)
+#   The SeerMapperRegs package contains the 2000 census tract 
+#   boundary data for the states containing a Seer Registries:
+#      Alaska (Native), Arizona (Indian), California, 
+#      Connectticut, Georgia, Hawaii, Iowa, Kentucky, 
+#      Lousiana, Michigan (Detroit), New Mexico, New Jersey,  
+#      Oklahoma (Cherokee Nation), Utah, 
+#      Washington (Seattle-Puget) 
+#      (15)
 #
-#   The SeerMapperEast and SeerMapper2010East packages contain the census
-#   tract boundary data for the states without Seer Registries that are
-#   east of the Mississippi river: 
-#      Maine, Vermont, Rhode Island, Massachusetts, New Hampshire,
-#      New York, Pennsylvania, Ohio, Indiana, Illinois,
-#      North Carolina, South Carolina, Florida, Tennessee, Alabama,
-#      Mississippi. Wisconsin, Delaware, Maryland, Virginia,
-#      West Virginia, DC, PR (23)
+#   Two other packages contains the 2000 census tract 
+#   boundary data for the other states that are east of the 
+#   east and west of the Mississippi river.
 #
-#   The SeerMapperWest and SeerMapper2010West packages contain the census
-#   tract boundary data for the states without Seer Registries that are
-#   west of the Mississippi river:
-#      Oregon, Idaho, Montana, Wyoming, Colorado,
-#      Kansas, North Dakota, South Dakota, Nebraska,
-#      Texas, Arkansas, Missouri, Minnesota, Nevada (14)
+#   The SeerMapperEast package contains 2000 tract boundary 
+#   data for:
+#      Alabama, Delaware, DC, Florida, Indiana, Illinois, 
+#      Maine, Massachusettes, New Hampshire, New York, 
+#      North Carolina, Ohio, Pennsylvania, PR, Rhode Island, 
+#      Maryland, Mississippi. South Carolina, Tennessee, 
+#      Vermont, Virginia, West Virginia, Wisconsin 
+#      (23)
 #
-#   The SeerMapper function has the following parameters:
+#   The SeerMapperWest package contains 2000 tract boundary 
+#   data for:
+#      Arkansas, Colorado, Idaho, Kansas, Minnisota, Missouri, 
+#      Montana, Nebraska, Neveda, North Dakota, Oregan,  
+#      South Dakota, Texas, Wyoming 
+#      (14)
+#
+#   Implement as a function with the following parameters:
 #
 #   ndf  = data frame of the data.  The key columns that must be
-#           provided in the ndf data.frame are the identifier column (idCol)
+#           provided in the ndf data.frame are the identifer column (idCol)
 #           and the data column (dataCol).
-#           The idCol must contain one of the following geographical identifiers
+#           The idCol must contain one of the following geographical identifers
 #           based on the U. S. Fips codes or the NCI Seer Area name abbreviations.
 #
 #           State mapping -> 2 digit - U. S. state fips codes.
@@ -73,6 +79,11 @@
 #                 name abbreviations.
 #
 #           See detail documentation for more on these codes.
+#
+#   proj4 = a Proj.4 string describing the projection to be used
+#          when drawning the maps.  It must be an acceptable
+#          string for the CRS R function in the sp and maptools 
+#          packages.
 #
 #   censusYear = the census year boundary data to be used with the rate data.
 #           The only supported values are 2000 or 2010. This is an internal
@@ -85,7 +96,7 @@
 #           Default column names is "FIPS"
 #
 #   dataCol = a character vector or numeric value.  It specifies the
-#           number or name of the column in the ndf data.frame that contains
+#           numver or name of the column in the ndf data.frame that contains
 #           data to be classified and colored on the map.
 #
 #           The data can be either a value/rates to be categorized (real number) 
@@ -120,7 +131,7 @@
 #         - when categ is set to "COLORS" or "colors", this indicates the 
 #           dataCol contains the actual color value to be used to fill the sub-area.
 #           The value must be a valid color name (e.g. colors()), or a character
-#           vector string starting with a "#" and containing 6 or 8 hexadecimal 
+#           vector string starting with a "#" and containing 6 or 8 hexidecimal 
 #           characters (0-9,a-f,A-F).  No other checking is done against the colors.
 #           When colors are specified, the legend will be constructed to list the colors
 #           in numerical order with the number of observations using that color. 
@@ -132,7 +143,10 @@
 #           of up to two elements for a two line title.  Any more elements
 #           will be ignored.
 #
-#  Future - make title as alternate parameter name.
+#   mTitle.cex = specified font size multiplier - default = 1 x font size.
+#
+#
+#  Future - make "title" as alternate.
 #
 #   us48Only = is a logical variable - TRUE/FALSE, (us48OnlyFlag).
 #           If set to TRUE, only the continental 48 states will be mapped.
@@ -147,8 +161,12 @@
 #
 #   regionB = "NONE", "DATA", "ALL".
 #           "NONE" -> no region boundaries are drawn (default)
-#           "DATA" -> Only region boundaries are drawn when a sub area within the region has data.
+#           "DATA" -> Only region boundaries are drawn when a subarea within the region has data.
 #           "ALL"  -> Draw all region boundaries within the us48Only and includePR limitations.
+#
+#   regionB_lwd = numeric value for the line weight for Regional Boundaries. Acceptable range
+#            is 1 to 72.  Default value = 2.5 
+#
 #
 #   stateB = "NONE", "DATA", "REGION", or "ALL".
 #            "NONE" -> no state/DC boundaries are drawn (default for non-state level data)
@@ -157,7 +175,9 @@
 #            "REGION" -> Map all state boundaries within a region that contain some sub-area with data.
 #            "ALL"  -> All state/DC boundaries are drawn.
 #
-#  Future:  stateB_lwd -> line weight for State Boundaries
+#   stateB_lwd = numeric value for the line weight for State Boundaries.  Acceptable range
+#            is 1 to 72.  Default value = 2.5 
+#
 #
 #   seerB  = "NONE", "DATA", "STATE", "REGION", or "ALL".
 #            "NONE" -> No Seer Registry boundaries are drawn
@@ -166,204 +186,281 @@
 #            "STATE"-> Draw ALL Seer Registry boundaries for states
 #                      that containing data values at any level.
 #            "REGION" -> Draw All Seer Registry boundaries in any region 
-#                      with a registry with data. 
+#                      with a registry with data.
 #            "ALL"  -> All US Seer Registry boundaries are drawn.
 #                      *** Exception: if state data, in stateB="DATA", "ALL" is limited 
-#                      to the states with data. 
+#                      to the states with data.
 #
-#  Future:  seerB_lwd -> line weight for Seer Registry Boundaries
+#   seerB_lwd = numeric value for the line weight for Seer Registry Boundaries.  Acceptable range
+#            is 1 to 72.  Default value = 2.0 
 #
-#  Future parameter for health districts
-#   hdistB = "NONE", "DATA", "SEER", or "STATE".
+#
+#  NEW
+#   hsaB = "NONE", "DATA", "SEER", or "STATE".
 #            "NONE" -> No Health District boundaries are drawn
 #            "DATA" -> Only Health District boundaries are drawn if the Health District or 
 #                      a sub-areas have data values.
+#            "SEER" -> All HSA boundaries are drawn in a Seer Registry, if the registry contains
+#                      a sub-area with data.
 #            "STATE"-> Draw ALL Health District boundaries for states
 #                      that containing data values at any level.
-#            "REGION"-> Draw all health districts in any region with 
-#                      health districts with data.
-#            
 #
-#  Future:  hdistB_lwd -> line weight for Health District Boundaries
+#   hsaB_lwd = numeric value for the  line weight for HSA Registry Boundaries.  Acceptable range
+#            is 1 to 72.  Default value = 1.5 
 #
-#   countyB = "NONE", "DATA", "SEER", or "STATE". Only valid when county data or tract 
-#             data is used.
+#   countyB = "NONE", "DATA", "HSA", "SEER", or "STATE". Only valid when county data or tract data is used.
 #            "NONE" -> No County boundaries are drawn
-#            "DATA" -> Only County boundaries are drawn if the county has a data value.
-#            "SEER" -> All county boundaries are drawn within a registry, if any county 
+#            "DATA" -> Only County boundaries are drawn if the country has a data value.
+#  NEW       "HSA"  -> All county boundaries are drawn within a health service area, if any 
+#                      county within the HSA has a data value.
+#            "SEER" -> All county boundaries are drawn within a registry, if any county or tract 
 #                      within the Registry has a data value.
-#            "STATE"-> All county boundaries are drawn within a state, if any county 
+#            "STATE"-> All county boundaries are drawn within a state, if any county or tract 
 #                      within the state has a data value.
-#            "REGION"->All county boundaries are drawn within a US region, if any county 
-#                      within the region has a data value.  (future)
-#            "ALL"  -> All county boundaries are draw within the US being mapped. (future)
 #
-#  Future:  countyB_lwd -> line weight for County Boundaries
+#   countyB_lwd = numeric value for the  line weight for County Boundaries.  Acceptable range
+#            is 1 to 72.  Default value = 1.0 
+#
 #
 #   tractB = "NONE", "DATA", "COUNTY", "SEER", or "STATE",  Only valid when tract data is used.
 #            "NONE" -> No census tract boundaries are drawn
 #            "DATA" -> Only census tract boundaries are drawn that have data values.
 #            "COUNTY"->All census tract boundaries in a county are drawn if the county 
 #                      containing a tract with data value.
+#  NEW       "HSA"  -> All tract boundaries within a Health Service Area are drawn, if the HSA
+#                      contains a tract with a data value.
 #            "SEER" -> All tract boundaries within a Seer Registry are drawn, if the registry 
 #                      contains a tract with a data value.
 #            "STATE"-> All tract boundaries within a state are drawn, if the state contains
 #                      a tract with a data value.
-#            "REGION"->All tract boundaries are drawn within a US region, if any tract 
-#                      within the region has a data value. (future)
-#            "ALL"  -> All tract boundaries are draw within the US being mapped. (future)
 #
-#  Future: tractB_lwd -> line weight for Census Tract Boundaries
+#   tractB_lwd = numeric value for the  line weight for Census Tract Boundaries.  Acceptable range
+#            is 1 to 72.  Default value = 0.75 
 #
 #
-#   clipTo = "NONE", "DATA", "SEER", or "STATE",  Valid for all mapping levels.
-#                      For the explanation of "clipTo" assume stateB="ALL" is set
-#                      so normally the entire US (all state boundaries) would 
-#                      be drawn.
-#            "NONE" -> No boundary clipping, all requested boundaries are drawn.  
-#                      In the example above: all of the U.S. states is mapped
-#                      regardless of how little of an area is being mapped.
-#            "DATA" -> Only the sub-areas are drawn, the spatial box for the 
-#                      sub-areas with data is used for the overall plot scaling.
-#                      If any boundaries are request to be drawn (like states),
-#                      they will be drawn but clipped at the box size set by the 
-#                      sub-areas with data.  If data was mapped Maryland counties, 
-#                      the graphic would show the boundaries for other states 
+#   clipTo = "NONE", "DATA", "HSA", "SEER", "STATE", or "REGION"  Valid 
+#                      for all mapping levels. For the explanation 
+#                      of "clipTo" assume stateB="ALL" is set
+#                      so normally the entire US (all state 
+#                      boundaries) would be drawn.  This feature is not 
+#                      working as expected with the use of the boundary
+#                      options. As more boundaries are drawn, the 
+#                      clipTo area enlarges.  The NONE and DATA 
+#                      work fine.  When the SEER, HSA, STATE and REGION boundary
+#                      options are used, the area is expanded to include 
+#                      boundaries that don't have data.
+#                      The new thought is to do the clipTo to the 
+#                      HSA, SEER, STATE and REGION areas that contain data.
+#                      This will require additional code to 
+#                      keep track of the data areas at each level.
+#            "NONE" -> No boundary clipping, all requested 
+#                      boundaries are drawn. In the example above: 
+#                      all of the U.S. states is mapped regardless 
+#                      of how little of an area is being mapped.
+#            "DATA" -> Only the sub-areas are drawn, the spatial 
+#                      box for the sub-areas with data is used for 
+#                      the overall plot scaling. If any boundaries 
+#                      are request to be drawn (like states), they 
+#                      will be drawn but clipped at the box size set 
+#                      by the sub-areas with data.  If data was 
+#                      mapped Maryland counties, the graphic would 
+#                      show the boundaries for other states 
 #                      until they reach the spatial box limits.
-#            "SEER" -> The spatial box for the graphics is taken from the space
-#                      occupied by the Seer Registry areas containing the data or 
-#                      sub-areas with data.  Other boundaries may be drawn up to 
-#                      they exit the spatial box.  If sub-areas have data, but 
-#                      are not in an registry, this option is changed to "STATE".
-#            "STATE"-> The spatial box for the graphic is taken from the 
-#                      space defined by all of the states that contain data
-#                      or sub-areas with data.  Again, other state boundaries may 
-#                      be drawn, but will be clipped when they reach the 
+#            "HSA" ->  The spatial box for the graphics is taken
+#                      from the space occupied by the HSAs 
+#                      containing data or sub-areas with data.
+#                      Other boundaries may be drawnn up to 
+#                      when they exit the spatial box.
+#                      This value is not valid with SEER or STATE
+#                      level data.
+#            "SEER" -> The spatial box for the graphics is taken 
+#                      from the space occupied by the Seer Registry 
+#                      areas containing the data or sub-areas with 
+#                      data.  Other boundaries may be drawn up to 
+#                      when they exit the spatial box.
+#                      This value is not valid with STATE level data.
+#            "STATE"-> The spatial box for the graphic is taken 
+#                      from the space defined by all of the states 
+#                      that contain data or sub-areas with data.  
+#                      Again, other state boundaries may be drawn, 
+#                      but will be clipped when they reach the 
 #                      spatial box limits.
-#            "REGION"->The spatial box for the graphic is taken from the space defined
-#                      by all of the regions that contain data or sub-areas with data.
-#                      Again, other state and regional boundaries may be drawn, but 
-#                      will be clipped when they reach the spatial box limits.
+#            "REGION"-> The spatial box for the graphic is taken 
+#                      from the space defined by all of the U.S. 
+#                      regions that contain sub-areas with data.  
+#                      Again, other state boundaries may be drawn, 
+#                      but will be clipped when they reach the 
+#                      spatial box limits.
 #             The default for this call parameter is "NONE"
 #
-#   dataBCol - is a character vector containing the color to be used for the 
-#             border of the areas at the data level.  The default value is "black".  
-#             The value is validated against the color names listed in colors().  
-#             It is only applied if supplied by caller - it's default 
-#             if the default color of the levels boundaries.
+#
+#   dataBCol = is a character vector containing the color to be 
+#             used for the border of the areas at the data level.  
+#             The default value is "black".  The value is 
+#             validated against the color names listed in 
+#             colors().  It is only applied if supplied by 
+#             caller - it's default if the default color 
+#             of the levels boundaries.
 #
 #
 #   hatch   = TRUE, FALSE or List of options:
 #             If TRUE, hatch is done using the default settings.
 #             If FALSE (default), hatching will not be preformed.
-#             If a list, hatching will be enabled and the list evaluated
-#             for overriding values.
+#             If a list, hatching will be enabled and the list 
+#             evaluated for overriding values.
 #             The default value is FALSE.
 #
-#         dataCol = a character vector or a single integer number containing the
-#             name of the data column or number for use to determine is hatch
-#             will be done on this area.
-#             The default  value is "pValue"
+#         dataCol = a character vector or a single integer number 
+#             containing the name of the data column or number 
+#             for use to determine is hatch will be done on 
+#             this area. The default  value is "pValue"
 #
-#         col = a character vector containing the color to be use for the hatching 
-#             lines. The default value is grey(0.66)
+#         ops - a character vector containing one of the 
+#             following values:
+#             "eq", "ne", "lt", "le", "gt", "ge", "EQ", "NE", 
+#             "LT", "LE", "GT", "GE", "=", "==", "!=", "<>", 
+#             "<", "<=", "=<", ">", ">=", and "=>".  
+#             This value specifies the comparison operator 
+#             be used to test for hatching.  The formula is:
 #
-#         lwd = a numeric representing the line weight (thickness) of the hatching 
-#             lines. The default value is 0.65.
+#             <hatch "dataCol" column values> <operator> <"value" parameter>
 #
-#         lty = a numeric representing the line type of the hatching lines.
-#             The default value is 1 (solid).
-#
-#         density (or den) = a numeric representing the number of lines per 
-#             inch in the hatching line pattern.  The default is 25 lines per inch.  
-#             The valid range for this value is 5 to 64.
-#
-#         angle = a numeric representing the angle in degrees of the lines in 
-#             the hatching pattern.  The default value is 45 degree CCW.  
-#             The valid range of this value is -360 to 360.
-#
-#         range - a vector of two numeric values.  The user provided data column 
-#             for the hatch test is validated and must be within this range 
-#             (inclusively.)
-#             If range=FALSE or NA, the range check feature is disabled.  
-#             If range=TRUE, the default range vector of c(0,1) is used.
-#             The default value for the range option is NA, disabled. 
-#
-#         ops - a character vector containing one of the following values:
-#            "eq", "ne", "lt", "le", "gt", "ge", "=", "==", "!=", "<>", 
-#            "<", "<=", "=<", ">", ">=", and "=>".  
-#            This value specifies the comparison
-#            operation be used to test for hatching.  The formula is:
-#
-#            <"dataCol" hatch parameter column values> 
-#                                 <operations> 
-#                                         <"value" hatch parameter>
-#
-#            For pValue testing the default values for ops (gt) and value 
-#            (0.05) can be used.  The resulting formula would be:
-#
+#             For pValue testing the default values for ops (gt) 
+#             and value (0.05) can be used. The resulting formula 
+#             would be:
 #                <hatch "dataCol" values> gt 0.05
 #
-#         value - a numeric value used with the criteria to compare against 
-#             the user's data to determine if the area should be hatch.
-#             The default value is 0.05  (as used with pValues)
+#         value - a numeric value used with the criteria to 
+#             compare against the user's data to determine if 
+#             the area should be hatch. The default value 
+#             is 0.05  (as used with pValues)
+#
+#         range - a vector of two numeric values.  The user 
+#             provided data column for the hatch test is 
+#             validted and must be within this range (inclusively.)
+#             If range=FALSE or NA, the range check feature 
+#             is disabled. If range=TRUE, the default range 
+#             vector of c(0,1) is used. The default value 
+#             for the range option is NA, disabled. 
+#
+#      The following options are general options for all hatching.
+#
+#         col = a character vector containing the color to be use 
+#             for the hatching lines. The default value is grey(0.66)
+#
+#         lwd = a numeric representing the line weight (thickness) 
+#             of the hatching lines. The default value is 0.65.
+#
+#         density (or den) = a numeric representing the number 
+#             of lines per inch in the hatching line pattern.  
+#             The default is 25 lines per inch.  The valid range
+#             for this value is 5 to 64.
+#
+#         angle = a numeric representing the angle in 
+#             degrees of the lines in the hatching pattern.  
+#             The default value is 45 degree CCW.  The valid 
+#             range of this value is -360 to 360.
+#
+#         incAngle = a numeric representing the amount the 
+#             angle of the hatching will be increased for hatch2.  
+#             The value must be between -120 and 120. The default 
+#             value is 60 CCW.  (Added - 18/03/14)
+#
+#   hatch2  = List of options:    (Added - 18/03/14)
+#             If a list, hatching will be enabled and the list 
+#             evaluated for overriding values. The default 
+#             value is NULL.
+#
+#         dataCol = a character vector or a single integer 
+#             number containing the name of the data column or 
+#             number for use to determine is hatch will be done 
+#             on this area. The default  value is NULL
+#
+#         ops - a character vector containing one of the 
+#             following values:
+#             "eq", "ne", "lt", "le", "gt", "ge", "EQ", "NE", 
+#             "LT", "LE", "GT", "GE", "=", "==", "!=", "<>", 
+#             "<", "<=", "=<", ">", ">=", and "=>".  This value 
+#             specifies the comparison operator be used to 
+#             test for hatching.  The formula is:
+#
+#            <hatch "dataCol" column values> <operator> <"value" parameter>
+#
+#             For pValue testing the default values for ops (gt) 
+#             and value (0.05) can be used. The resulting formula 
+#             would be:
+#                <hatch "dataCol" values> gt 0.05
+#
+#         value - a numeric value used with the criteria to 
+#             compare against the user's data to determine if 
+#             the area should be hatch. The default value is 0.05  
+#             (as used with pValues)
+#
 #
 #  Note: A legend will be drawn by default using the default settings..
 #
 #  mLegend = a logical value of TRUE or FALSE or a list of legend parameters.
-#           If NA or FALSE, the legend will not be drawn. If TRUE, the default 
-#           mLegend settings will be used to create the legend.
+#           If NA or FALSE, the legend will not be drawn. If TRUE, the default Legend 
+#           settings will be used to create the legend.
 #
-#           mLegend can also be set to a list of named values.  Each named 
-#           value provides controls over how the legend will be drawn.  
+#           mLegend can also be set to a list of named values.  Each named value 
+#           provides controls over how the legend will be drawn.  
 #           For example:  mLegend=list(pos="center",size=0.5)
 #           The following options are available:
 #
-#         numCols = (ncol or legendColn) is an integer and specifies the 
-#              number of columns in the legend.
-#              The value must be in the range of 1 to 8.  
-#              The default value is 3.
+#         numCols = (ncol or legendColn) is an integer and specifies 
+#              the number of columns in the legend. The value must 
+#              be in the range of 1 to 8.  The default value is 3.
 #
-#         pos = (legendPos) is the string  "left", "center", or "right" 
-#              indicating the position of the legend in the bottom of the 
-#              graphic.  The default value is "left".
+#         pos = (legendPos) is the string  "left", "center", or 
+#              "right" indicating the position of the legend in 
+#              the bottom of the graphic. The default value is "left".
 #
-#         size = (legendCex) a numeric value to use as a multiplier for 
-#              legend font size.
-#              The default value is 0.85 times the par("ps") value.
+#         size = (legendCex) a numeric value to use as a multiplier 
+#              for legend font size. The default value is 0.85 
+#              times the par("ps") value.
 #
-#         counts = TRUE/FALSE,  (legendCnt) If TRUE, display the number 
-#              of areas in each category in the legend after the label.  
-#              If FALSE (the default), no counts 
+#         counts = TRUE/FALSE,  (legendCnt) If TRUE, display the 
+#              number of areas in each category in the legend 
+#              after the label.  If FALSE (the default), no counts 
 #              are displayed in the legend.
 #
-#         noValue = is a logical parameter. If TRUE, any category in the 
-#              legend with no entries is tagged with "NV" after the 
-#              category. The default value is FALSE.
+#         noValue = is a logical parameter. If TRUE, any category 
+#              in the legend with no entries is tagged with "NV" 
+#              after the category. The default value is FALSE.
 #
 #
 #   bktPtDigits = number of digits to allow in the break point list
-#               and resulting categorization intervals.  
-#               Default is the calculated number of digits based on the 
-#               interval between break points.  If categ is set to "color" 
-#               or "data", this parameter is ignored.
+#               and resulting categorization intervals.  Default is the calculated
+#               number of digits based on the interval between break points.
+#               If categ is set to "color" or "data", this parameter is ignored.
 #
 #   palColors   = is a character string used to specify the RColorBrewer 
-#               palette to use to color the categories.  The colors
-#               are used in the order provided by RColorBrewer.
-#               If the color order needs to be reversed, place
-#               a "-" in front of the color name, e.g. "-RbYlBu". 
-#               The default value is "-RdYlBu".  
-#               The value provided by the user is verified against the list 
-#               of RColorBrewer acceptable palette names.   Dependent on the
-#               palette selected, the number of categories may be limited 
-#               based on the number of colors available from RColorBrewer.
-#               if categ is set to "color", then this call parameter is 
-#               ignored.  
+#               palette to use to color the categories.  The default 
+#               is "RdYlBu" reversed.  The value provided by the user 
+#               is verified against the list of RColorBrewer acceptable 
+#               palette names.   Dependent on the palette selected, 
+#               the number of categories may be limited based on 
+#               the number of colors available from RColorBrewer.
+#               if categ is set to "color", then this call parameter 
+#               is ignored.
 #
-#   debug       = is a logical variable.  Set to \var{TRUE} to enable printing 
-#               a lot of debug output prints and logic traces.  This is 
-#               a lot of output and should not be used unless requested.
+#   debug       = is a logical variable.  Set to \var{TRUE} to enable 
+#               printing a lot of debug output prints and logic traces.  
+#               This is a lot of output and should not be used unless 
+#               requested.
+#
+#  Future: 
+#     shapeFile = allows a user to specify their own shapefile.
+#               This parameter is a list of several options:
+#                dir = directory where the shapefile is stored.
+#                dsn = file name of the shapefile (.shp, .dbf, etc.)
+#                idCol = name of the Location ID in the shapefile@data 
+#               structure.
+#               The use of shapeFile=list will disable the following
+#               regionB, stateB, seerB, hsaB, countyB, tractB, clipTo,
+#               us48only, includePR, censusYear parameters.
+#               
 #
 #
 #  The type of map is dynamically determined by the area ids used by
@@ -382,7 +479,7 @@
 #  By default (countyB="DATA") the county boundaries are only drawn 
 #  for counties with data values. The boundaries for counties without 
 #  data values can be drawn to their registry or state boundaries by 
-#  using the countyB = "SEER" and "STATE" options.
+#  using the countyB = "HSA", "SEER" and "STATE" options.
 #  State and registry boundaries can be added by using the stateB and seerB
 #  options set to "DATA" or "ALL".  The "DATA" value will draw 
 #  the associated boundary around any county with data values.
@@ -391,9 +488,10 @@
 #  data and mapping is done at the census tract level.
 #  The tractB parameter works in the same manner for tracts as the 
 #  countyB parameter worked for counties.  tractB has one additional
-#  value of "COUNTY".  This asks the package to draw all tracts in any
+#  value of "COUNTY".  This askes the package to draw all tracts in any
 #  county containing a tract with data values, similar to the countyB="SEER".
-#  The tractB="NONE", "DATA", "SEER" and "STATE" work the same way.  
+#  The tractB="NONE", "DATA", "HSA", "COUNTY", "SEER" and "STATE" 
+#  work the same way.  
 #  The stateB and seerB parameter also work the same.
 #
 #  The base package only contains the census tracts for states
@@ -413,11 +511,17 @@
 #  the leading zero to form character string versions of the
 #  codes to match the boundary data files.
 #
+#  The HSA numbers are 1 to 3 digits in the range from 1 to 999.
+#  The idMode = HSA will be set if any of the location IDs 
+#  are 3 digits, do not match a state FIPS code.  If a 
+#  state ID is entered incorrectly, the location id may 
+#  be classified as HSA.
+#
 #  If the id is the Seer registry area abbreviation or a
-#  recognized string outputted by government Seer Registry
+#  recognized string outputed by government Seer Registry
 #  support programs.  Only the Seer registry abbreviations
 #  or strings that can be alias matched.  See table below.
-#  Only the state and Seer Registry boundaries are drawn
+#  Only the state and Seer Registry bounaries are drawn
 #  based on the stateB and seerB call parameters.
 #
 #  If the id does not match any known pattern, a wildcard
@@ -428,7 +532,8 @@
 #  abbreviation is assigned to the row.
 #
 #  Any ids that do not match a boundary FIPS code (at state,
-#  county or tract level) or the alias or abbreviation of
+#  county or tract level), the HSA number range
+#  or the alias or abbreviation of
 #  the Seer Registry, will be reported to the user via
 #  warning messages.  The data for the unmatched
 #  row will not be mapped.
@@ -511,14 +616,14 @@
 #               of "0" values. The middle points may also be duplicated,
 #               but not as frequently as the high and low ends. The
 #               resolution is to adjust the 2nd to low end value to
-#               be 0.0001 above the minimum value and set the second
+#               be 0.0001 above the miniumum value and set the second
 #               to high value 0.0001 below the maximum value. A set
 #               of break points like:
 #                  c(0, 0, 0.4, 0.6, 1, 1) would become
 #                        c(0, 0.0001, 0.4, 0.6, 0.9999, 1)
 #               This would force a large number of 0's or 1's in this
 #               example to the extreme ends. A message documenting the
-#               adjustment will be outputted. If an internal breakpoint
+#               adjustment will be outputed. If an internal breakpoint
 #               is duplicated, example:
 #                  c(0,  0.4,  0.6,  0.6,  1).
 #               This is 4 categories (25% each) with large number of
@@ -535,7 +640,7 @@
 #               PNG, JPEG, PS, and PDF device setups. At the current
 #               time, the TIFF. JPEG, and PNG do not work. They only show
 #               the state boundary and legend are shown, we think. Need to
-#               find what is being plotted successfully and why. Windows, PS
+#               find what is being ploted successfully and why. Windows, PS
 #               and PDF appear to work correctly.
 #               Answer: Tested to see if the line width or colors were
 #               cause lines (polygons) to not be drawn, then attempted to
@@ -543,10 +648,10 @@
 #               The last plot always worked, but appears to erases the
 #               previous plots or completely obscure them. As it turns out
 #               each type of output graphics handles the plot() differently.
-#               The par(new=T) was added to help with over plotting.
+#               The par(new=T) was added to help with overplotting.
 #               However, the devices need more information. A patch was
 #               implemented. R would like you to do PLOT then polygons
-#               or lines as means to over plot in R. To permit plot()
+#               or lines as means to overplot in R. To permit plot()
 #               overlays an option in the plot call "add=TRUE" was added
 #               in an patch to tell the devices this plot is an overlay.
 #               This options does not appear in the general documentation.
@@ -555,13 +660,13 @@
 #
 #             - Error found- when us48Only option is set, the codes does
 #               not exclude the data from Alaska and HI. When the maps are
-#               later drawn, the existence of the data causes the
+#               later drawn, the existance of the data causes the
 #               boundaries to be drawn anyway. Data is scanned and any
 #               data, at state, county or tract level, for AK, HI, and PR
 #               are excluded. The state FIPS code will be added to each
 #               data record and used to subset the data at plotting time.
 #
-#    10/21/14 - The adjustments for the duplicate break points broke
+#    10/21/14 - The adjustements for the duplicate break points broke
 #               the break point rounding logic and was not dynamic to
 #               handle future cases. Changes made to use small adjustment
 #               intervals based on the difference between the calculated
@@ -621,10 +726,10 @@
 #               in package.
 #               Only tract boundaries will be included for seer areas.
 #               Seer area boundaries will be included in package.
-#               Supplemental tract boundary files will be accessible,
-#               if referenced and loaded.  If not, thru error.
-#             - Rebuild boundary data into simpler SPDFs with no indexes,
-#               no place name data, and no SaTScan used information.
+#               Supplimental tract boundary files will be accessible,
+#               if referenced and loaded.  If not, throu error.
+#             - Rebuild boundary data into simplier SPDFs with no indexes,
+#               no placename data, and no SaTScan used information.
 #             - Reduced the boundary data to 15% from 33%.
 #             - Added new features (SeerOnly and SeerOverlay)
 #             - Changed type of map identification logic to do it
@@ -633,7 +738,7 @@
 #               simplify function call.
 #   03/11/16  - Lazydata and Lazyload is disabled to save about
 #               1 megabyte of disk space to get release < 5 megabytes.
-#             - Re implemented hatch and Legend parameters to use
+#             - Reimplemented hatch and Legend parameters to use
 #               named lists instead of separate call parameters
 #             - implemented hatch and Legend parameters as TRUE/FALSE
 #               or a list of settings.
@@ -643,7 +748,7 @@
 #               data level to Seer or State levels based on the
 #               areas with data.  Extra areas are mapped in white.
 #             - Completed generating boundaries reduced to 15% for
-#               all states, seer Areas, counties and census tracts.
+#               all states, seer Areas, counties and censustracts.
 #             - Created SeerTractEast and SeerTractWest packages
 #               to carry the census tracts for non-Seer Area states
 #               to the east and west of the Mississippi.
@@ -651,10 +756,10 @@
 #             - Updated code to handle oddities in R 3.2+ that
 #               do not handle xxx[yy] properly - now you have to
 #               code xxx[yy,].  Updated code as debugged.
-#             - Changed name of package to SeerTractMapper (later to SeerMapper)
+#             - Changed name of package to SeerTractMapper.
 #   03/15/16  - Rewrote the how the package determines what
 #               areas to map and what overlays to draws.  It now
-#               had the areas with data, the extinction of the
+#               had the areas with data, the extention of the
 #               boundaries at the data level to the Seer Area
 #               boundaries or the State boundaries (controlled
 #               by the fillTo call parameter and possible
@@ -669,7 +774,7 @@
 #               that created a categorization range that did
 #               not cover the entire data range.  The result
 #               is a NA category and areas colored black.
-#               The RateRound function was re coded to provide
+#               The RateRound function was recoded to provide
 #               a better rounding process.
 #             - Corrected the loadBoundary function to properly
 #               handle reading tract boundary dataset that are
@@ -683,7 +788,7 @@
 #                - County, State, Seer and Region boundaries now
 #                  derived from tract boundaries to ensure edges
 #                  overlap properly.
-#                  May still have minor issue at state boundaries
+#                  May still have minor issue at state boundarie
 #             - Expanded examples to include Georgia census tracts
 #                  and do partial maps - ATL, ATL+partial and
 #                  show off options.
@@ -721,23 +826,23 @@
 #             - The area outlines are not working as expected.
 #               Added the option for seerB="STATE". This setting
 #               will draw all Seer Registry borders within a state
-#               where an area has data. No other Seer Registry
+#               where an area has data. No other Seer Registery
 #               borders are drawn as in the seerB="ALL" case.
 #               seerB="ALL" is not designed to draw all Seer
 #               Registries within the US even if they do not contain
 #               any data.
 #             - The limits of the graphs have been corrected to
 #               draw the state or empty Seer Registry borders.
-#               It currently clips the borders in these situations.
+#               It currently clips the borders in these situatlions.
 #             - Protection needs to be added to the categ="n" logic
 #               incase the data only contains a few areas (<"n").
 #               The interval can not be 0.
 #             - Updated examples to use the new datasets for state,
 #               state/county and state/county/tract, and state/seer
-#               registry data. All examples had to be re-written.
+#               reg. data. All examples had to be re-written.
 #             - The regular expression used to validate character
 #               form of numbers has been enhanced to handle leading
-#               white space and a space between leading - or + and
+#               whitespace and a space between leading - or + and
 #               the number. Commas may be included, but must
 #               be every 3 digits from the decimal point or end of
 #               number (standard format). The commas are now
@@ -753,7 +858,7 @@
 #             - The countyB call parameter is expanded to include:
 #               "SEER" and "STATE" values.
 #             - Added wild card match on Seer Registry Names -
-#               see which is better Abbreviation Match or Alias Match -
+#               see which is better Abbr Match or Alias Match -
 #               pick the best.
 #    10/02/16 - Reorder call parameter checking to allow idCol
 #               processing and level determination code to set
@@ -778,7 +883,7 @@
 #    11/16/16 - Changed hatching range checking parameter default from c(0,1) to NA, disabled.
 #             - Corrected Hatching code to support the operations and value fields properly.
 #             - Corrected the Legend code to allow a single option. 
-#             - Expanded legend code to support all of the top and bottom position names.
+#             - Expanded legend code to aupport all of the top and bottom position names.
 #               Have conflict with the original names and the "middle" names used by the 
 #               legend function.
 #             - Reordered the hatching logic to:
@@ -787,7 +892,7 @@
 #                c) validate the dataCol value as a column name or number
 #                d) validate the dataCol contents as numbers.
 #                e) execute comparison logic and set hatching flag for each area.
-#                f) remove comparison logic from plotting section.  If hatching, plot
+#                f) remove comparison logic from ploting section.  If hatching, plot
 #             - changed the default value for the categ from c(0.6, 0.8, 1.0, 1.2, 1.4) to "5".
 #               This provides a quick map for any type of data.  User can then refine the 
 #               breakpoints when needed.
@@ -803,7 +908,7 @@
 #
 #               The first symbols are R operator symbols.  The second symbol are values
 #               supported by other languages.  The package will access the character symbol
-#               (based on Fortran), the R based operators or the variation symbol operators.
+#               (based on fortran), the R based operators or the variation symbol operators.
 #             - Completed density and angle options for hatching.  Added verification code
 #               defaults and parameters to plot call.
 #             - Needed about 200k of space in package.  Removed the rg99_dXX.rda data sets
@@ -816,18 +921,15 @@
 #             - Added return value by SeerMapper of the x and y limits used to draw then 
 #               map.  This is used by SaTScanMapper to position the cluster outline shapes 
 #               over the drawn map.
-#             - Add the option categ="colors" (upper or lower case).  This allows the caller 
-#               to pass the actual
+#             - Add the option categ="colors" (upper or lower case).  This allows the caller to pass the actual
 #               colors for filling the areas instead of a category or rate value.  This is 
-#               required to support SaTScanMapper as a caller.  The colors are check 
-#               to ensure they are really color values to the R routines.  
-#               An upper limit of the number of colors used
-#               needs to be set to help the legend code handle the list. 
-#               The feature may require the addition of the 
+#               required to support SaTScanMapper as a caller.  The colors are check to ensure they
+#               are really color values to the R routines.  An upper limit of the number of colors used
+#               needs to be set to help the legend code handle the list. The feature may require the addition of the 
 #               legend label override new feature being considered.
 #             - changed "US48Only" call parameter name to "us48Only".
 #             - changed the default of the categ parameter to 5.
-#             - changed the return list of 'xlim' and 'ylim' to an invisible return.
+#             - changed the return list of xlim and ylim to an invisible return.
 #    01/16/17 - Subdivide logic into segments to all SaTScanMapper to call key elements and
 #               void repeat work to improve performance.  Key elements 1) parameter 
 #               validation - not required, 2) Categorization and Color assignment - not required.
@@ -886,30 +988,80 @@
 #    02/18/17 - Fixed hatch:lty option. Not assigning the correct value for the plot call and
 #               was limiting numeric range to 0-5 instead of 0-6.  Also did not ensure
 #               the value was an integer.
-#    04/10/17 - Change package inter-dependencies used to allow census tract packages to 
-#               automatically be downloaded and installed and allow SeerMapper to control the 
-#               loading of the packages when needed.
-#    04/25/17 - Added code to implement the clipTo call parameter.
-#    05/08/17 - Completed removal of "fillTo" call parameter.
-#    05/09/17 - satscanMapper calls to SeerMapper don't work - SeerMapper can't find basic st99_d00
-#               and other files.  Also coXX_d00 files are not found.
-#               Had to change data() call to include the package name containing the dataset.
-#               Since packages may be loaded via "require" function, they are not always 
-#               attached to the search list.  Therefore, all dataset loads (data()), must
-#               have the "package=" parameter present specifically pointing to the package
-#               containing the dataset.
-#    05/13/17 - In order to support mapping with satscanMapper and the limited sub-areas
-#               contained in the results files, the SeerMapper countyB and tractB option
-#               had to be expanded to include "REGION" and "ALL" values. (deferred to future release)
-#             - Added new feature to permit the reversal of the palColors scheme selected.
-#               For easy implementation a "-" is check at the lead of the string.
-#               If present, a flag is set and the "-" is removed.  Processing is then continued.
-#               Changed the default to "-RdYlBu".  Modified the logic to only reverse
-#               the colors when a "-" is present.  Added rPM$palColorsRev logical variable to 
-#               indicate to the code, the color list should be reversed, when the color list
-#               is created.
+#    03/13/18 - Add Heatlh Service Areas to the boundary maps.  This impacts: dynamic location 
+#               ID detection, add new hsaB and HSA parameters, new hs99_d00 table, new set of 
+#               hsXX_d00 and hsXX_d10 datasets, updates the co99_d00 to include HSA number,
+#               updates st99_d00 to include number of HSAs in state, modifies 
+#               added plotting of HSA layer, roll up of counties and tracts to HSA level, 
+#               add one example and same data for HSA in the Washington/Baltimore CMA, HSA boundaries are 
+#               included for all US states.
+#             - Boundary Options support for HSA is enhanced: hsaB = { NONE, DATA, SEER, STATE }, 
+#               expanded countyB = HSA ( all counties in HSA that contains data), and 
+#               expanded tractB = HSA ( all tracts in HSA that contains data.)
+#             - Add the "proj4" call parameter for a caller specified projection definition for 
+#               the final mapping. Value is converted to CRS and any errors trapped and reported
+#               to the caller.  This is the only validation of the string provided.
+#             - Accept "proj4" parameter string from satscanMapper in the rPM vector. Must be 
+#               provided immediately after the SM_GlobInit call is completed.
+#             - Add to documention the process and transformations done to all coordinates.
+#             - Removed the ltyp hatching option.  
+#             - Add the ability to do a second hatch (hatch2).  The first hatch and all 
+#               control options are specified via the "hatch" call parameter.  
+#               The second hatch is specified via the "hatch2" call parameter, but 
+#               only the dataCol, ops, and value options are allowed.
+#               The rest of the options for the second hatch are copies from the hatch=list(options).
+#             - Update documentation for new features and parameters.
+#                   proj = "string"
+#                   countyB, and tractB modifications = HSA
+#                   hsaB = { NONE | SEER | STATE | REGION | ALL
+#                   hatch2 = list()
+#             - Add return value at end of SeerMapper to provide information required to 
+#               allow overlay printing on maps created by SeerMapper.
+#             - Remove ltyp options in hatching.
+#             - Added "lab" option to Hatching (1 and 2) incase we need to label them 
+#               or do a small legend.
+#   02/27/19  - turn off debug output.
 #
+#   Future:
+#             - Add GROUP feature to allow user to define there own logical groups (like districts
+#               or HSAs) based on counties.  Input is "name/ID" and county (5 digit fips).
+#               package constucts name-group-county table.  Reads needed counties and 
+#               combines counties as needed.  Group entities can not span state boundaries.
+#               GROUP = "data.frame" of (locID, county FIPS).
+#             - xxxxxB_lwd  - boundary line weight override.
+#             - User specified shapefiles with names tables.
 #
+#   Immedidate: - rebalance census tract files to meet CRAN size requirements.
+#   10/07/19 Fanni Zhang
+#             - add # to comment out functions cat and print when debug=0 to get rid of long output
+#             - modify st99_d00 with loc2 included for the new tract data arrangement in version 1.2.2
+#               (see R program "modify_st99_d00.R")
+#             - check the data package version and replace loc with loc2 in st99_d00 if 
+#               packageVersion("SeerMapperRegs")>="1.2.2" & packageVersion("SeerMapper2010Regs")>="1.2.2"
+#   
+#   01/06/20 Fanni Zhang
+#             - fix the proj4 problems by replacing the default proj4 string with user-defined proj4
+#               for region, state, registry.
+#             - add # to comment out function str when debug=0 to get rid of long output
+#
+#   02/11/20 Fanni Zhang
+#             - resolve the discrepancy of centroid points between st99_d00@data and st99_d00@polygons
+#               (see R program "modify_st99_d00.R")
+#
+#   03/26/20 Fanni Zhang
+#             - resolve the discrepancy of centroid points between sa99_d00@data and sa99_d00@polygons
+#               (see R program "modify_package_rdafiles.R")
+#   
+#   04/22/20 Fanni Zhang
+#             - update centroids for states, seer registries and regions based on the user-specified proj if any  
+#
+#   05/06/20 Fanni Zhang
+#             - resolve the discrepancy of centroid points for co99_d00 and coXX_dXX@polygons
+#             - resolve the discrepancy of centroid points for hs99_d00 and hsXX_dXX@polygons
+#               (see R program "modify_package_rdafiles.R")
+#             - update centroids for county-level and hsa-level data based on the user-specified proj if any  
+#
+#   
 # Plans:
 #   1) convert legend to list vector format
 #   2) use same code structure for legend and hatch
@@ -917,7 +1069,7 @@
 #
 #  Libraries required for function.  Make sure you have them installed.
 #
-#  The focus is to develop on R 3.3.x.
+#  The focus is to develop on R 3.5.  (as of March 2018, development focus is R 3.4)
 #
 #  IMPLEMENTATION NOTES:
 #    a) LazyData and LazyLoad were disabled. It appears by
@@ -940,10 +1092,10 @@
 #
 #  Referenced packages:
 #
-#library(foreign)      - No
-#library(grDevices)    - YES
+#library(foreign)      - BUILD processes
+#library(grDevices)    - embedded in R
 #library(graphics)     - confirmed
-#library(data.table)   - No
+#library(data.table)   - ???
 #library(stats)        - confirmed  (quantile)
 #
 #library(stringr)      - confirmed  (str_sub, str_trim, str_match)
@@ -952,14 +1104,16 @@
 #library(maps)         - NO
 #library(maptools)     - confirmed  (spRbind)
 #library(mapproj)      - NO
-#library(rgdal)        - NO (???)
+#library(rgdal)	       - BUILD processes
 #
 #  Data contained in package:
 #     state boundaries (all)
 #     county boundaries (all)
 #     Seer area boundaries (all)
+#     Health Service Area boundaries (all)
 #     Index of Seer to State (2 digits)
-#     Index of county (5 digits) to Seer
+#     Index of HSA (1-3 digits) to Seer (abbr) and State (2 digits)
+#     Index of county (5 digits) to Seer (abbr) and HSA (1-3 digits)
 #     test/example data
 #
 #####
@@ -1102,7 +1256,7 @@
             xNMax <- max(nchar(xN))
             xSp   <- paste0(rep(" ",xNMax),collapse="")
             for (N in xN) {
-                wN <- str_sub(paste0(N,xSp),1,xNMax)
+                wN <- stringr::str_sub(paste0(N,xSp),1,xNMax)
                 wM <- paste0(wN,":",paste0(x[N],collapse=", "))
                 cat(wM,"\n")
             }
@@ -1114,6 +1268,92 @@
    # End of  printNamedList 
    # 
    ###
+   
+   
+   ###
+   #
+   #  function to convert PROJ4 string into CRS format, catch any errors and warnings, report them
+   #  and return CRS to caller.
+   #
+   
+   convertPROJ4 <- function (x) {
+   
+   #  function is designed to convert a proj4 string into CRS format
+   #  and catch any errors or warnings.
+   #
+   #   x - user provided PROJ4 string
+   #
+   #   value = CRS of x if no errors or warnings
+   #         = FALSE if errors or warnings.
+   #
+    save_x <- x
+    y <- NULL
+    #cat("input proj4:",x,"\n")
+ 
+    ErrFnd <- FALSE
+    if (!is.character(x)) {
+       # not a character vector - error
+       ErrFnd <- TRUE
+       xmsg <- paste0("***903 The proj4 call parameter is not a valid character vector.  Must be a valid proj4 argument character string to be converted.")
+       warning(xmsg,call.=FALSE)
+       return(FALSE)     
+    } else {
+       # character vector - OK try the convert
+ 
+       res <- tryCatch({
+          y <- sp::CRS(x)
+          }, warning = function(war) {
+             #print(paste0("My Warning: ",war))
+             return(paste0("WARNING:",war))
+          }, error = function(err) {
+        
+             #print(paste0("My Error:  ",err))
+             return(paste0("ERROR:",err))
+          }, finally = {
+          }
+       )
+     
+       if (class(res) == "CRS") {
+          # its a CRS class - convert to string to print status of call.
+          #xres <- sp::CRSargs(res)
+          #cat("results:",xres,"\n")
+          return(res)    # return CRS class version.
+       } else {
+          # its not a CRS..  Most likely an error. Should be character.
+          res <- as.character(res)
+          #cat("results:",res,"\n")
+       
+          if (stringr::str_sub(res,1,6) == "ERROR:" ) {
+             # an error occurred during the conversion to CRS
+             xmsg <- paste0("***900 The provided proj4 string encountered an error when converted to the \n",
+             "      internal CRS parameter. The following error was reported, plesae correct and rerun.\n",
+             "     ",stringr::str_sub(res,7,200),"\n")
+             warning(xmsg,call.=FALSE)
+             ErrFnd = TRUE
+          } else {
+    
+             if (stringr::str_sub(res,1,8) == "WARNING:") {    
+                # an warning occurred during the conversion to CRS
+                xmsg <- paste0("***901 The provided proj4 string encountered an warning when converted to the \n",
+                "      internal CRS parameter.  The following warning was reported, plesae correct and rerun.\n",
+                "     ",stringr::str_sub(res,9,200),"\n")
+                warning(xmsg,call.=FALSE)
+                ErrFnd = TRUE
+             } else {
+                xmsg <- paste0("***902 Unpredicted results when proj4 was translated to CRS format. Unknown problem.\n",
+                "     ",res,"\n")
+                warning(xmsg,call.=FALSE)
+                ErrFnd = TRUE
+             }
+          }
+          return(FALSE)
+       }
+    }
+ }
+   #
+   #
+   ###
+
 
 #  End of Common Functions
 #
@@ -1128,7 +1368,7 @@
 SM_GlobInit <- function() {
 
       rPM            <- NULL
-      rPM$debugFlag  <- FALSE                 # set to TRUE if running outside of package
+      rPM$debugFlag  <- FALSE                # set to TRUE if running outside of package
       rPM$debug      <- FALSE    
       
       #
@@ -1136,7 +1376,7 @@ SM_GlobInit <- function() {
       #
       #    RColorBrewer Palette Name List and limit color
       #
-      RCBrewerDF <- brewer.pal.info   # get palatte information from RColorBrewer
+      RCBrewerDF <- RColorBrewer::brewer.pal.info   # get palatte information from RColorBrewer
       #       columns:  row.names = palette name
       #                 maxcolors = maximum number of colors
       #                 category  = div, qual, seq
@@ -1148,22 +1388,24 @@ SM_GlobInit <- function() {
       #
       rPM$RCBrewerDF       <- RCBrewerDF
      
+      rPM$palColors        <- "RdYlBu"
+      rPM$palColorsMaxNum  <- 11
+      
       #
       #  Boundary Colors
       #
-      rPM$ColorB_O_Region  <- "grey10"      # Top Layer
-      rPM$ColorB_O_State   <- "grey15"      # Top Layer
-      rPM$ColorB_O_Seer    <- "grey20"      # Seer Level
-      rPM$ColorB_O_HDist   <- "grey25"      # Health District Level
-      rPM$ColorB_O_County  <- "grey30"      # When tracts are mapped.
-      rPM$ColorB_O_Tract   <- "grey35"
-      rPM$ColorB_hatching  <- grey(0.66)    # hatch overlay.
+      rPM$ColorB_O_Region  <- "grey10"      # Top Layer  - 90% black
+      rPM$ColorB_O_State   <- "grey14"      # Top Layer
+      rPM$ColorB_O_Seer    <- "grey18"      # Seer Level
+      rPM$ColorB_O_Hsa     <- "grey22"      # Health Service Area Level
+      rPM$ColorB_O_Group   <- "grey23"      # User Group Definition Level
+      rPM$ColorB_O_County  <- "grey26"      # When tracts are mapped.
+      rPM$ColorB_O_Tract   <- "grey30"
+      rPM$ColorB_hatching  <- grey(0.66)    # hatch overlay (hatch and hatch2)  66% -> grey34
       rPM$ColorB_Data      <- "black"       # black
       
       rPM$palColors        <- "RdYlBu"      # default Color Brewer palette
-      rPM$palColorsMaxNum  <- 11
-      rPM$palColorsRev     <- TRUE
-      rPM$CB_Rate_Mid      <- rev(brewer.pal(5,"RdYlBu"))  # place holder.
+      rPM$CB_Rate_Mid      <- rev(RColorBrewer::brewer.pal(5,rPM$palColors))  # place holder.
       rPM$CB_Rate_Mid2     <- rPM$CB_Rate_Mid # back up value if needed for categMode = 4
       
       #
@@ -1190,27 +1432,34 @@ SM_GlobInit <- function() {
       #  Set up project 4 strings  -  Original and Projected
       #
 
-      rPM$OrigCRS      <- CRS("+proj=longlat +datum=NAD83")
+      rPM$OrigCRS      <- sp::CRS("+proj=longlat +datum=NAD83")
 
       #
       #  Transform the State, State/County, State/County/Census Tract
       #  boundary polygons from long/lat to Equidistance Conic projection.
       #
-      #   Projection = Equidistance-Conical => simpleconic
+      #   Projection = Alber equal area  => simpleconic
       #   Lat Parallel 1   = 33
       #   Lat Parallel 2   = 45
       #   Origin of Lat    = 39
       #   central Meridian = -96   (96W)
       #
 
-      rPM$ProjCRS      <- CRS("+proj=eqdc +lat_1=33 +lat_2=45 +lat_0=39 +lon_0=96w +units=m")
+      rPM$ProjCRS      <- sp::CRS("+proj=aea +lat_1=33 +lat_2=49 +lat_0=39 +lon_0=96w +units=m")
       
       #
       # As of 2/20/17 - all datasets were converted from lat/long to equal area coordinates 
       #  by doing it ahead of time, it same in setup time when the package is run.
       #
       
-
+      #
+      #   User provided Proj4 projection definition for final mapping.
+      #
+      
+      rPM$proj4        <- NA
+      rPM$CRSproj4     <- NA
+      
+      
       #
       #
       #  rg99_dXX table labels - static data table.
@@ -1312,9 +1561,36 @@ SM_GlobInit <- function() {
       rPM$HatchFlag       <- FALSE
       rPM$hatch_caller    <- FALSE
       rPM$hatch           <- list(hDataCol=character(),hDataColName=character(),hDataColNum=numeric(),
-                                  hOps=character(),hValue=numeric(),
-                                  hCol=character(),hLwd=numeric(),hLty=numeric(),hDen=numeric(),hAngle=numeric(),
-                                  hRange=numeric())
+                                  hData=numeric(),
+                                  hOps=character(),
+                                  hValue=numeric(), 
+                                  hRange=numeric(),
+                                  hLab=character(),
+                                  hAngle=numeric(),
+                                  hRes=logical(),
+                                  # general options
+                                  hCol=character(),
+                                  hLwd=numeric(),
+                                  hDen=numeric(),
+                                  incAngle=numeric()
+                                 )
+                                  
+      rPM$Hatch2Flag      <- FALSE
+      rPM$hatch2_caller   <- FALSE
+      rPM$hatch2          <- list(hDataCol=character(),hDataColName=character(),hDataColNum=numeric(),
+                                  hData=numeric(),
+                                  hOps=character(),
+                                  hValue=numeric(), 
+                                  hRange=numeric(), 
+                                  hLab=character(),
+                                  hAngle=numeric(),
+                                  hRes=logical(),
+                                  # general options - inherited
+                                  hCol=character(),
+                                  hLwd=numeric(),
+                                  hDen=numeric()
+                                 )
+			      
       
       rPM$mLegendFlag     <- FALSE
       rPM$mLegend_caller  <- FALSE
@@ -1325,8 +1601,20 @@ SM_GlobInit <- function() {
       rPM$dataBCol        <- "grey90"
       rPM$dataBCol_caller <- FALSE
       
+      rPM$data_lwd        <- 0.75
+      rPM$tr_lwd          <- 0.75
+      rPM$co_lwd          <- 1.0
+      rPM$hs_lwd          <- 1.5
+      rPM$sa_lwd          <- 2.0
+      rPM$st_lwd          <- 2.5
+      rPM$rg_lwd          <- 2.5
+    
+      
       rPM$mTitle          <- c()
       rPM$mTitle.cex      <- 1
+      
+      rPM$HSA             <- FALSE
+      rPM$GROUPS          <- FALSE
       
       rPM$regionB         <- "NONE"
       rPM$regionB_caller  <- FALSE
@@ -1334,22 +1622,21 @@ SM_GlobInit <- function() {
       rPM$stateB_caller   <- FALSE
       rPM$seerB           <- "NONE"
       rPM$seerB_caller    <- FALSE
-      rPM$hdistB          <- "NONE"
-      rPM$hdistB_caller   <- FALSE
+      rPM$hsaB            <- "NONE"
+      rPM$hsaB_caller     <- FALSE
       rPM$countyB         <- "NONE"
       rPM$countyB_caller  <- FALSE
       rPM$tractB          <- "NONE"
       rPM$tractB_caller   <- FALSE
-      
+      rPM$fillTo          <- "NONE"
+      rPM$fillTo_caller   <- FALSE
       rPM$clipTo          <- "NONE"
       rPM$clipTo_caller   <- FALSE
        
-      rPM$dataMapDF       <- data.frame(ID=c("01","02"),data=c("1.2","1.3"),stringsAsFactors=FALSE) 
+      rPM$dataMapDF       <- data.frame(ID=c("01","02"),data=c("1.2","1.3"),hData=c(1,2),h2Data=c(1,2),stringsAsFactors=FALSE)  # and more. 
        
       rPM$NumErrors       <- 0
       rPM$NumWarnings     <- 0
-      
-      rPM$Mar             <- c(3.1,1.1,3.1,1.1)
       
       return(rPM)      
    }
@@ -1363,32 +1650,31 @@ SM_GlobInit <- function() {
    #####
    #
    #   SM_Hatching - setup the hatching variables and dataMapDF for the plotting.
-   #    The data is in dataMapDF$hData under rPM.
+   #    The data is in xxxxx$hData vector under rPM.
+   #    The control information are under $hRes and $hDen vectors in 
+   #    the hatch and hatch2 lists.
+   #    To be able to sync with the dataMapDF, the hatching lists also carry
+   #    the sub-area ID.
    #
 SM_Hatching  <- function(rPM) {
       #   
       #   Local Functions
       #
-      
-      #
-      #   Local Variables
-      #
-      debug      <- rPM$debug
-      debugFlag  <- rPM$debugFlag
-      
-      HatchFlag  <- rPM$HatchFlag
-      
-      if (HatchFlag) {
-
-         dataMapDF  <- rPM$dataMapDF
-         hatch      <- rPM$hatch
-         maphData   <- dataMapDF$hData
+      SetUpHatch <- function(whatch,lhatch) {
+     
+         #  whatch is the hatch list with all parameters and data
+         #  lhatch is the literal - "hatch" or "hatch2"
+         #  Use whatch$flag for the "HatchFlag"
+     
+         # get data into working vector
          
-         #hatch$hRes <- FALSE     # Not at hatch level in the dataMapDF instead.
+         maphData   <- whatch$hData   # get data
+ 
+         # re-written to generalize for both hatch and hatch2
          
          #####
          #
-         #  Step H.1 - Step 1 - Hatching - Get data and validate
+         #  Step HG.1 - Step 1 - Hatching - Get data and validate
          #
          #  Do if hatching is still enabled.
          #  By default maphData is set to NAs
@@ -1405,19 +1691,21 @@ SM_Hatching  <- function(rPM) {
 
          }
          #
+         
          if (!is.numeric(maphData)) {
-            # Not numeric
+            # Not numeric vector.
             
             if (!is.character(maphData)) {
-               # data is not numeric or character
-               xmsg       <- paste0("***144 The hatch data column ",hatch$hDataColName,
-                                           " does not contain numbers. Hatching disabled.")
+               # data is not numeric or character vector
+               xmsg       <- paste0("***144 The ",lhatch," data column ",whatch$hDataColName,
+                                           " does not contain numbers. Parameter ",lhatch," disabled.")
                warning(xmsg, call.=FALSE)
-               HatchFlag  <- FALSE
+               whatch$flag  <- FALSE
          
             } else {
             
                # should be characters - test for numeric characters
+               
                hDataT     <- gregexpr(numberTestRegExpr,maphData)    #  1 OK, NA missing, -1 not number
                HNumOK     <- (hDataT == 1)
                
@@ -1426,33 +1714,41 @@ SM_Hatching  <- function(rPM) {
                   #    OK to convert to numbers.
                   maphData <- as.numeric(maphData) # convert to numeric pValue
                
+                  if (any(is.na(maphData))) {
+                     xmsg <- paste0("***145 The ",lhatch," data is not numeric.  Parameter ",lhatch," disabled.")
+                     warning(xmsg,call.=FALSE)
+                     whatch$flag <- FALSE
+                  }
                   # should no have any NAs..
                
                } else {
-                  xmsg       <- paste0("***144 The hatch data column ",hatch$hDataColName,
-                                           " does not contain numbers. Hatching disabled.")
+                  xmsg       <- paste0("***146 The ",lhatch," data column ",whatch$hDataColName,
+                                           " does not contain valid numbers. Parameter ",lhatch," is disabled.")
                   warning(xmsg, call.=FALSE)
-                  HatchFlag  <- FALSE
+                  whatch$flag  <- FALSE
                
                }
+               
             }  # end of character check
          } # end of numeric check
          
          #  data now is in maphData instead of NAs
          #
+         #  we have turned off hatching or really believe it a good number.
+         #
          #####
          
          #####   
          #
-         #  Step H.2 - Data Range Check if RANGE = TRUE or c(l,h)
+         #  Step HG.2 - Data Range Check if RANGE = TRUE or c(l,h)
          #
-         #  If still hatching and range exists
+         #  If still hatching # 1 and range exists
          #   
          #  Assumption if HatchFlag is TRUE at this point - hData is known to be numeric.
          
-         if (HatchFlag) {
+         if (whatch$flag) {  # still doing hatching.
             #  Check range of hData.
-            H_range <- hatch$hRange
+            H_range <- whatch$hRange
             
             if (!is.na(H_range)) {
       
@@ -1460,10 +1756,10 @@ SM_Hatching  <- function(rPM) {
                x1 <-  maphData < H_range[1]
                x2 <-  maphData > H_range[2]
                if (any(x1 | x2)) {
-                  xmsg <- paste0("***146 Hatching data provided is not within the allowed range :",
-                                     hatch$hRange[1]," to ",hatch$hRange[2],". Hatching disabled.")
+                  xmsg <- paste0("***147 ",lhatch," data provided is not within the allowed range :",
+                                     whatch$hRange[1]," to ",whatch$hRange[2],". Parameter ",lhatch," disabled.")
                   warning(xmsg, call.=FALSE)
-                  HatchFlag <- FALSE
+                  whatch$flag <- FALSE    # turn it off.
                }
             } # end of range check
       
@@ -1474,26 +1770,32 @@ SM_Hatching  <- function(rPM) {
          
          #####
          #
-         # Step H.3 - Have valid data, do comparison and set hatch flag 
+         # Step HG.3 - Have valid data, do comparison and set hatch flag 
          #
-         #  $hRes is set to FALSE to start.
-         #  When the string is evaluated, all entries the match the equation are set TRUE
+         #  maphData - the data to compare
+         #  result of comparision -> $hRes vector is set to FALSE to start.
+         #  When the string is evaluated, all entries the match the equation 
+         #    are set TRUE
          #
          #    $hRes <-  ( <dataValue>  <hOps>  <hValue> )
          #
-         dataMapDF$hRes  <- FALSE          # initialize.
+         H_res  <- rep(FALSE,length(maphData))          # initialize.   Result of test.
+      
+         if (whatch$flag) {  # still hatching,,,
          
-         if (HatchFlag) {
-            #  comparison is by row.   <data> <H_ops> <H_value>
-            wstr        <- paste0("maphData ",hatch$hOps," ",hatch$hValue)
+            #  build comparison is by row.   <data> <H_ops> <H_value>
+            wstr        <- paste0("maphData ",whatch$hOps," ",whatch$hValue)
             #cat("hatch comparison command:",wstr,"\n")
    
-            dataMapDF$hRes  <- eval(parse(text=wstr))   #  true/false
-            #cat("hatch op results:",dataMapDF$hRes,"\n")
-            whDen           <- rPM$hatch$hDen
-            dataMapDF[dataMapDF$hRes,"hDen"] <- whDen
+            # execute
+            H_res        <- eval(parse(text=wstr))   #  true/false   # perform the test
+     
+            #cat("hatch op results:",H_res,"\n")
+    
+            whatch$hRes   <- H_res
+           
          }
-         
+   
          #
          #  if the validate check on "value" is changed to allow a vector with
          #  a length > 1, then the H_ops operaton can be executed between 
@@ -1502,23 +1804,99 @@ SM_Hatching  <- function(rPM) {
          #  for each row.  Why you would do this is beyond me.
          #
     
+         return(whatch)
+ 
       }  # end of all ifs to check each option
       
-      if (debug) {
-         cat("Hatching FINAL settings Z-1451 Flag:",HatchFlag,"\n")
-         cat("   parameters -- dataCol:",hatch$hDataColName," #:",hatch$hDataColNum,"  ops:",hatch$hOps,"  value:",hatch$hValue,"\n")
-         cat("  range:",hatch$hRange,"\n")
-         cat("  col  :",hatch$hCol,"  lwd:",hatch$hLwd,"  lty:",hatch$hLty,"  den:",hatch$hDen,"  angle:",hatch$hAngle,"\n")
-      }
       #
-      #  End of hatch List checking and Processing.
+      #  End of hatch List checking and Processing common function.
       #
       #####
 
-      rPM$HatchFlag   <- HatchFlag
-      rPM$dataMapDF   <- dataMapDF
-   
+      #####
+      #
+      #   SM_Hatching main code
+      #
+      #   Local Variables
+      #
+      debug      <- rPM$debug      # get debug flags
+      debugFlag  <- rPM$debugFlag
+      
+      dataMapDF  <- rPM$dataMapDF  # get access to hatching data
+      
+      HatchFlag  <- rPM$HatchFlag  # get HatchFlag
+      
+      # hatch # 1
+      
+      if (HatchFlag) {
+
+         hatch           <- rPM$hatch         # get hatch list options
+         hatch$flag      <- HatchFlag
+         hatch$hData     <- dataMapDF$hData   # get hatch data # 1
+         #str(hatch) ## FZ 01/06/2020
+         
+         hatch      <- SetUpHatch(hatch,"hatch")  # do hatching calculations
+
+         # save variables    
+         HatchFlag       <- hatch$flag         # HatchFlag - could be disabled.
+         dataMapDF$hRes  <- hatch$hRes         # save test results.
+         
+         #str(dataMapDF) ## FZ 01/06/2020
+         
+         if (debug) {
+    
+            cat("Hatching FINAL settings Z-1814 Flag:",HatchFlag,"\n")
+            cat("   parameters -- dataCol:",hatch$hDataColName," #:",hatch$hDataColNum,"  ops:",hatch$hOps,"  value:",hatch$hValue,"\n")
+            cat("  range:",hatch$hRange,"\n")
+            cat("  col  :",hatch$hCol,"  lwd:",hatch$hLwd,
+            #"  lty:",hatch$hLty,
+            "  den:",hatch$hDen,"  angle:",hatch$hAngle," incAngle:",hatch$hIncAngle,"\n")
+            cat("dataMapDF:\n")
+            print(str(dataMapDF))
+            
+         }
+         
+         rPM$HatchFlag <- HatchFlag
+         rPM$hatch     <- hatch
+      }  
+ 
+      Hatch2Flag  <- rPM$Hatch2Flag
+      
+      # hatch # 2
+      
+      if (Hatch2Flag) {
+
+         hatch2       <- rPM$hatch2
+         hatch2$flag  <- Hatch2Flag
+         hatch2$hData <- dataMapDF$h2Data
+         
+         #str(hatch2) ## FZ 01/06/2020
+         
+         hatch2       <- SetUpHatch(hatch2,"hatch2")
+         
+         Hatch2Flag       <- hatch2$flag   # hatch2flag may be false if errors.
+         dataMapDF$h2Res  <- hatch2$hRes
+
+         #str(dataMapDF) ## FZ 01/06/2020
+
+         if (debug) {
+         
+            cat("Hatching # 2 FINAL settings Z-1850 Flag:",Hatch2Flag,"\n")
+            cat("   parameters -- dataCol:",hatch2$hDataColName," #:",hatch2$hDataColNum,"  ops:",hatch2$hOps,"  value:",hatch2$hValue,"\n")
+            cat("  range:",hatch2$hRange,"\n")
+         }
+         rPM$Hatch2Flag   <- Hatch2Flag
+         rPM$hatch2       <- hatch2
+      }
+            
+      rPM$dataMapDF <- dataMapDF
+      
+      #
+      #
+      #####
+
       return(rPM)
+
    }
    #  End of SM_Hatching.
    #
@@ -1539,58 +1917,94 @@ SM_Hatching  <- function(rPM) {
    #                  rPM -> OrigCRS, ProjCRS
    #                  rPM -> censusYear, cYear, cY
    #                  rPM -> ndfName, stateSelDel
+   #                  rPM -> CRSproj4  (modification if not NULL or NA or "")
    #
    #
    #         Returnes:   MV -> xxxx_proj, xxxx_data, xxxxListAll, xxxxListData
    #                     more to be added.
    #
+   #  Must apply new projections to SPDF before this function returns.
+   #
+   #
    
    SM_Build <- function(rPM) {
       
       ####
-      #    The boundaries for the census tracts in the 13 States
-      #    containing Seer Area:
-      #         AK, AZ, CA, CT, GA, HI, IA, KY, LA, MI, NJ, NM, OK, WA, UT
-      #
-      #    The other census tract boundary data is available in two
-      #    supplemental packages covering the East and West United States.
-      #
-      #    The East US package (NCIMapper-East) contains the census tracts for the following States:
-      #
-      #    The West US package (NCIMapper-West) contains the census tracts for the following States:
       #   
+      #    The boundary data for the regions, states, Seer Registries, 
+      #    HSA, and counties are contained in the "SeerMapper" package.
+      #
+      #    The boundary data for the census tracts for 2000 and 2010 are
+      #    located in six additional packages with a sets for 2000 and 2010.
+      #
+      #    The ...Regs packages contain the census tract boundaries
+      #    for the 19 states containing Seer Registiries:
+      #         AK, AZ, CA, CT, GA, HI, ID, IA, KY, LA, 
+      #         MA, MI, NJ, NM, NY, OK, UT, WA, WI  ## changed by FZ 10/07/2019
+      #
+      #    The ...East packages contain the census tracts for 2000 and 2010
+      #    for the 20 states without Seer Registries east of the Mississippi 
+      #    river.  ## number changed by FZ 10/07/2019
+      #
+      #    The ...West packages contain the census tracts for 2000 and 2010
+      #    for the 13 states without Seer Registries west of the Mississippi
+      #    river.  ## number changed by FZ 10/07/2019
+
+      #   
+      #    Added - March, 2018 - Health Service Areas (HSA)
+      #
       ####
    
       ###
       #
-      #  Local functions
+      #  Local SM_Build functions
       #
       
       ###
       #
       #  Load a list of boundary files
       #
-      loadBoundary <- function(rPM, loadList, pkgList) {
+      #  rPM is the variable list for the package
+      #  DSList is a data.frame with the "DSN" column containing the dataset (file)
+      #   to be loaded/data'd and the "Pkg" column indicating the 
+      #   package name containing the dataset.
+      #
+      #  This version uses the "Import:" feature in the DESCRIPTION
+      #  file to make sure the packages are loaded along with lasy-data loaded.
+      #  While the datasets may not show up on a data() call, they do
+      #  when you do a data(package="xxxx") call. To load, the data call must
+      #  specify data("dataset-name",package="package-name",environ=environment())
+      #
+      #  Primarily for hsa, county and tract
+      #
+      #  
+      #
+      loadBoundary2 <- function(rPM, DSList) {
       
+         #   rPM - parameter lists and variables
+         #   DSList - Data set list  (DSN and Pkg)
          #
          #  Check to see if datasets are available because the appropriate libraries (packages)
          #  were loaded.  This mostly applies to census tract datasets.  
          #
-         #cat("Loading boundary list:",loadList,"\n")
-         #cat("rPM$loadedDSList:",rPM$loadedDataSetList,"\n")
-   
+         #cat("Loading boundary list:\n")
+         #print(DSList)
+         #DDir   <- "c:/projects/statnet/r code/"
+         #DDir<-"/spin1/users/zhangf10/GIS/Rpackage/V1.2.2-New/"  ## biowulf folder
+         DDir   <- "H:/work/GIS/Rpackage/V1.2.2/"
+         DVer   <- "-1.2.2/data/"
+      
+         # validate the requested load list (dataset and package)
          if (!rPM$debugFlag) {
-            # validate the requested load list is in the data list in the system 
-            
-            loadMatch         <- match(loadList,rPM$loadedDataSetList)   # are the dataset available?
+            #  check DSN names against list provided.
+            loadMatch         <- match(DSList$DSN,rPM$loadedDataSetList)   # are the dataset available?
             loadMissing       <- is.na(loadMatch)
          } else {
-            # debug mode
+            # in debug mode nothing is missing.
             loadMissing       <- FALSE
          }
          
          # report any missing required datasets.
-         
          if (any(loadMissing)) {
          
             #  one or more of the datasets needed are missing, need extra package loaded.
@@ -1598,89 +2012,86 @@ SM_Hatching  <- function(rPM) {
             xmsg         <- paste0("***196 The following boundary datasets are missing. Make sure the appropriate SeerMapper",rPM$cY," supplement packages have been installed and loaded.")
             warning(xmsg, call.=FALSE)
          
-            loadListMiss <- loadList[loadMissing]
+            loadListMiss <- DSList$DSN[loadMissing]
             xmsg         <- paste0("***197 Missing:",paste0(loadListMiss,collapse=", "),"\n")
             stop(xmsg, call.=FALSE)
             rm(loadListMiss)
          }
-   
-         #  loadList contains the list of .rda datasets to load
-         #    Data level      is          State, Seer,         State/County         or Tract.
-         #    Overlay Levels are  Region  State, State/Seer,   State/Seer/County
-   
-         if (rPM$debug) {
-            print("pull details for data level (county or tract).")
-         }
+      
+         #  DSList$DSN contains the list of .rda datasets to load
+         #    Data level      is  State,   Seer,  HSA, State/County, or Tract.
+         #    Overlay Levels are  Region,  State, State/Seer,  HSA, State/Seer/County
+      
          work_set        <- NULL     # start of the accumulation of the DF
-   
-         for (ind in c(1:length(loadList))) { # loop and load.
-         #for (loadImage in loadList) { # loop and load.
-   
-              loadImage <- loadList[ind]
-              pkgImage  <- pkgList[ind]
-   
+         
+         for (inx in seq(dim(DSList)[1]))  { #  loadImage in loadList) { # loop and load.
+      
+            loadImage <- DSList[inx,"DSN"]
+            loadImPkg <- DSList[inx,"Pkg"]
+         
             if (rPM$debugFlag) {
-               load(paste0(DDir,loadImage,".rda"),envir=environment())
+               # manually load froom data directory "DDir"
+               DSN_FN <- paste0(DDir,loadImPkg,DVer,loadImage,".rda")
+               #cat("Loading boundary file:",DSN_FN,"\n")
+               load(file=DSN_FN,envir=environment())
             } else {
-               data(list=loadImage,envir=environment(),package=pkgImage)
+               #cat("data(",loadImage," from package=",loadImPkg,")\n")
+               data(list=loadImage,envir=environment(),package=loadImPkg)
             }
-            #cat("combining counties:",loadImage,"\n")
-
+       
             new_bnd    <- get(loadImage)   # get newly loaded spdf
                         
-            idList     <- row.names(new_bnd)
-            #cat("idList Z-1571 :",idList,"\n")
+            new_idList     <- row.names(new_bnd)
+            #cat("idList Z-2000 :",new_idList,"\n")
+            new_spdf       <- new_bnd 
             
-            if (class(new_bnd) == "SpatialPolygons") {
-               # have a Spatial Polygon structure
-               #cat("tr-found SP - converted to SPDF\n")
-               idDF            <- data.frame(ID=idList,row.names=idList,stringsAsFactors=FALSE)
-               new_spdf        <- SpatialPolygonsDataFrame(new_bnd,idDF)   # build SPDF
-            } else {
+            if (class(new_spdf) == "SpatialPolygons") {
+               # if a Spatial Polygon structure, build it into SPDF
+               idDF             <- data.frame(ID=new_idList,row.names=new_idList,stringsAsFactors=FALSE)
+               new_spdf         <- SpatialPolygonsDataFrame(new_bnd,idDF)   # build SPDF
+            }
+            if (class(new_spdf) == "SpatialPolygonsDataFrame" ) {
                # have a Spatial Polygon Data Frame (assume)
-               new_bnd@data$ID <- idList  # set up one element in @data
-               new_spdf        <- new_bnd
+               new_spdf@data$ID <- new_idList  # set up one element in @data
+            } else {
+               # not the correct format.
+               xmsg <- paste0("***980 Internal Error.  Boundary DS :",loadImage," is not a SpatialPolygonsDataFrame.")
+               stop(xmsg,call.=FALSE)
             }
             #  new_spdf is definitely a SPDF.
-
+    
             #  Combine single state into multiple state data
             if (length(work_set) == 0)  {
                # if first structure loaded - just copy to base structure
-               work_set   <- new_spdf
+               work_set        <- new_spdf
             } else {
                # else append to existing structure
-               work_set    <- spRbind(work_set,new_spdf)
+               work_set        <- spRbind(work_set,new_spdf)
             }
             
             #  Now erase imported structures to save space.
-            eStr2         <- paste0("suppressWarnings(rm(",loadImage,"))")
+            eStr2              <- paste0("suppressWarnings(rm(",loadImage,"))")
             eval(parse(text=eStr2))  # remove imported data.
-            #cat("eStr2 command Z-1597 :",eStr2,"\n")
-
+            #cat("eStr2 command Z-2037 :",eStr2,"\n")
+    
          }
          #  boundaries have been read and combined.
-   
-         #  Set original projection on county boundary data.
-         #work_set@proj4string <- rPM$OrigCRS
-         #cat("str(work_set@data):\n")
-         #print(str(work_set@data))
-         
-         #work_proj    <- sp::spTransform(work_set,CRSobj=rPM$ProjCRS)        # SHOULD NOT EFFECT @data.
-
-         #cat("End loadboundary:\n")
-         #cat("class(work_proj):",class(work_proj),"\n")
-         #cat("length(work_proj):",length(work_proj),"\n")
-         #cat("str(work_proj@data):\n")
-         #print(str(work_proj@data))
+      
+         #
+         #  The boundaries have already been projected into an Alber Equal Area/Distance
+         #  projection when the datasets were built.
+         #
          
          return(work_set)
       }
       
       # 
-      #  end of loadBoundaries
+      #  end of loadBoundaries2
       #
       #####
-      
+    
+    
+    
       ##### Main code of SM_Build
 
       ##### Stage 2 - would be used by other processes.
@@ -1688,7 +2099,7 @@ SM_Hatching  <- function(rPM) {
       #  Key variable:  rPM$dataMapDF$ID -> idList -> list of data location IDs for the data.
       #
       #  take information and build id List, 
-      #      st99, sa99, rg99, and associated coXX, and maybe trXX
+      #      st99, sa99, rg99, co99, hs99 and associated hsXX, coXX, and maybe trXX
       #
       #      the xxxxListAll vectors
       #      Then construct xxxxPLists related to the data.
@@ -1700,10 +2111,12 @@ SM_Hatching  <- function(rPM) {
       #   to validate the contents.
       #
       #####
-      #print("initialize - SM_Build")
+      #cat("initialize - SM_Build Z-2076 \n")
 
       ErrFnd        <- FALSE
       StopFnd       <- FALSE
+      
+      #  pull out variables from rPM>
       
       debugFlag     <- rPM$debugFlag
       debug         <- rPM$debug
@@ -1712,11 +2125,11 @@ SM_Hatching  <- function(rPM) {
       cYear         <- rPM$cYear
       cY            <- rPM$cY
 
-      #cat("censusYear:",censusYear,"  cYear:",cYear,"  cY:",cY," Z-1654 \n")
+      #cat("censusYear:",censusYear,"  cYear:",cYear,"  cY:",cY," Z-2083 \n")
       
       stateSelDel   <- rPM$stateSelDel    # from us48Only and includePR.
-      #OrigCRS       <- rPM$OrigCRS
-      #ProjCRS       <- rPM$ProjCRS
+      #OrigCRS      <- rPM$OrigCRS
+      #ProjCRS      <- rPM$ProjCRS
       
       ndfName       <- rPM$ndfName    
       
@@ -1725,77 +2138,83 @@ SM_Hatching  <- function(rPM) {
       
       dataMapDF     <- rPM$dataMapDF      # get data info.
    
-      MV <- NULL
-   
-      ###
-
+      MV            <- NULL               # initialize new return vector for data.frames
+      
       #####
       #
-      #  Step 20 - load state and seer registry boundary data
-      #     and build the regional boundary data.
+      #  Step 20 - load region, state and seer registry information
+      #     and boundary data
+      #     Load county information, but not boundary data. There is no 
+      #     real tract information to load, just ID.
       #     This is the top level that is always used.
       #     Build xxxxxListAll for the above.
       #
       #  Step 20.1  - Setup the references to the correct census year and handle debug mode.
       #
+      rg99_d00        <- NULL
+      st99_d00        <- NULL
+      sa99_d00        <- NULL
+      hs99_d00        <- NULL
+      co99_d00        <- NULL
       
-                      # to test code. Changes data into loads
+                     # to test code. Changes data into loads
       rgDataSet       <- paste0("rg99_d00")   # regional info
       stDataSet       <- paste0("st99_d00")   # state info
       saDataSet       <- paste0("sa99_d00")   # seer  info
+      hsDataSet       <- paste0("hs99_d00")   # HSA information
       coDataSet       <- paste0("co99_d00")   # state/county to seer mapping
 
-      # as of 2/20/17, these files cover both 2000 and 2010 census years.
       #
-      #  Step 20.2 - Setup and load states, seers, and stcoID to saID table - loads or data
+      #  As of 2/20/17, these files cover both 2000 and 2010 census years.  
+      #  They contain a super set of information covering both census years.
+      #
+      #  Step 20.2 - Setup and load region, states, seer registry,
+      #       HSA and county information (and boundaries).
+      #       Complete table linkage and information.
+      #       co99_d00 table now serves as the original Seer stcoID 
+      #         to saID table.
       #
       #   Have censusYear - Load data structures
       #
      
+      #cat("Load index files Z-2142 \n")
+     
       #cat("Reading/Loading:",stDataSet,"  ",saDataSet,"  ",coDataSet,"\n")
+      #DDir          <- "/spin1/users/zhangf10/GIS/Rpackage/V1.2.2-New/"
+      DDir   <- "H:/work/GIS/Rpackage/V1.2.2/"
+      DVer   <- "-1.2.2/data/"
+      
+      #cat("debug Z-2148 = ",debug,"\n")
       
       if (debugFlag) {
-         if (cYear == "00") {
-            DDir  <- "c:/projects/statnet/r code/SeerMapper-1.2.0/data/"
-            DDirD <- "c:/projects/statnet/r code/SeerMapperTest/data/"
-            DDirE <- "c:/projects/statnet/r code/SeerMapperEast-1.2.0/data/"
-            DDirW <- "c:/projects/statnet/r code/SeerMapperWest-1.2.0/data/"
-            DDirM <- "c:/projects/statnet/r code/SeerMapperRegs-1.2.0/data/"
-         } else {
-            DDir  <- "c:/projects/statnet/r code/SeerMapper-1.2.0/data/"
-            DDirD <- "c:/projects/statnet/r code/SeerMapperTest/data/"
-            DDirE2 <- "c:/projects/statnet/r code/SeerMapper2010East-1.2.0/data/"
-            DDirW2 <- "c:/projects/statnet/r code/SeerMapper2010West-1.2.0/data/"
-            DDirM2 <- "c:/projects/statnet/r code/SeerMapper2010Regs-1.2.0/data/"
-         }
-          #cat("datasets via load().\n")
-          load(paste0(DDir,rgDataSet,".rda"),envir=environment())
-          load(paste0(DDir,stDataSet,".rda"),envir=environment())
-          load(paste0(DDir,saDataSet,".rda"),envir=environment())
-          load(paste0(DDir,coDataSet,".rda"),envir=environment())
-
+         cat("datasets via load().\n")      
+         load(file=paste0(DDir,"SeerMapper",DVer,rgDataSet,".rda"),envir=environment())  # region
+         load(file=paste0(DDir,"SeerMapper",DVer,stDataSet,".rda"),envir=environment())  # state
+         load(file=paste0(DDir,"SeerMapper",DVer,saDataSet,".rda"),envir=environment())  # seer registry
+         load(file=paste0(DDir,"SeerMapper",DVer,hsDataSet,".rda"),envir=environment())  # hsa
+         load(file=paste0(DDir,"SeerMapper",DVer,coDataSet,".rda"),envir=environment())  # county
       } else {
-          #cat("datasets via data().\n")
-          data(list=rgDataSet,envir=environment(),package="SeerMapper")
-          data(list=stDataSet,envir=environment(),package="SeerMapper")
-          data(list=saDataSet,envir=environment(),package="SeerMapper")
-          data(list=coDataSet,envir=environment(),package="SeerMapper")
+         #cat("datasets via data().\n")
+         data(list=rgDataSet,envir=environment(),package="SeerMapper")
+         data(list=stDataSet,envir=environment(),package="SeerMapper")
+         data(list=saDataSet,envir=environment(),package="SeerMapper")
+         data(list=hsDataSet,envir=environment(),package="SeerMapper")
+         data(list=coDataSet,envir=environment(),package="SeerMapper")
       }
-      
-      #cat("basic Data Sets for reg, st, sa, and co are loaded..\n")
-      
+
       #
       #  Step 20.3 - clear the region, data, county and tract level information areas.
       #
-      #print("init-proj and data areas Z-1728 ")
-
+      
+      #cat("initialize - proj and data areas Z-2170 \n")
+      
       # US Regions level (combinations of states)
       regions_set       <- NULL
       regions_data      <- NULL
       regions_proj      <- NULL
       
       rg_proj_sel       <- NULL
-
+      
       # US State Level (includes DC)
       states_set        <- NULL
       states_data       <- NULL
@@ -1809,14 +2228,15 @@ SM_Hatching  <- function(rPM) {
       SeerRegs_proj     <- NULL
       
       sa_proj_sel       <- NULL
+      hs99_mapr         <- NULL
       co99_mapr         <- NULL
-
+      
       ####
       #
       #  Step 20.4 - State Boundaries Information - adjust for us48Only and includePR
       #
       #cat("Process ",stDataSet,"  into states_data\n")
-  
+      
       states_set <- get(stDataSet)
       #eStr                <- paste0("states_set <- ",stDataSet)  #  move load to common variable.
       #eval(parse(text=eStr))
@@ -1827,9 +2247,10 @@ SM_Hatching  <- function(rPM) {
       
       StateListFull       <- as.character(row.names(states_set))
       MV$StateListFull    <- StateListFull #  not edited by stateSelDel.
+      #cat("StateListFull:",StateListFull,"\n")
+      
       StateListAll        <- StateListFull
       
-      #cat("StateListFull:",StateListFull,"\n")
       
       #  Adjust state boundaries list based on us48Only and includePR parameters
       
@@ -1842,48 +2263,67 @@ SM_Hatching  <- function(rPM) {
          #cat("reduced size of StateListAll by:",stateSelDel,"\n")
       }
       
+      MV$StateListAll     <- StateListAll
       #cat("StateListAll:",StateListAll,"\n")
       
       states_set          <- states_set[StateListAll,]      
-
+      
       # Project lat/long coordinates to equal area.
-
+      
       #states_set@proj4string  <- OrigCRS
-      #states_proj             <- sp::spTransform(states_set,CRSobj=rPM$ProjCRS)
+      #states_proj             <- sp::spTransform(states_set,CRSobj=rPM$ProjCRS) # already done..
       states_proj              <- states_set
       
-      #cat("states_proj row.names RN Z-1793 :",paste0(row.names(states_proj),collapse=", "),"\n")   # get row names.
-
-      #  states information dataset.   clean up incase it's not just right
-
       states_data         <- states_proj@data                     #  pick up data section of SPDF
+      #print(states_data) 
+      #saveRDS(states_data, file = "test_states_data_before.rds")
       
-      #cat("states_data:\n")
-      #print(str(states_data))
-  
-      #print(str(states_data))
+      if (!is.null(rPM$CRSproj4)) {
+        states_proj <- sp::spTransform(states_set,CRSobj=rPM$CRSproj) ## FZ 01/06/2020
+        c_XY<-t(sapply(slot(states_proj,"polygons"), function(x) c(x@ID,x@labpt[1],x@labpt[2])))
+        colnames(c_XY)<-c("ID","c_X","c_Y")
+        states_proj@data[,c("c_X","c_Y")]<-c_XY[,c("c_X","c_Y")]
       
+      } ## FZ 02/24/2020 update centroids based on the user-specified proj
+      
+      states_data         <- states_proj@data  
+      #print(states_data) 
+      #saveRDS(states_data, file = "test_states_data_after.rds")
+      
+      #cat("states_proj row.names RN Z-2231 :",paste0(row.names(states_proj),collapse=", "),"\n")   # get row names.
+      
+      #  states information dataset.   clean up incase it's not just right
       rm(stDataSet)
-      
-      #  saID can't be in the states_data table, since more than one can be in a state.
-
-      #print("initial states_data and StateListAll Z-1818 :")
+    
+      #print("initial states_data and StateListAll Z-2239 :")
       #print(str(states_data))
       #print(states_data)
       
-      MV$states_proj      <- states_proj
+      MV$states_proj      <- states_proj          # all states.
       MV$states_data      <- states_data
-      MV$StateListAll     <- StateListAll
+    
+    
+      #  saID can't be in the states_data table, since more than one can be in a state.
+     
       #
       #     20.5 - Seer Area Boundaries Information
       #
-      #cat("Process ",saDataSet," into SeerRegs_data.\n")
+      #cat("Proccess ",saDataSet," into SeerRegs_data.\n")
       
       SeerRegs_set <- get(saDataSet)
         
       #SeerRegs_set@proj4string <- OrigCRS
       #SeerRegs_proj            <- sp::spTransform(SeerRegs_set,CRSobj=rPM$ProjCRS)
       SeerRegs_proj             <- SeerRegs_set
+
+      if (!is.null(rPM$CRSproj4)) {
+        SeerRegs_proj <- sp::spTransform(SeerRegs_set,CRSobj=rPM$CRSproj) ## FZ 01/06/2020
+        
+        ## FZ 02/24/2020 update centroids based on the user-specified proj
+        c_XY<-t(sapply(slot(SeerRegs_proj,"polygons"), function(x) c(x@ID,x@labpt[1],x@labpt[2])))
+        colnames(c_XY)<-c("ID","c_X","c_Y")
+        SeerRegs_proj@data[,c("c_X","c_Y")]<-c_XY[,c("c_X","c_Y")]   
+      } 
       
       SeerRegs_data        <- SeerRegs_proj@data
       
@@ -1894,39 +2334,50 @@ SM_Hatching  <- function(rPM) {
       SeerRegListAll       <- SeerRegs_data$saID
       SeerRegListAll       <- na.omit(SeerRegListAll)   # new file - no NAs.
       #attr(SeerRegListAll,"na.action") <- NULL  # no NAs in the section.
+      MV$SeerRegListAll    <- SeerRegListAll
       
       #cat("SeerRegListAll:\n")
       #print(SeerRegListAll)
+      
+      rm(saDataSet)
+      
+      MV$SeerRegs_proj     <- SeerRegs_proj     # all Registries
+      MV$SeerRegs_data     <- SeerRegs_data
+   
       #print(str(SeerRegs_data))
       #print(SeerRegs_data)
       
-      rm(saDataSet)
-
-      MV$SeerRegs_proj     <- SeerRegs_proj
-      MV$SeerRegs_data     <- SeerRegs_data
-      MV$SeerRegListAll    <- SeerRegListAll
+      # project Seer Registry boundaries from Lat/Long to equal area.
       
-     # project Seer Registry boundaries from Lat/Long to equal area.
-
       if (debug) {
-         cat("SeerRegs_proj RN Z-1870 :",paste0(row.names(SeerRegs_proj),collapse=", "),"\n")   # get row names.
+         cat("SeerRegs_proj RN Z-2285 :",paste0(row.names(SeerRegs_proj),collapse=", "),"\n")   # get row names.
       }
-
+      
       #
       #     20.6 - generate regions Boundaries Information
       #
       #cat("Reading Region_data...\n")
       
-      regions_set <- get(rgDataSet)
+      regions_set          <- get(rgDataSet)
       
       regions_data         <- regions_set@data
       #regions_proj         <- sp::spTransform(regions_set,CRSobj=rPM$ProjCRS)
       regions_proj         <- regions_set
       
+      if (!is.null(rPM$CRSproj4)) {
+        regions_proj <- sp::spTransform(regions_set,CRSobj=rPM$CRSproj) ## FZ 01/06/2020
+        
+        ## FZ 03/26/2020 update centroids based on the user-specified proj
+        c_XY<-t(sapply(slot(regions_proj,"polygons"), function(x) c(x@ID,x@labpt[1],x@labpt[2])))
+        colnames(c_XY)<-c("ID","c_X","c_Y")
+        regions_proj@data[,c("c_X","c_Y")]<-c_XY[,c("c_X","c_Y")]   
+      } 
+       
       RegionListAll        <- as.character(row.names(regions_proj))
       
-      MV$regions_proj      <- regions_proj
+      MV$regions_proj      <- regions_proj        # all regions
       MV$regions_data      <- regions_data
+      
       MV$RegionListAll     <- RegionListAll
       
       #cat("SM_Build-regional data info:\n")
@@ -1935,113 +2386,149 @@ SM_Hatching  <- function(rPM) {
       
       #cat("RegionListAll:",RegionListAll,"\n")
       
+      
       #
+      #  HSA index
+      #
+      #cat("Process ",hsDataSet," into hs99_mapr Z-2316 \n")
+      hs99_mapr            <- get(hsDataSet)
+      MV$hs99_mapr         <- hs99_mapr            # represents all HSA
+      
+      # hs99_mapr is now our reference for HSA information - not any of the hsXX_d00 files.
+      #cat("hs99_mapr Z-2328 : \n")
+      #print(head(hs99_mapr,30))
+      #print(str(hs99_mapr))
+       
+      #
+      #  county index
+      #
+       
       #cat("Process ",coDataSet," into co99_mapr.\n")
-  
-      co99_mapr <- get(coDataSet)
-
-      #print(str(co99_mapr))
-
-      MV$co99_mapr <- co99_mapr 
+      
+      co99_mapr            <- get(coDataSet)
+      
+      #print(co99_mapr) ### FZ 05/06/2020
+      # rebuild parts
+      co99_mapr$ID         <- row.names(co99_mapr)
+      co99_mapr$stID       <- stringr::str_sub(co99_mapr$ID,1,2)
+      co99_mapr$stcoID     <- co99_mapr$ID
+      co99_mapr$stcotrID   <- NA
+      
+      co99_mapr$stName   <- states_data[co99_mapr$stID,"stName"]
+      co99_mapr$stAbbr   <- states_data[co99_mapr$stID,"abbr"]
+      
+      co99_mapr <- co99_mapr[,c("ID","stID","stAbbr","stName","stcoID","coName","stcotrID","saID","HSAID","c_X_00","c_Y_00","c_X_10","c_Y_10","tracts_00","tracts_10","y")]
+      # co99 index now restored.
+      
+      MV$co99_mapr         <- co99_mapr              # represents all CO
       
       # co99_mapr is now our reference for county information - not the coXX_d00 files.
-      #print("co99_mapr")
+      #cat("co99_mapr Z-2355 : \n")
       #print(head(co99_mapr,30))
-      #str(co99_mapr)
+      #print(str(co99_mapr))
       
-      #
-      #  we took time to build the regional boundary information to save on disk space.
-      #
-      #  Package includes:
-      #    st99_d00 for 2000 and 2010 census - state boundaries
-      #    sa99_d00 for 2000 and 2010 census - Seer Registries
-      #    rg99_d00 for 2000 and 2010 census - regional boundaries
-      #    co99_d00 for 2000 and 2010 census - county information minus boundaries.
-      #
-      
+      ####
       #
       #  The data tables for each map layer and data.
       #
       #  states_data   (from st99_d00)
       #            Expanded to handle 2000 and 2010 boundaries - states did not change.
-      #     ID            - state 2 digit fips code (also row.names)
-      #     stID          - state 2 digit fips code (also row.names)
-      #     abbr          - state 2 character postal abbreviation
-      #     stName        - state name (remove)
-      #     rgID          - census region #  (1-4)
-      #     rgName        - census region name (Northeast, South, Midwest, West)
-      #     dvID          - census division #
-      #     dvName        - census division name
-      #     loc           - location of state (east or west of Mississippi river)
-      #     c_X, c_Y      = centroid X, Y build on load and after transform
-      #     county00      - number of 2000 counties in state
-      #     county10      - number of 2010 counties in state
-      #     tracts00      - number of 2000 census tracts in state
-      #     tracts10      - number of 2010 census tracts in state
-      #     change10      - T/F indicator whether coXX_d00 is valid for 2010 mapping.
-      #                     If T, package should use coXX_d10 dataset.
+      #     row.names      - state 2 digit FIPS code
+      #     ID             - state 2 digit fips code (also row.names)
+      #     stID           - state 2 digit fips code (also row.names)
+      #     abbr           - state 2 character postal abbreviation
+      #     stName         - state name (remove)
+      #     rgID           - census region #  (1-4)
+      #     rgName         - census region name (Northeast, South, Midwest, West)
+      #     dvID           - census division #
+      #     dvName         - census division name
+      #     loc            - location of state (east or west of Mississippi river)
+      #     c_X, c_Y       - centroid X, Y build on load and after transform
+      #     county_00      - number of 2000 counties in state
+      #     county_10      - number of 2010 counties in state
+      #     tracts_00      - number of 2000 census tracts in state
+      #     tracts_10      - number of 2010 census tracts in state
+      #     change10       - T/F indicator whether coXX_d00 is valid for 2010 mapping.
+      #                      If T, package should use coXX_d10 dataset.
       #
       #    dropped after read:
       #     ## done when building dataset.
-      #     scale         - Scaling of original coordinates of state
-      #     moveX         - X adjustment to state coordinates (offset_x)
-      #     moveY         - Y adjustment to state coordinates (offset_y)
-      #     proj          - projection used on the state  (contained in _proj)
-      #     DoAdj         - are adjustments required?  (shift)
-      #
-      #    added:
+      #     scale          - Scaling of original coordinates of state
+      #     moveX          - X adjustment to state coordinates (offset_x)
+      #     moveY          - Y adjustment to state coordinates (offset_y)
+      #     proj           - projection used on the state  (contained in _proj)
+      #     DoAdj          - are adjustments required?  (shift)
       #
       #
       #  SeerRegs_data     (only true Seer Regs - with boundaries)
-      #     row.names     - Seer Registry abbreviation
-      #     ID            - built from row.names
-      #     saID          - Seer area abbreviation (build from row.names)
-      #     stID          - state 2 digit fips code
-      #     stName        - state Name
-      #     county00         - number of counties in Seer Registry in 2000
-      #     county10         - number of counties in Seer Registry in 2010
-      #     tracts00         - number of tracts in Seer Registry in 2000
-      #     tracts10         - number of tracts in Seer Registry in 2010
-      #     rgID          - key to US regions. (generated from stID match when loaded)
-      #     c_X, c_Y      - built from proj - area centroid (after transform)
+      #     row.names      - Seer Registry abbreviation
+      #     ID             - built from row.names
+      #     saID           - Seer area abbreviation (build from row.names)
+      #     stID           - state 2 digit fips code
+      #     stName         - state Name
+      #     county_00      - number of counties in Seer Registry in 2000
+      #     county_10      - number of counties in Seer Registry in 2010
+      #     tracts_00      - number of tracts in Seer Registry in 2000
+      #     tracts_10      - number of tracts in Seer Registry in 2010
+      #     rgID           - key to US regions. (generated from stID match when loaded)
+      #     c_X_00, c_Y_00 - built from proj - area centroid (after transform) for 2000
+      #     c_X_10, c_Y_10 - built from proj - area centroid (after transform) for 2010
       #
       #
       #  regions_data
-      #     rgID          - key to US regions.
-      #     rgName
-      #     county00         - number of counties in region in 2000
-      #     county10         - number of counties in region in 2010
-      #     tracts00         - number of tracts in region in 2000
-      #     tracts10         - number of tracts in region in 2010
-      #     c_X, c_Y      - centroid X, Y (after load and transform)
+      #     row.names      - key to US census regions
+      #     rgID           - key to US regions.
+      #     rgName         - region name
+      #     county_00      - integer number of counties in region in 2000
+      #     county_10      - Integer number of counties in region in 2010
+      #     tracts_00      - integer number of tracts in region in 2000
+      #     tracts_10      - integer number of tracts in region in 2010
+      #     c_X, c_Y       - centroid X, Y (after load and transform) for 2000 and 2010
       #
       #
-      #         from co99_d00
-      #  co99_mapr       (replacement for Seer_stcoIDtosaID to minimize space.)
-      #     row.names     - 5 digit FIPS coped
-      #     ID            - county fips id - 5 digit same as stcoID   #built
-      #     stID          - state fips
-      #     stAbbr        - state abbreviation
-      #     stName        - state Name
-      #     stcoID        - state/county fips                       
-      #     coID          - county 3 digit fips code within state
-      #     coName        - county name                         
-      #     saID          - associated Seer Registry abbr.
-      #     tract00        - Number of tracts within county in 2000
-      #     tract10        - Number of tracts within county in 2010
-      #    added:
-      #     <none>
+      #         from hs99_d00.rda
+      #  hs99_mapr
+      #     row.names      - character3 digit HSA number (001-999)
+      #     ID             - * character 3 digit HSA ID (number) 
+      #     HSA            - * integer numeric HSA number
+      #     HSAID          - * same as ID
+      #     HSA_Name       - character - HSA name
+      #     stID           - 2 digit state ID (FIPS) associated with HSA
+      #     stAbbr         - * 2 character state abbreviation
+      #     stName         - * character full state name
+      #     saID           - character assocated Seer Registry ID (2-6 characters) or NA
+      #     y              - numeric - census year indicater - 1 = 2000, 2 = 2010, 3 = both
+      #     Chg10          - indicates the boundaries changed during 2010.
+      #     county00       - integer number of counties in HSA during 2000 census
+      #     county10       - integer number of counties in HSA during 2010 census
+      #     c_X_00, c_Y_00 - centroid of HSA during 2000 census
+      #     c_X_10, c_Y_10 - centroid of HSA during 2010 census
       #
-      #  Future - ha_data  - health area sub/aggregation of counties with a state.
-      #                    would be loaded like the county informaton.
-      #     haID          - health area ID
-      #     stID          - state ID
-      #     saID          - Seer Registry ID
-      #     region        - U.S. region
-      #     haName        - health area Name
+      #
+      #         from co99_d00.rda  - partial read from disk and rest re-built.
+      #  co99_mapr        (replacement for Seer_stcoIDtosaID to minimize space.)
+      #     row.names      - character vector of 5 digit FIPS coped
+      #     ID             - * county fips id - 5 digit same as stcoID   #built
+      #     stID           - * state fips
+      #     stAbbr         - * state abbreviation
+      #     stName         - * state Name
+      #     stcoID         - * state/county fips   
+      #     stcotrID       - * NA
+      #     coName         - county name                         
+      #     saID           - associated Seer Registry abbr.
+      #     HSAID          - associated HSA number (3 characters)
+      #     tracts_00      - Number of tracts within county in 2000
+      #     tracts_10      - Number of tracts within county in 2010
+      #     c_X_00, c_Y_00 - centroid for country for 2000 census
+      #     c_X_10, c_Y_10 - centroid for country for 2100 census
+      #     y              - use year (1 = 2000, 2 = 2010, 3 = 2000 and 2010
+      #
+      #
+      #  No tr99_d00 index.
       #
       #  Links between state, seer and region = "region"
       #  Links between state and seer = stID
+      #  Links between county and HSA = HSAID
       #    Seer Registry can only be in one state, but multiple Seer Registries
       #    can be in a state.
       #
@@ -2052,12 +2539,14 @@ SM_Hatching  <- function(rPM) {
       #
       #
       #  co99_proj
+      #
       #  co99_data         - counties for states with data.
       #     row.names      - 5 digit FIPS code
       #    added:
       #     ID             - 5 digit FIPS code
       #     stID           - State ID (2 digit FIPS)
       #     saID           - Seer Registry abbreviation (is associated, else NA)
+      #     HSAID          - HSA Number
       #     stcoID         - 5 digit FIPS code
       #     stcotrID       - 11 digit FIPS for tract <= NA
       #     
@@ -2065,12 +2554,12 @@ SM_Hatching  <- function(rPM) {
       #   processing time.  Assume reading is faster.
       #
       #####
-    
+      
       ##  regional, state, and Seer Registry boundaries for the entire US are loaded.
-    
-    
+      
+      
       #####  Basic boundary tables loaded
-      #cat("basic boundary tables loaded.\n")
+      #cat("basic boundary tables loaded - Z-2491 \n")
       
       #####
       #
@@ -2088,21 +2577,24 @@ SM_Hatching  <- function(rPM) {
       #
       #  Clean up ID and save.
       #
-      #print(str(dataMapDF))
-
+      
       dataMapID       <- dataMapDF$ID         # make character and trim blanks
       
-      #cat("dataMapID Z-2060 :",dataMapID,"\n")
-
+      #cat("dataMapDF Z-2512 :\n")
+      #print(str(dataMapDF))
+      rPM$dataMapDF <- dataMapDF
+      
       #
       #  possible ID values:
-      #       1-2  state fips
+      #       1-2  state fips  1-56 and 72  (digits)
+      #       1-3  HSA numbers  (not state value) if 3 digits force HSA type (digits)
       #       4-5  state/county fips
       #      10-11 state/county/tract fips
-      #     non-numeric seer abbreviations
+      #     non-numeric seer registry abbreviations or names
       #
-
-      idNA            <- is.na(dataMapID)                        # any NA in list
+      
+      #   Test for NA values in location IDs.
+      idNA            <- is.na(dataMapID)                        # any NA in list of Location IDs.
       if (any(idNA)) {
          # some IDs are NA.
          xmsg         <- paste0("***220 Some of the data rows in the ",rPM$ndfName," data.frame have location IDs with missing values (NA). These rows will be removed. Correct and rerun.")
@@ -2110,105 +2602,178 @@ SM_Hatching  <- function(rPM) {
          NAList       <- dataMapDF$rSeq[idNA]             # get list of NA rows.
          xmsg         <- paste0("***222 The following rows will not be mapped: ",paste0(NAList,collapse=", "))
          warning(xmsg, call.=FALSE)
-         dataMapDF <- dataMapDF[!idNA,]    # remove ID=NA
-         dataMapID <- dataMapDF$ID         # get new copy of IDs.
+         dataMapDF    <- dataMapDF[!idNA,]    # remove ID=NA
+         dataMapID    <- dataMapDF$ID         # get new copy of IDs.
       }
       
-      idLenR          <- range(nchar(dataMapID),na.rm=TRUE)      # get range of length of idCol values
+      #  get range of number of characters in location ID
+      idLenR          <- range(nchar(dataMapID)) #,na.rm=TRUE)      # get range of length of idCol values
+      
+      #  validate all location IDs are numeric ONLY
       idType          <- grepl("^[0-9]*$",dataMapID)             # inspect list for numbers or characters
           # values can only be integer (0-9) or characters.  So simple verification.
-          # TRUE - NUMBER, FALSE - NOT-NUMBER or NA
-          # NAs already been removed.
-
+          # TRUE - NUMBER,    FALSE - NOT-NUMBER or NA or SEER-Abbr
+          # Possible NAs already been removed.
+      
       idLenMax        <- idLenR[2]    # upper range of the number of character in ID.
-      idMode          <- NA
+      idMode          <- NA           # 1-state, 2-county, 3-tract, 4-seer  , 5-HSA   , 6-   , 7- 
       idGroup         <- ""
+      
+      data_proj        <- NULL
+      data_data        <- NULL
+      dataListAll      <- NA
+      dataListData     <- NA   
 
       loadDetails      <- FALSE
-      
       #
-      # Classify ID.
+      # Classify ID.  - and fill out dataMapDF as needed.
       #
       
       #cat("classify run - idLenR(ange):",idLenR,"\n idLenMax:",idLenMax,"\n")
       #cat("  idMode:",idMode,"\n idGroup:", idGroup,"\n")
       #cat("idType:",idType,"\n")
-
+      
       if (all(idType)) {
          # all values are numeric integers.  (=1 TRUE) (or NA, to be edited out.)
          #
-         # The data is at the state, state/county, or state/county/tract level.
+         # The data is at the state, HSA, state/county, or state/county/tract level.
          #
          if (idLenMax == 2 || idLenMax == 1) {  # 1 or 2 characters => STATE
             # State Level data
-            #cat("state level\n")
-            loadDetails     <- FALSE
-
-            idGroup         <- NA
-            idMode          <- 1                # State mode
-
+            #cat("state level Z-2572 \n")
+            
             # data info - make sure it's 2 digits.
-            dataMapID        <- as.character(str_sub(paste0("0",dataMapID),-2,-1))  # get right two characters   stID
-            dataMapDF$ID     <- dataMapID
-            dataMapDF$saID   <- NA
-           
-            data_proj        <- states_proj
-            data_data        <- states_data
+            dataMapID       <- as.character(stringr::str_sub(paste0("0",dataMapID),-2,-1))  # get right two characters   stID
+            
+            xm              <- match(dataMapID,StateListAll)   # see if any does not match the list (clue for HSA)
+            xmNA            <- is.na(xm)
+            xmCnt           <- sum(xmNA)              # number of non-matches.
+            
+            # if there are non-matches, then classify the Location ID as HSA.
+            if (xmCnt > 0) {
+               # bad state IDs - assume it's HSA
+               xmsg <- paste0("***206 The location IDs contain invalid state IDs.  Assuming the Location IDs are HSA numbers.")
+               warning(xmsg, call.=FALSE)
+               idLenMax <- 3   # for to HSA
+            } else {
+               # treat as State IDs
+            
+               loadDetails     <- FALSE
+      
+               idGroup         <- NA
+               idMode          <- 1                # State mode
+      
+               dataMapDF$ID       <- dataMapID
+               dataMapDF$stID     <- dataMapID
+               dataMapDF$stcoID   <- NA
+               dataMapDF$stcotrID <- NA
+      
+               dataMapDF$saID     <- NA              # Seer Reg not at state level
+               dataMapDF$HSAID    <- NA
+               #  saID, stcoID, stcotrID and HSAID will remain NA.
+            
+               data_proj          <- states_proj
+               data_data          <- states_data
                     
-            #
-            # Special Note: when state data is being mapped, Registries have no
-            #   data, so SeerRegListData will be empty.
-            #
-            # When seerB="DATA" or "STATE", we want the Registries in the
-            # state to be outlined.
-            #     SeerRegListData &  SeerRegListInStateData
-            #     must be set up - later (See SM_Impl_B)
-            #
+               #
+               # Special Note: when state data is being mapped, Registries have no
+               #   data, so SeerRegListData will be empty.
+               #
+               # At state level, when seerB="DATA" or "STATE", we want the 
+               # registries in the state to be outlined.
+               #     SeerRegListData &  SeerRegListInStateData
+               #     must be set up - later (See SM_Impl_B)
+               #
+            }
          }
-
-         if (idLenMax == 5 || idLenMax == 4) {
-            #cat("County Level\n")
-            # State / County Level data
-            loadDetails     <- TRUE     # need to load county/tract data.
-
+         
+         #   HSA IDs
+         if (idLenMax == 3) {
+            # at least one location ID has a length of 3, it must be HSA IDs.
+            #cat("HSA Level Z-2622 \n")
+            #print(dataMapID)
+            #print(dataMapDF)
+            
+            # Health Service Area Level data
+            loadDetails        <- TRUE
+            
             # type
-            idGroup         <- "co"
-            idMode          <- 2             # State/County mode
+            idGroup            <- "hs"
+            idMode             <- 5        # hsa mode
+         
+            # make sure it's 3 digits in all cases.
+            dataMapID          <- stringr::str_sub(paste0("00",dataMapID),-3,-1)  # get right 3 characters - HSAID
 
+            dataMapDF$ID       <- dataMapID                      # HSA ID field
+            dataMapDF$stID     <- hs99_mapr[dataMapID,"stID"]    # Pick state ID   ###
+            dataMapDF$stcoID   <- NA
+            dataMapDF$stcotrID <- NA
+      
+            dataMapDF$saID     <- hs99_mapr[dataMapID,"saID"]    # Pick up Registry ID ###
+            dataMapDF$HSAID    <- dataMapID
+            # set data_proj later when boundary datasets read. (hs99_d00 and boundaries)
+            
+            #cat("HSA Classification Z-2645 \n")
+            #print(str(hs99_mapr))
+            #print(str(dataMapDF))
+            
+            #   proj to be gathered later.
+         
+         }
+      
+         if (idLenMax == 5 || idLenMax == 4) {
+            #cat("County Level  Z-2647 \n")
+            # State / County Level data
+            loadDetails        <- TRUE     # need to load county/tract data.
+            
+            # type
+            idGroup            <- "co"
+            idMode             <- 2             # State/County mode
+      
             # make sure it's 5 digits.
-            dataMapID        <- str_sub(paste0("000",dataMapID),-5,-1)  # get right two characters   stID
-            dataMapDF$ID     <- dataMapID
-            dataMapDF$stcoID <- dataMapID                # get state ID which is equal to XXXid
-            dataMapDF$saID   <- co99_mapr[dataMapDF$stcoID,"saID"]
-            ##  Set data_proj later when boundary datasets read.
+            dataMapID           <- stringr::str_sub(paste0("000",dataMapID),-5,-1)  # get right 5 characters  stcoID
+            dataMapDF$ID        <- dataMapID
+            dataMapDF$stID      <- stringr::str_sub(dataMapID,1,2)         
+            dataMapDF$stcoID    <- dataMapID                # get state ID which is equal to XXXid
+            dataMapDF$stcotrID  <- NA
+          
+            dataMapDF$saID      <- co99_mapr[dataMapDF$stcoID,"saID"]
+            dataMapDF$HSAID     <- co99_mapr[dataMapDF$stcoID,"HSAID"]
+        
+            #  Set data_proj later when boundary datasets read. (co99_d00 and boundaries)
+            
          }
          
          if (idLenMax == 11 || idLenMax == 10) {
-            #cat("Census Tract Level\n")
+            #cat("Census Tract Level Z-2677 \n")
             # State / County / Tract Level data
-            loadDetails     <- TRUE
-
-            #  indicate type
-            idGroup         <- "tr"
-            idMode          <- 3             # State/County/Tract (or State/Tract) mode
-
-            # make sure it's 11 digits.
-            dataMapID        <- as.character(str_sub(paste0("0",dataMapID),-11,-1))  # get right two characters   stID
-            dataMapDF$ID     <- dataMapID
-            dataMapDF$stcoID <- str_sub(dataMapID,1,5)   # get state ID which is equal to XXXid
-            dataMapDF$stcotrID <- dataMapID
-            dataMapDF$saID   <- co99_mapr[dataMapDF$stcoID,"saID"]
+            loadDetails        <- TRUE
             
-            dataListAll      <- NA                     # fill in later.  (Tract)
-            ##  Set data_proj later when boundary datasets read.
+            #  indicate type
+            idGroup            <- "tr"
+            idMode             <- 3             # State/County/Tract (or State/Tract) mode
+      
+            # make sure it's 11 digits.
+            dataMapID           <- as.character(stringr::str_sub(paste0("0",dataMapID),-11,-1))  # get right two characters   stID
+            dataMapDF$ID        <- dataMapID
+            dataMapDF$stID      <- stringr::str_sub(dataMapID,1,2)
+            dataMapDF$stcoID    <- stringr::str_sub(dataMapID,1,5)   # get state ID which is equal to XXXid
+            dataMapDF$stcotrID  <- dataMapID
+      
+            dataMapDF$saID      <- co99_mapr[dataMapDF$stcoID,"saID"]
+            dataMapDF$HSAID     <- co99_mapr[dataMapDF$stcoID,"HSAID"]
+            
+            dataListAll         <- NA                     # fill in later.  (Tract)
+        
+            #  Set data_proj later when boundary datasets read. (tr99_d00 and boundaries)
+       
          }
-
-         #  Get stID for state, county and tract runs.
-         dataMapDF$stID   <- str_sub(dataMapDF$ID,1,2)
-          
-         #  Set Seer Registry area to NA - fill in later.
-
+       
+         #  In all FIPS based Location IDs - get stID for state, county and tract runs.
+         if (idMode != 5) dataMapDF$stID      <- stringr::str_sub(dataMapDF$ID,1,2)   # or add to each processing group.
+      
       } else {
+         # possible Seer Registry Abbr.
          # check to see if all character ??
          if (all(!idType)) {
             # The value is not all numeric or character numeric
@@ -2217,7 +2782,10 @@ SM_Hatching  <- function(rPM) {
             # match against the abbreviations first.  If any rows have
             # not matched, try the alias match.  Then report on any misses.
             #
-
+            #
+            #  ### Future, may want to implement HSA names as Location IDs.  If so, the logic would become part of the Seer.
+            #
+      
             SeerNames       <- rPM$SeerNames
             
             SeerAbbr        <- toupper(dataMapID)   # get label strings
@@ -2226,29 +2794,29 @@ SM_Hatching  <- function(rPM) {
             
             SeerAbbrRes     <- rep(NA,numEntries)                 # results list.
             #cat("Seer Reg ID-SeerAbbr:",paste0(SeerAbbr,collapse=", "),"\n")
-
+      
             # First try matching the Seer Registry Abbreviations
             #     Mark entries that match abbreviations (completely)
-
+      
             SeerAbbrMatch   <- match(SeerAbbr,SeerRegListAll)
                     # have index into SeerRegListAll or NA (no match)
             SeerAbbrMiss    <- is.na(SeerAbbrMatch)     # TRUE = Miss - no match
-
+      
             #
             # SeerAbbrMatch is an index into the SeerAbbr table for each ndf entry ID.
             #   Entries that did not match have indexes of NA.
             #
             # SeerAbbrMiss is a T/F list, one entry for each ndf ID row.
             #
-
+      
             SeerAbbrRes     <- SeerRegListAll[SeerAbbrMatch]       # have matches.
-
+      
             #
             #  SeerAbbrRes is a list of Seer Reg. Abbreviations. One for each
             #    row in the ndf table.   It contains the match abbreviation,
             #    the abbreviation translation for aliases or NA.
             #
-
+      
             if (any(SeerAbbrMiss)) {
                #
                #  If any entry is not an abbreviation (a miss), then
@@ -2258,12 +2826,12 @@ SM_Hatching  <- function(rPM) {
                #  the alias list.
                #
                #cat("SeerReg Misses after abbr:",paste0(SeerRegMiss,collapse=", "),"\n")
-
+      
                SeerAliasMatch   <- rep(NA,numEntries)       # NA results index
-
+      
                # wild card match of input character vector (SeerAbbr)
                #   to alias and abbreviations in Seer Registry name table.
-
+      
                SeerROuta     <- t( sapply(c(1:length(SeerNames$alias)),
                                      function(x) {
                                         y=grep(SeerNames$alias[x],SeerAbbr,ignore.case=TRUE)
@@ -2274,7 +2842,7 @@ SM_Hatching  <- function(rPM) {
                # result - matrix of 2 columns:
                #      1st -> position in SeerNames of the match
                #      2nd -> results of the match (grep) (index into the string of the match.)
-
+      
                #  SeerROutb is the results that matched,
                SeerROutb                     <- SeerROuta[!is.na(SeerROuta[,1]),]
                   # Set match vector element for the match entry [,2] to the index to the SeerNames [,1]
@@ -2288,9 +2856,9 @@ SM_Hatching  <- function(rPM) {
                #
                # SeerAliasMiss is T/F. One entry for each row in the ndf data.frame.
                #
-
+      
                #cat("SeerAbbrRes-Before Alias:",SeerAbbrRes,"\n")
-
+      
                #  Translate the matched alias to Abbr. and update the results list.
                SeerAliasRes            <- SeerNames$ab[SeerAliasMatch]
                
@@ -2298,7 +2866,7 @@ SM_Hatching  <- function(rPM) {
                SeerAbbrRes[!SeerAliasMiss] <- SeerAliasRes[!SeerAliasMiss] 
                
                #cat("SeerAbbrRes-After merge:",SeerAbbrRes,"\n")
-
+      
                # combine miss lists from Abbr and Alias - TRUE = neither was found.
                SeerRegMiss                <- SeerAbbrMiss & SeerAliasMiss
                #cat("SeerRegMiss:",SeerRegMiss,"\n")
@@ -2323,36 +2891,41 @@ SM_Hatching  <- function(rPM) {
                   warning(zmsg,call.=FALSE)
                   #  remove bad ID rows.
                }
-
+      
                #  SeerAbbr has list of Seer Reg strings.
                #  SeerRegMiss indicates which entries are bad.
                #
                ####
             }
-
-            #cat("SR-dataMapID Z-2298 :",dataMapID,"\n")
+      
+            #cat("SR-dataMapID Z-2830 :",dataMapID,"\n")
             
             #cat("Seer Registry name matching completed.\n")
-            loadDetails     <- FALSE   # no more loads (SeerReg) - we have everything.
-
-            #   set type
-            idGroup          <- NA
-            idMode           <- 4       # Seer Area Mode
-
+            loadDetails       <- FALSE   # no more loads (SeerReg) - we have everything.
+       
+            #   set type  
+            idGroup            <- NA
+            idMode             <- 4       # Seer Area Mode
+      
             # Set Seer Registry Abbr ID
-            dataMapDF$ID     <- dataMapID
-            dataMapDF$saID   <- dataMapID
-
+            dataMapDF$ID       <- dataMapID
+            dataMapDF$saID     <- dataMapID
+      
             # Set state ID         
-            srMatch          <- match(dataMapID,SeerRegs_data$saID)
-            dataMapDF$stID   <- SeerRegs_data[srMatch,"stID"]
-
+            srMatch            <- match(dataMapID,SeerRegs_data$saID)
+            dataMapDF$stID     <- SeerRegs_data[srMatch,"stID"]
+            
+            dataMapDF$stcoID   <- NA
+            dataMapDF$stcotrID <- NA
+            
+            dataMapDF$HSAID    <- NA
+      
             #   use preloaded seer datasets.
-            data_proj        <- SeerRegs_proj
-            data_data        <- SeerRegs_data             
+            data_proj          <- SeerRegs_proj
+            data_data          <- SeerRegs_data             
       
             #print(str(dataMapDF))
-
+      
          } else {
             # mixture of integers and non-integers.
             ErrFnd             <- TRUE
@@ -2364,39 +2937,37 @@ SM_Hatching  <- function(rPM) {
       } # end classification
       # everyone is done. fix up reference values
       
-      row.names(dataMapDF) <- dataMapDF$ID  # update incase fixed.
-      rPM$dataMapDF     <- dataMapDF
-      rPM$idMode        <- idMode
       
-      rPM$BK0.dataMapDF <- dataMapDF
+      row.names(dataMapDF) <- dataMapDF$ID  # update incase fixed.
+      
+      rPM$dataMapDF       <- dataMapDF        # save checkpoint of dataMapDF
+      rPM$idMode          <- idMode
+      
+      rPM$BK0.dataMapDF   <- dataMapDF
       
       #  all set including idMode
       #  boundary data at state, region and registry level have been edited to stateSelDel.
       #
       ####
       
+   
       ####
       #
       #   Step 23 - back fill in additional information into ndf - like region (080-082)
       #
       #  Translate stID to region ID
       #
-      #cat("Step 23 - Z-2388 \n")
+      #cat("Step 23 - Z-2889 \n")
        
-      #print("states_data")
-      #print(str(states_data))
-      #print("dataMapDF")
-      #print(str(dataMapDF))
-      
-      # get regional ids based on state id.
-
       #
       #   Check that all states used are valid.
       #
       stMatch           <- match(dataMapDF$stID,StateListFull)           # map data to statesIndex.
+      #print(stMatch)
+      #print(StateListFull)
       
       if (debug) {
-         cat("stMatch Z-2373 :",paste0(stMatch,collapse=", "),"\n")
+         cat("stMatch Z-2899 :",paste0(stMatch,collapse=", "),"\n")
       }
       
       # State check must be done now to save loading bad county and tract data.
@@ -2409,7 +2980,7 @@ SM_Hatching  <- function(rPM) {
                                    
           stop(xmsg, call.=FALSE)
       }   
-
+      # are the states in the boundary data.
       stMatch              <- match(dataMapDF$stID, states_data$stID)
       if (any(is.na(stMatch))) {
           # we have states not in the mapping list because of us48Only and includePR.
@@ -2420,28 +2991,10 @@ SM_Hatching  <- function(rPM) {
           dataMapDF[DropList,"good"] <- FALSE
           dataListData     <- dataMapDF$ID
       }
+      
       # second use of stMatch - move rgID over to data
       
       dataMapDF$rgID       <- as.character(states_data[stMatch,"rgID"])       # then pull out the regions for this data entry.
-      
-      #
-      ####
-          
-      ####
-      #
-      #  Check point save into MV
-      #
-      #  no xxxxB variables are modified in this function.
-      #
-      
-      rPM$dataMapDF     <- dataMapDF
-      
-      #####debug
-      
-      rPM$BK1.dataMapDF <- dataMapDF
-      
-      #
-      #####
       
       #####
       #
@@ -2449,38 +3002,68 @@ SM_Hatching  <- function(rPM) {
       #    state ID is pulled off the ID if state, county or tract level.
       #
       
-      StateListData    <- unique(dataMapDF$stID)
-       
+      StateListData     <- unique(dataMapDF$stID)
+      
+      #####
+      #
+      #  Check point save into MV
+      #
+      
+      rPM$dataMapDF     <- dataMapDF
+      rPM$StateListData <- StateListData
+      
+      #####debug
+      
+      rPM$BK1.dataMapDF <- dataMapDF
+ 
+      #cat("end of state checks Z-2948 \n")
+      #cat("dataMapDF - \n")
+      #print(str(dataMapDF))
+      #cat("StateListData\n")
+      #print(StateListData)
+      
+ 
       #
       #####
       
       #####
       #
-      #  Step 24 - Load needed COUNTY/TRACT DATA
+      #  Step 24 - Load needed HSA/COUNTY/TRACT DATA
       #         Based on ID type setup, load county and tract boundary datasets as needed.
       #
-
+      # Three tiers: HSA, County, Tract
+      #    a) T2=HSA,   T1=County, Data=Tract
+      #    b)           T1=HSA,    Data=County
+      #    c)                      Data=HSA
+      
       #
       #   Later expansion would add loading of the Health Districts for each state.
       #
-
+      #cat("Step 24 - load needed details boundaries Z-2971 loadDetails:",loadDetails,"\n")
+      
       if (debug) {
-         cat("Check if co99 or tr99 datasets need loading. Z-2442  idMode:",idMode,
+         cat("Check if hs99, co99 or tr99 datasets need loading. Z-2974  idMode:",idMode,
                 "  idGroup:",idGroup,"  loadDetails:",loadDetails,"\n")
       }
-
-      #cat("Get ready for loaddetails - idMode",idMode,"  loaddetails:",loadDetails,"\n")
-
-      co99_proj        <- NULL
-      co99_data        <- NULL
-      CountyListAll    <- NA
-
-      tr99_proj        <- NULL
-      tr99_data        <- NULL
-      TractListAll     <- NA
       
-      dataListAll      <- NA
-
+      #cat("Get ready for load details - idMode",idMode,"  loaddetails:",loadDetails,"\n")
+      
+      #
+      #  hsXX_dXX fields -> hs99_data
+      #
+      #     row.names  <- hs99_data$ID  <- $HSAID
+      #     @data$ID   <- row.names(co99_proj)
+      #     polygons   (for the HSA)
+      #
+      #  for detail fields see hs99_mapr
+      #
+      #       ID        -> build on load from row.names
+      #       stID      -> built on load (from hs99_d00$stID)
+      #       saID      -> built on load (from hs99_d00$asID)
+      #       HSAID     -> built on load from row.names
+      #       stcoID    -> NA           (present for parallel structure)
+      #       stcotrID  -> NA           (present for parallel structure)
+      #
       #
       #   coXX_dXX fields -> co99_data
       #
@@ -2490,287 +3073,440 @@ SM_Hatching  <- function(rPM) {
       #
       #  for detail fields see co99_mapr
       #       ID        -> build on load from row.names
-      #       stID      -> built on load  (1,2)
+      #       stID      -> built on load co99_d00$stID
+      #       saID      -> built on load co99_d00$saID
+      #       HSAID     -> build on load co99_d00$HSAID
       #       stcoID    -> built on load from row.names
-      #       saID      -> built on load  (lookup based on stcoID (filled in))
       #       stcotrID  -> NA           (present for parallel structure)
       #
-      #   trXX_dXX fields -> tr99_data      
+      #   trXX_dXX fields -> tr99_data     (build on fly)   
       #
       #       row.names -> tr99_data$stcotrID  <- $ID
       #       polygons (for the tracts)
-    
-      #   added based on row.names  in tr99_data  with row.names = $ID.
-      #       stID      -> built on load (1,2)
-      #       stcoID    -> built on load (1,5)
-      #       stcotrID  -> built on load from row.names
-      #       ID        -> built on load from row.names
-      #       saID      -> built on load - (lookup based on stcoID (filled in))
-      #       
       
+      #   added based on row.names  in tr99_data  with row.names = $ID.
+      #       ID        -> built on load from row.names
+      #       stID      -> built on load (1,2) of ID
+      #       saID      -> built on load (co99_d00[tr$stcoID,"saDI")
+      #       HSAID     -> built on load (co99_d00(tr$stcoID,"HSAID")
+      #       stcoID    -> built on load (1,5) of ID
+      #       stcotrID  -> built on load is ID
+      #       
       #
       #  Added code to check to see if SeerMapperEast and SeerMapperWest packages were installed on this 
       #  system and if they are loaded and the census tract datasets are available has been 
       #  determined are NEEDED.
       #
-      
+      #
+      #  idMode = 5: loc ID = HSA    : load HSA as Data Level, no county or tract
+      #  idMode = 2: loc ID = County : load county as Data Level, HSA as overlay # 1
+      #  idMode = 3: loc ID = tract  : load tract as Data Level, County as overlay # 2, HSA as overlay # 1
+      #
+      #  As before county was always loaded - NOW - HSA is always loaded.
+      #      County is loaded for modes 2 and 3.
+      #      tract is loaded for modes 3
+      #
+      hs99_proj        <- NULL
+      hs99_data        <- NULL
+      HSAListAll       <- NA
+      HSAListData      <- NA
+              
+      co99_proj        <- NULL
+      co99_data        <- NULL
+      CountyListAll    <- NA
+      coListData       <- NA
+              
+      tr99_proj        <- NULL
+      tr99_data        <- NULL
+      TractListAll     <- NA
+      trListData       <- NA
+            
       #
       if (loadDetails) {
-
-         # take care of getting county and tract boundary datasets read in.
-         #  This is only set in idMode 2 or 3.
-
-         # build load list for states with data.
-         #          idGroup = "co" or "tr"
-         #          StateListData is a list of 2 digit state FIPS codes
          
+         #cat("loadDetails Z-3056 :\n")
+         
+         # take care of getting county and tract boundary datasets read in.
+         #  This is only set in idMode 2 (county)  or 3 (tract) or 5 (hsa).
+         
+         # build load list for states with data.
+         #          idGroup = "hs", "co" or "tr"
+         #          StateListData is a list of 2 digit state FIPS codes
+         #
+         
+         #
          # In building the load list for counties, check for 2010 requests.  Most
          # are filed by 2000 datasets, but 3 changed enough to require separate files 
          # under the _d10 names.
          
-         #cat("censusYear:",censusYear,"   cYear:",cYear,"  cY:",cY," Z-2505 \n")
+         #cat("censusYear:",censusYear,"   cYear:",cYear,"  cY:",cY," Z-3064 \n")
          #cat("Required States  :",StateListData,"\n")
          
-         loadYear            <- rep("00",length(StateListData))
+         # Build list of hsXX_dXX, coXX_dXX and trXX_dXX files and packages.  
+         #    hsXX_dXX is always in "SeerMapper"
+         #    coXX_dXX is always in "SeerMapper"
+         #     based on the change10 flag, d00 may be used for d10.
+         #
+         #    trXX_dXX are in six packages based on the state and census year.
+         #
+         #    StateListData -> is a list of the states, we need boundaries for.
+         #
+         if (censusYear == "2000") {
+            cY = ""        # part of package name
+            DSext ="_d00"  # part of dataset name
+         } else {
+            cY = "2010"
+            DSext ="_d10"
+         }
+         #cat("cY:",cY,"  DSext:",DSext,"\n")
          
-         if (censusYear == "2010") {
-            loadChgID           <- states_data[StateListData,"change10"]  
-            loadYear[loadChgID] <- "10"
-         } 
+         # build empty data frames.
          
-         #cat("loadYear:",loadYear,"\n")
-         
-         loadList           <- paste0("co",StateListData,"_d",loadYear)     # county and tract loads based on states with data.
-         
-         #cat("CO-loadList:",loadList,"\n")    # list of county files.
-         pkgList  <- rep("SeerMapper",length(loadList))
-         #cat("pkgList:",pkgList,"\n")
+         hsDSList <- data.frame(DSN=character(), Pkg=character(), stringsAsFactors=FALSE)
+         coDSList <- data.frame(DSN=character(), Pkg=character(), stringsAsFactors=FALSE)
+         trDSList <- data.frame(DSN=character(), Pkg=character(), stringsAsFactors=FALSE)
          
          #
-         # load county layer - later use ad county or data layer
+         #  HSA, County and Tract Boundary Data Load List (name, pkg)
+         #
+         for (stID in StateListData) {
+            #   
+            #  counties  - all are 2000 based, except 3.
+            #
+            wDSN2    <- paste0("hs",stID,"_d00")
+            wDSN     <- paste0("co",stID,"_d00")
+            wPkg     <- "SeerMapper"
+             
+            if (censusYear == "2010") {
+               if (states_data[stID,"change10"]) {
+                  # right year and it's an exception.
+                  wDSN2 <- paste0("hs",stID,"_d10")
+                  wDSN <- paste0("co",stID,"_d10")
+               }
+            }
+            wEnHs  <- data.frame(DSN=wDSN2,Pkg="SeerMapper",stringsAsFactors=FALSE)
+            wEnCo  <- data.frame(DSN=wDSN,Pkg="SeerMapper",stringsAsFactors=FALSE)
+            #print(wEnHs)
+            #print(wEnCo)
+            
+            hsDSList <- rbind(hsDSList,wEnHs)
+            coDSList <- rbind(coDSList,wEnCo)
+         
+            #	    
+            #  tracts - based on year
+            # 
+            stLoc    <- states_data[stID,"loc"]
+            ## check the data package version and replace loc with loc2 in st99_d00 ## FZ 10/07/2019
+            if(packageVersion("SeerMapperRegs")>="1.2.2" & packageVersion("SeerMapper2010Regs")>="1.2.2"){
+              stLoc    <- states_data[stID,"loc2"]
+              states_data$loc<-stLoc
+            }else{
+              warning("The version of the data packages is older than 1.2.2.")
+            }
+            wDSN     <- paste0("tr",stID,DSext)
+            wPkg     <- paste0("SeerMapper",cY,stLoc)
+            wEnTr    <- data.frame(DSN=wDSN,Pkg=wPkg,stringsAsFactors=FALSE) 
+            #print(wEnTr)
+            
+            trDSList <- rbind(trDSList,wEnTr)
+         }
+         
+         #cat("hsDSList, coDSList and trDSList Z-3136:\n")
+         #print(hsDSList)
+         #print(coDSList)
+         #print(trDSList)
+         
+         #
+         # load HSA layer - later use as HSA or data Layer
+         # load county layer - later use as county or data layer
+         #
+         
          #
          #  get list of loaded datasets
          #
-         rPM$loadedDataSetList <- data(package="SeerMapper")$results[,"Item"]      # get list of data sets available.
-	 #cat("loadedDataSetList:",rPM$loadedDataSetList,"\n")
-	 
-         co99_proj             <- loadBoundary(rPM, loadList, pkgList)     # load all counties or tracts.
          
-         #cat("length of co99 SPDF:",length(co99_proj),"\n")
-         # co99_proj contains saID with "xx-NON" references.
-         #  17/02/03 - removed saID and saHere from dataset - must rebuild here.
+         wPkg      <- unique(c(trDSList$Pkg,"SeerMapper")) # get list of packages needed.
+         #cat("List of tr Pkgs Z-3151 :\n")
+         #print(wPkg)
          
-         #print("loading County borders for overlay Z-2533 ")
+         #   Get list of datasets in packages
+         rPM$loadedDataSetList <- data(package=wPkg)$results[,"Item"]  
          
-         co99_data          <- co99_proj@data
-
-         co99_data$stcoID   <- co99_data$ID                                    # redundent
-         co99_data$stID     <- str_sub(co99_data$stcoID,1,2)         # build when loaded.
+         #cat("List of datasets in pkgs:\n")
+         #print(rPM$loadedDataSetList)
          
-         xM                 <- match(co99_data$stcoID, co99_mapr$stcoID)
-         #  fill in county name  (???)
-         co99_data$coName   <- co99_mapr[xM,"coName"]
-         #  since states may have multiple registries, the registries must be looked up at the county level.
-         co99_data$saID     <- co99_mapr[xM,"saID"]    # build when loaded.
-         #co99_data$tracts   <- co99_mapr[xM,"tracts"]
-         
-         co99_data$stcotrID <- NA
-         
-         #cat("co99_data:\n")
-         #str(co99_data)
-
-         CountyListAll      <- co99_data$stcoID
-         
-         #  Assumption - row.names(co99_data) is set to the co99_data$ID (stcoID)
-         
-         #cat("CountyListAll:",paste0(CountyListAll,collapse=", "),"\n")  ###
-
          #cat("StateListData   :",StateListData,"\n")
          #cat("states_data$stID:",states_data$stID,"\n")
-
-         if (idMode == 3) {
-            #
-            # if census tracts are needed, then load it and make it data layer.
-            #
-            # All of the census tract boundary information are now in supplemental packages.
-            # Additional processing is needed to determine if the packages were properly 
-            # installed and then to get them loaded, if not.
-            #
-            # 1) Get list of installed packages on host machine.
-            # 2) Get list of required packages for the states listed in the data.
-            # 3) Issue require for each package needed.
-            #
-            # If errors - warn user and stop.
-            #
-            #  The st99_dxx data.frame contains the location of each states' census tract
-            #    as "Regs", "East", or "West".
-            #
-            #  The base name is always "SeerMapper".
-            #
-            #  Get list of required boundary dataset packages.
-            #  Convert state list into package list.
-            #cat("TR loading - StateListData:",StateListData,"\n")
-            
-            xM                 <- match(StateListData, states_data$stID)    # find index into states_data table
-            if (any(is.na(xM))) {
-               # should not happen, a state ID is reference that is not in the datasets. 
-               # should have been editted out earlier.
-               stop("Internal Error in census tract loading")
-            }
-            #  Get list of packages for each census tract state file.
-            
-            pkgList            <- as.character(states_data$loc[xM])
-            
-            cY                 <- ""
-            if (censusYear != "2000") { cY <- censusYear }
-            rPM$cY             <- cY
-            #cat("censusYear:",censusYear," cY:",cY," Z-2596 \n")
-            
-            pkgList            <- paste0("SeerMapper",cY,pkgList)  # create full name of package for each dataset
-            
-            #loadLocList       <- unique(pkgList) # get unique list of packages
-            #cat("LocList:",loadLocList,"\n")
-            #loadLibNames      <- paste0("SeerMapper",cY,loadLocList)            # add census year
-       
-            loadLibNames       <- unique(pkgList) # get unique list of packages
-            #cat("loadLibNames:",loadLibNames,"\n")
-            #cat("pkgList:",pkgList,"\n")
          
-            #### Have list of needed packages.
-            
-            #
-            #  Get list of installed packages on this machine.  
-            #  Make sure we have access to the ones we need.
-            #
-            instPackages     <- installed.packages()[,"Package"]
-            #cat("Installed Pkgs:",instPackages,"\n")
-            missingPkg       <- is.na(match(loadLibNames,instPackages))
-            if (any(missingPkg)) {
-   
-               #cat("package needed:",loadLibNames[missingPkg],"\n")
-            
-               #  one or more of the packages are missing, need extra package loaded.
-               ErrFnd       <- TRUE
-               xmsg         <- paste0("***198 The following supplemental SeerMapper Census Tract boundary packages are missing and must be installed:")
-               warning(xmsg, call.=FALSE)
+         #
+         #   load HSA information and boundaries   (always loaded) idModes = 2, 3, 5
+         # 
+         #cat("loadBoundary - hs99_dXX Z-3166 \n")
          
-               loadPkgMiss  <- loadLibNames[missingPkg]
-               xmsg         <- paste0("***199 Missing:",paste0(loadPkgMiss,collapse=", "),"\n")
-               stop(xmsg, call.=FALSE)
-               rm(loadPkgMiss)
-            }
-            ErrFnd <- FALSE
+         hs99_proj           <- loadBoundary2(rPM,hsDSList)    # load all HSAs needed as SPDF
+         
+         xM                 <- match(hs99_proj@data$ID, hs99_mapr$HSAID)
+        
+         if (!is.null(rPM$CRSproj4)) {
+           hs99_proj <- spTransform(hs99_proj,rPM$CRSproj4)  # apply user projection 
+           ## FZ 05/06/2020 update centroids based on the user-specified proj
+           c_XY<-t(sapply(slot(hs99_proj,"polygons"), function(x) c(x@ID,x@labpt[1],x@labpt[2])))
+           colnames(c_XY)<-c("ID","c_X","c_Y")
+           hs99_mapr_xM<-hs99_mapr[xM,]
+           c_XY_match<-match(hs99_mapr_xM$ID,c_XY[,"ID"])
+           if(censusYear=="2000"){
+             hs99_mapr_xM[,c("c_X_00","c_Y_00")]<-c_XY[c_XY_match,c("c_X","c_Y")]
+           }else if(censusYear=="2010"){
+             hs99_mapr_xM[,c("c_X_10","c_Y_10")]<-c_XY[c_XY_match,c("c_X","c_Y")]
+           }
+           hs99_mapr[xM,]<-hs99_mapr_xM
+         } 
+         
+         #cat("length of hs99 SPDF:", length(hs99_proj),"\n")
+         #print("loading HSA borders for overlay Z-3173 ")
+         
+         hs99_data       <- hs99_proj@data
+         hs99_data$HSAID <- hs99_data$ID
+         
+         #  fill in HSA name  (???)  what to back fill into hs99_d00 from 
+         hs99_data$HSA_Name   <- hs99_mapr[xM,"HSA_Name"]
+     
+         #  Each HSA index record contains the state and seer registry information 
+         hs99_data$stID       <- hs99_mapr[xM,"stID"]
+         hs99_data$saID       <- hs99_mapr[xM,"saID"]    # build when loaded.
+         
+         hs99_data$stcoID     <- NA                # no tract ID at county level
+         hs99_data$stcotrID   <- NA                # no tract ID at county level
+         
+         #cat("hs99_data:\n")
+         #str(hs99_data)
+         
+         MV$hs99_proj         <- hs99_proj         # all HSA in states with Data
+         MV$hs99_data         <- hs99_data
+         
+         HSAListAll           <- hs99_data$HSAID    # all HSA in states with Data
+         MV$HSAListAll        <- HSAListAll
+         
+         HSAListData          <- unique(dataMapDF$HSAID)
+         MV$HSAListData       <- HSAListData
+         
+         
+         #cat("HSAListAll      :\n")
+         #print(HSAListAll)
+         
+         if (idMode == 5) {
+         
+            data_proj     <- hs99_proj      # all HSAs in states with data.
+            data_data     <- hs99_data
             
-            # load required census tract packages
-            for (rPkg in loadLibNames) {
-                # pull in the required packages to be able to load the data.
-                #cat("Require package:",rPkg,"\n")
-                
-                xRes <- require(rPkg,character.only=TRUE,quietly=TRUE)       # attach package.
-                
-                if (!xRes) {
-                   xmsg <- paste0("***980 Package: ",rPkg," failed to load into the system. Verify package was installed and try manually executing a 'library(",rPkg,")' command.")
-                   warning(xmsg, call.=FALSE)
-                   ErrFnd <- TRUE
-                }
-            }
-            if (ErrFnd) stop()
-             
-            # build census tract dataset loadlist from the co load list
-            loadList2          <- paste0("tr",str_sub(loadList,3))           # list of tract boundary files.
- 
-            #  reload the list of datasets for identified census tract packages loaded
-            rPM$loadedDataSetList <- data(package=loadLibNames)$results[,"Item"]                 # get list of data sets available.
-      
-            #cat("census tract load:\n")
-            #cat("pkgList:",pkgList,"\n")
-            #cat("loadList2:",loadList2,"\n")
-            #cat("TR-NEW-rPM$loadedDataSetList:",rPM$loadedDataSetList,"\n")
+            CountyListAll <- NULL
+            coListData    <- NULL
             
-            tr99_proj          <- loadBoundary(rPM, loadList2, pkgList)
-
-            #cat("LB-class(tr99_proj):",class(tr99_proj),"\n")
-            
-            tr99_proj@data$ID  <- as.character(row.names(tr99_proj))
-            
-            tr99_data          <- tr99_proj@data     # nothing to get, just the row.names
-
-            #cat("LB-tr99_proj@data:\n")
-            #print(str(tr99_proj@data))
-
-            #  Assumption - row.names(tr99_data) is set to the tr99_data$ID  (stcotrID)
-
-            # tr99 data does not have any @data fields, must build fron scratch
-
-            tr99_data$stID      <- as.character(str_sub(tr99_data$ID,1,2))    # build when loaded - get stID from tract fips code.
-            tr99_data$stcoID    <- as.character(str_sub(tr99_data$ID,1,5))    # build when loaded - get stcoID
-            tr99_data$stcotrID  <- tr99_data$ID                               # build when loaded
-
-            tr99_data$saID      <- as.character(co99_mapr[tr99_data$stcoID,"saID"]) # pull saID from county and add to tract DF.
-
-            trMatch             <- match(tr99_data$stID,StateListAll)         # Do effective statesSelDel operation.
-            TractListAll        <- tr99_data[!is.na(trMatch),"stcotrID"]      #  L
-   
-            #xC                 <- coordinates(tr99_proj)
-            #colnames(xC)       <- c("c_X","c_Y")
-            #tr99_data          <- cbind(tr99_data,xC)
-
-            #cat("LB-tr99_data:\n")
-            #print(str(tr99_data))
-
-            # now build subL table for Census Tract Data.
-
-            data_data            <- tr99_data
-            data_proj            <- tr99_proj
-
-            dataMapDF$saID       <- tr99_data[dataMapDF$ID,"saID"]  # match ID to boundary and get saID.
-
-            #
-            #  At this point we have tract in subL_ and tr99_ structures  and county in co99_ structure.
-            #
-
-         } else {
-            #
-            # data is for county, no tr99_d00 needs to be loaded.
-            # set up county boundaries and information as subL
-            #
-
-            tr99_proj     <- NULL
-            tr99_data     <- NULL
-
-            data_data     <- co99_data
-            data_proj     <- co99_proj
-
             TractListAll  <- NULL
+            trListData    <- NULL
+         
+         } else {
+            # mode 2, 3 
+            #
+            #   load County information and boundaries.  Load if idModes 2 or 3.
+            #
+            co99_proj           <- loadBoundary2(rPM, coDSList)   # load all counties needed.
+        
+            xM                 <- match(co99_proj@data$ID, co99_mapr$stcoID)
 
-         }
+            if (!is.null(rPM$CRSproj4)) {
+              co99_proj <- spTransform(co99_proj,rPM$CRSproj4)  # apply user projection 
+              ## FZ 05/06/2020 update centroids based on the user-specified proj
+              c_XY<-t(sapply(slot(co99_proj,"polygons"), function(x) c(x@ID,x@labpt[1],x@labpt[2])))
+              colnames(c_XY)<-c("ID","c_X","c_Y")
+              co99_mapr_xM<-co99_mapr[xM,]
+              c_XY_match<-match(co99_mapr_xM$ID,c_XY[,"ID"])
+              if(censusYear=="2000"){
+                co99_mapr_xM[,c("c_X_00","c_Y_00")]<-c_XY[c_XY_match,c("c_X","c_Y")]
+              }else if(censusYear=="2010"){
+                co99_mapr_xM[,c("c_X_10","c_Y_10")]<-c_XY[c_XY_match,c("c_X","c_Y")]
+              }
+              co99_mapr[xM,]<-co99_mapr_xM
+            } 
+            
+       
+            #cat("length of co99 SPDF:",length(co99_proj),"\n")
+            #  co99_proj contains saID with "xx-NON" references.
+            #  17/02/03 - removed saID and saHere from dataset - must rebuild here.
+         
+            #print("loading County borders for overlay Z-3224 ")
+            
+            co99_data          <- co99_proj@data
+         
+            co99_data$stcoID   <- co99_data$ID                                    # redundent
+            co99_data$stID     <- stringr::str_sub(co99_data$stcoID,1,2)         # build when loaded.
+            
+            #  fill in county name  (???)
+            co99_data$coName   <- co99_mapr[xM,"coName"]
+            #  since states may have multiple registries, the registries must be looked up at the county level.
+            co99_data$saID     <- co99_mapr[xM,"saID"]    # build when loaded.
+         
+            co99_data$stcotrID <- NA                # no tract ID at county level
+            
+            #cat("co99_data:\n")
+            #str(co99_data)
+            
+            CountyListAll      <- co99_data$stcoID     # list of all counties in states with data.
+            
+            coListData         <- unique(dataMapDF$stcoID)
+            
+            #cat("CountyListAll   :\n")
+            #print(CountyListAll)
+                  
+            if (idMode == 2) {
+                        
+               data_proj    <- co99_proj
+               data_data    <- co99_data
+               
+               TractListAll <- NULL
+               trListData   <- NULL
+            
+            } else {
+               if (idMode == 3) {
+         
+                  # DATA Level = TR
+                  #
+                  # if tr is needed, then load it and make it data layer.
+                  #
+                  # All of the census tract boundary information are now in supplemental packages.
+                  # Additional processing is needed to determine if the packages were properly 
+                  # installed and then to get them loaded, if not.
+                  #
+                  # 1) Get list of installed packages on host machine.
+                  # 2) Get list of required packages for the states listed in the data.
+                  # 3) Issue require for each package needed.
+                  #
+                  # If errors - warn user and stop.
+                  #
+                  #  The st99_dxx data.frame contains the location of each states' census tract
+                  #    as "Regs", "East", or "West".
+                  #
+                  #  The base name is always "SeerMapper".
+                  #
+                  #  Get list of required boundary dataset packages.
+                
+                  #### Have list of needed packages.
+                  
+                  #
+                  #  Get list of loaded packages (in namespace). By now they should be in Namespaces
+                  #
+                  loadNSPkg         <- loadedNamespaces()        # list of loaded packages in Namespace
+                  missingPkg        <- is.na(match(trDSList$Pkg, loadNSPkg))
+                  #cat("loadNSPkg:",loadNSPkg,"\n")
+                  
+                  if (any(missingPkg)) {
+                     MissingList   <- trDSList$Pkg[missingPkg]   # get list of missing packages
+                     #cat("package needed:",MissingList,"\n")
+                  
+                     #  one or more of the packages are missing, need extra package loaded.
+                     ErrFnd       <- TRUE
+                     xmsg         <- paste0("***198 The following supplemental SeerMapper Census Tract boundary packages are missing and must be installed and loaded:")
+                     warning(xmsg, call.=FALSE)
+               
+                     xmsg         <- paste0("***199 Missing:",paste0(MissingList,collapse=", "),"\n")
+                     stop(xmsg, call.=FALSE)
+                     rm(MissingList)
+                  }
+                  
+                  if (ErrFnd) stop()
+                  
+                  #cat("trDSList.\n")
+                  #print(head(trDSList))
+                  
+                  tr99_proj          <- loadBoundary2(rPM,  trDSList )
+         
+                  if (!is.null(rPM$CRSproj4)) tr99_proj <- spTransform(tr99_proj,rPM$CRSproj4)  # apply user projection 
+         
+                  #cat("LB-class(tr99_proj):",class(tr99_proj),"\n")
+                  
+                  tr99_proj@data$ID  <- as.character(row.names(tr99_proj))
+                  
+                  tr99_data          <- tr99_proj@data     # nothing to get, just the row.names
+         
+                  #cat("LB-tr99_proj@data:\n")
+                  #print(str(tr99_proj@data))
+         
+                  #  Assumption - row.names(tr99_data) is set to the tr99_data$ID  (stcotrID)
+         
+                  # tr99 data does not have any @data fields, must build fron scratch
+         
+                  tr99_data$stID     <- as.character(stringr::str_sub(tr99_data$ID,1,2))    # build when loaded - get stID from tract fips code.
+                  tr99_data$stcoID   <- as.character(stringr::str_sub(tr99_data$ID,1,5))    # build when loaded - get stcoID
+                  tr99_data$stcotrID <- tr99_data$ID                               # build when loaded
+         
+                  tr99_data$saID     <- as.character(co99_mapr[tr99_data$stcoID,"saID"]) # pull saID from county and add to tract DF.
+         
+                  trMatch            <- match(tr99_data$stID,StateListAll)         # Do effective statesSelDel operation.
+                  TractListAll       <- tr99_data[!is.na(trMatch),"stcotrID"]      #  
+         
+                  #cat("LB-tr99_data:\n")
+                  #print(str(tr99_data))
+         
+                  # now build subL table for Census Tract Data.
+         
+                  data_data            <- tr99_data         # all tracts in states with data.
+                  data_proj            <- tr99_proj
+         
+                  dataMapDF$saID       <- tr99_data[dataMapDF$ID,"saID"]  # match ID to boundary and get saID.
+         
+                  #
+                  #  At this point we have tract in subL_ and tr99_ structures  and county in co99_ structure.
+                  #
+                  
+                  TractListAll <- tr99_data$stcotrID
+                  trListData   <- unique(dataMapDF$stcotrID)
+         
+               }
+            
+            }
+         
+         }         
       }  # end of load details        
-      #cat("End of load details tables - co and tr.\n")
-
+      #cat("End of load details tables - hs, co and tr, if any!.\n")
+      
       rPM$BK2.dataMapDF   <- dataMapDF
+      
+      # save all of the xxxx_proj's 
       
       dataListAll         <- row.names(data_proj)  # all of the area at the data level.  Up to states with data.
       dataListData        <- dataMapDF$ID
-   
+      
       MV$data_proj        <- data_proj
       MV$data_data        <- data_data
       MV$dataListAll      <- dataListAll
+      rPM$dataListAll      <- dataListAll
       MV$dataListData     <- dataListData
-  
+      rPM$dataListData     <- dataListData
+      
+      MV$hs99_proj        <- hs99_proj
+      MV$hs99_data        <- hs99_data
+      MV$HSAListAll       <- HSAListAll
+      rPM$HSAListAll       <- HSAListAll
+      HSAListData          <- unique(dataMapDF$HSAID)
+      MV$HSAListData       <- HSAListData
+      rPM$HSAListData      <- HSAListData
+      
       MV$co99_proj        <- co99_proj
       MV$co99_data        <- co99_data
       MV$CountyListAll    <- CountyListAll
+      rPM$CountyListAll   <- CountyListAll
+      coListData          <- unique(dataMapDF$stcoID)
+      MV$coListData        <- coListData
+      rPM$coListData       <- coListData
+          
+      MV$tr99_proj         <- tr99_proj
+      MV$tr99_data         <- tr99_data
+      MV$TractListAll      <- TractListAll
+      rPM$TractListAll     <- TractListAll
+      trListData           <- unique(dataMapDF$stcotrID)
+      MV$trListData        <- trListData
+      rPM$trListData       <- trListData
       
-      ### Temp
-      MV$hd99_proj        <- co99_proj
-      MV$hd99_data        <- co99_data
-      HdistListAll        <- CountyListAll
-      MV$HdistListAll     <- HdistListAll
-  
-      MV$tr99_proj        <- tr99_proj
-      MV$tr99_data        <- tr99_data
-      MV$TractListAll     <- TractListAll
-   
       #  update changed dataMapDF
       
       rPM$dataMapDF       <- dataMapDF
@@ -2784,22 +3520,82 @@ SM_Hatching  <- function(rPM) {
       #
       #cat("end of build part 1 - loaded.\n")
       
+      #cat("idMode         :",idMode,"\n")
       #cat("dataListAll    :",dataListAll,"\n")
       #cat("RegionListAll  :",RegionListAll,"\n")
       #cat("StateListAll   :",StateListAll,"\n")
       #cat("SeerRegListAll :",SeerRegListAll,"\n")
-      #cat("HdistListAll   :",HdistListAll, "\n")
+      #cat("HSAListAll     :",HSAListAll, "\n")
       #cat("CountyListAll  :",CountyListAll,"\n")
       #cat("TractListAll   :",TractListAll,"\n")
-  
+      
+      ####
       #
       #  Build dataListData list of IDs in dataMapDF
       #
       #   Go and validate the ID and adjust the rows.
       #
       #print("Call SM_ValID")     
+      
       rPM <- SM_ValID(rPM,MV)
-  
+      
+      #
+      #  end of SM_ValID
+      #
+      ####
+      
+      ####
+      #cat("Adjust the clipTo values and Check - Z-3443 \n")
+      #	  Adjust the clipTo values
+      #   idMode now set to type of Location ID
+      #
+      #   Test values of clipTo: 
+      #     if clipTo = "NONE" - no clipping                       (num=1)
+      #     if clipTo = "DATA" - use data_proj for bbox            (num=2)
+      #     if clipTo = "HSA"  - find bbox of HSAs with data.      (num=7)
+      #     if clipTo = "SEER" = find bbox of SEER with data.      (num=4) 
+      #     if clipTo = "STATE" = find bbox of STATE with data.    (num=5)
+      #     if clipTo = "REGION" = find bbox of REGIONs with data. (num=6)
+      #
+      #  SList         <- c("NONE", "DATA", NA, "SEER", "STATE", "REGION", "HSA", "TRUE","FALSE")
+      #                      1       2      3     4       5       6         7      8      9
+      #  if clipTo="HSA" can't use with data levels of HSA(5), SEER(4) and STATE(1) = set to "DATA"
+      #  if clipTo="SEER" can't use with data levels of SEER(4), STATE(1) = set to "DATA"
+      #  if clipTo="STATE" can't use with data levels of STATE(1) = set to "DATA"
+      #  
+      # The reason for this logic is we don't have spatial polygons structure for any 
+      # boundaries lower than the data layer's geography.  If set lower, reset to "DATA"
+      #
+      clipReset <- FALSE
+      clipTo    <- rPM$clipTo
+      clipToNum <- rPM$clipToNum
+      
+      if (clipTo == "HSA" && ( idMode == 1 || idMode == 5 || idMode == 4)) {
+           clipTo = "DATA"
+           clipToNum = 2
+           if (idMode != 5) clipReset <- TRUE
+      }
+      if (clipTo == "SEER" && ( idMode == 1 || idMode == 4)) {
+           clipTo = "DATA"
+           clipToNum = 2
+           if (idMode != 4) clipReset <- TRUE
+      }
+      if (clipTo == "STATE" && ( idMode == 1 )) {
+           clipTo = "DATA"
+           clipToNum = 2
+      }
+      
+      if (clipReset) {
+         xmsg <- paste0("***096 The clipTo value specifies a geographic level lower than the data level. The clipTo value set to 'DATA'.\n")
+         warning(xmsg, call.=FALSE)
+      }
+      #cat("clipTo:",clipTo," Z-3487  clipToNum:",clipToNum,"\n")
+      
+      rPM$clipTo <- clipTo
+      rPM$clipToNum <- clipToNum
+      
+      ####
+            
       # Build xxxxxListData after the SM_ValID in case the 
       # data is reduced because of an error.
       
@@ -2810,8 +3606,7 @@ SM_Hatching  <- function(rPM) {
       RegionListData     <- unique(dataMapDF$rgID)
       StateListData      <- unique(dataMapDF$stID)
       SeerRegListData    <- sort(unique(dataMapDF$saID))   # sort killed possible NA.
-      #HdistListData     <- unique(dataMapDF$hdID)
-      HdistListData      <- unique(dataMapDF$stcoID)   # temp
+      HSAListData        <- unique(dataMapDF$HSAID)
       CountyListData     <- unique(dataMapDF$stcoID)
       TractListData      <- unique(dataMapDF$stcotrID)
       
@@ -2819,34 +3614,39 @@ SM_Hatching  <- function(rPM) {
       #cat("RegionListData :",RegionListData,"\n")
       #cat("StateListData  :",StateListData,"\n")
       #cat("SeerRegListData:",SeerRegListData,"\n")
-      #cat("HdistListData  :",HdistListData,"\n")
+      #cat("HSAListData    :",HSAListData,"\n")
       #cat("CountyListData :",CountyListData,"\n")
       #cat("TractListData  :",TractListData,"\n")
       
-      #cat(" Z-2778 length(dataListData):",length(dataListData),"\n")
+      #cat(" Z-3516 length(dataListData):",length(dataListData),"\n")
       #cat("        length(data_proj)   :",length(data_proj),"\n")
       #cat("        length(dataMapDF)   :",dim(dataMapDF)[1],"\n")
+      
       MV$dataListData    <- dataListData
       MV$RegionListData  <- RegionListData
       MV$StateListData   <- StateListData
       MV$SeerRegListData <- SeerRegListData
-      MV$HdistListData   <- HdistListData
+      MV$HSAListData     <- HSAListData
       MV$CountyListData  <- CountyListData
       MV$TractListData   <- TractListData
       
-      #print("Call SM_SetDef")
+      #cat("xxxxListData are build and saved in MV.\n")
+      
+      #cat("Calling SM_SetDef\n")
       rPM       <- SM_SetDef(rPM)
       
-      #print("Call SM_Impl_B")
+      #cat("Calling SM_Impl_B\n")
       MV        <- SM_Impl_B(rPM, MV)
       
-      #print("Call SM_box_sel")
+      #cat("Calling SM_box_sel\n")
       xRes      <- SM_box_sel(rPM, MV)
       rPM       <- xRes$rPM
       MV        <- xRes$MV
-
+      
+      #cat("Exiting SM_Build... \n")
+      
       return(list(rPM=rPM,MV=MV))
- 
+      
    }  # end of SM_Build
    #
    #
@@ -2912,7 +3712,7 @@ SM_Hatching  <- function(rPM) {
          dPos          <- dataMapDF[dupList,"rSeq"]   # get relative row number in data.
          idL           <- idListData[dupList]
          
-         xlines        <-  paste0(formatC(dPos,width=5,)," ",str_sub(paste0("   ",idL),-5,-1),"\n")
+         xlines        <-  paste0(formatC(dPos,width=5,)," ",stringr::str_sub(paste0("   ",idL),-5,-1),"\n")
          xlines        <-  c("  row#   ID\n",xlines)
          
          xmsg          <- paste0("***204 The duplicate IDs are:")
@@ -2955,7 +3755,7 @@ SM_Hatching  <- function(rPM) {
          zmsg            <- paste0("***292 Please check to make sure your data matches the 20",rPM$cYear, " census area identifiers and boundaries.")
          warning(zmsg, call.=FALSE)
       
-         #cat("areaMissing Z-2910 len:",length(areaMatch)," content:",areaMatch,"\n")
+         #cat("areaMissing Z-3653 len:",length(areaMatch)," content:",areaMatch,"\n")
          #  remove bad rows
          
          dataMapDF[areaMatchNAs,"good"] <- FALSE
@@ -2966,7 +3766,7 @@ SM_Hatching  <- function(rPM) {
       #  5.02.5 - Only good rows from validation (ID validation) and data validation.
       #    Last validation of ID step.
       #
-      dataMapDF            <- dataMapDF[dataMapDF$good,]
+      dataMapDF            <- dataMapDF[dataMapDF$good,]         # clear bad records in the data.
       #cat("Why reset row.names? - ",row.names(dataMapDF),"\n")
       #row.names(dataMapDF) <- dataMapDF$ID     # reset row.names
 
@@ -2989,13 +3789,12 @@ SM_Hatching  <- function(rPM) {
          stop(xmsg)
       }
       
-      
+      #cat("Exiting SM_ValID\n")
       return(rPM)
    }
    #
    #
    #####
-
 
    #####
    #
@@ -3007,6 +3806,7 @@ SM_Hatching  <- function(rPM) {
         #
         #  Now we have idMode.  
         #
+        
         debug  <- rPM$debug
         idMode <- rPM$idMode
    
@@ -3014,7 +3814,7 @@ SM_Hatching  <- function(rPM) {
         #cat("  regionB:",rPM$regionB,"  regionB_c:",rPM$regionB_caller,"\n")
         #cat("  stateB :",rPM$stateB, "  stateB_c :",rPM$stateB_caller, "\n")
         #cat("  seerB  :",rPM$seerB,  "  seerB_c  :",rPM$seerB_caller,  "\n")
-        #cat("  hdistB :",rPM$hdistB, "  hdistB_c :",rPM$hdistB_caller, "\n")
+        #cat("  hsaB   :",rPM$hsaB,   "  hsaB_c   :",rPM$hsaB_caller,   "\n")
         #cat("  countyB:",rPM$countyB,"  countyB_c:",rPM$countyB_caller,"\n")
         #cat("  tractB :",rPM$tractB, "  tractB_c :",rPM$tractB_caller, "\n")
         #cat("  clipTo :",rPM$clipTo, "  clipTo_c :",rPM$clipTo_caller, "\n")
@@ -3025,13 +3825,14 @@ SM_Hatching  <- function(rPM) {
         #  SM_GlobInit set all xxxxB values to "NONE" in rPM$.  If not modified
         #  by caller - set the default dependent on idMode.
         # 
+        
         if (!rPM$regionB_caller) {
            rPM$regionB <- switch( idMode,
                               "NONE",    # 1 - state
                               "NONE",    # 2 - county
                               "NONE",    # 3 - tract
                               "NONE",    # 4 - seer reg
-                              "NONE"     # 5 - h dist
+                              "NONE"     # 5 - hsa
                            )
         }
         if (!rPM$stateB_caller) {
@@ -3040,7 +3841,7 @@ SM_Hatching  <- function(rPM) {
                               "NONE",    # 2 - county
                               "NONE",    # 3 - tract
                               "NONE",    # 4 - seer reg
-                              "NONE"     # 5 - h dist
+                              "NONE"     # 5 - hsa
                            )
         }
         if (!rPM$seerB_caller) {
@@ -3049,16 +3850,16 @@ SM_Hatching  <- function(rPM) {
                               "NONE",    # 2 - county
                               "NONE",    # 3 - tract
                               "DATA",    # 4 - seer reg
-                              "NONE"     # 5 - h dist
+                              "NONE"     # 5 - hsa
                            )
         }
-        if (!rPM$hdistB_caller) {
-           rPM$hdistB <- switch( idMode,
+        if (!rPM$hsaB_caller) {
+           rPM$hsaB <- switch( idMode,
                               "NONE",    # 1 - state
                               "NONE",    # 2 - county
                               "NONE",    # 3 - tract
                               "NONE",    # 4 - seer reg
-                              "DATA"     # 5 - h dist
+                              "DATA"     # 5 - hsa
                            )
         }
         if (!rPM$countyB_caller) {
@@ -3067,7 +3868,7 @@ SM_Hatching  <- function(rPM) {
                               "DATA",    # 2 - county
                               "NONE",    # 3 - tract
                               "NONE",    # 4 - seer reg
-                              "NONE"     # 5 - h dist
+                              "NONE"     # 5 - hsa
                            )
         }
         if (!rPM$tractB_caller) {
@@ -3076,12 +3877,15 @@ SM_Hatching  <- function(rPM) {
                               "NONE",    # 2 - county
                               "DATA",    # 3 - tract
                               "NONE",    # 4 - seer reg
-                              "NONE"     # 5 - h dist
+                              "NONE"     # 5 - hsa
                            )
         }
 
-        # FUTURE code for Health Districts.
-        
+        if (!rPM$clipTo_caller) {
+           # The default for clipTo is always "NONE"
+           rPM$clipTo <- "NONE"
+           rPM$clipToNum <- 1
+        }
         #
         #  Merge default based on idMode and caller value for dataBCol.
         #
@@ -3094,7 +3898,7 @@ SM_Hatching  <- function(rPM) {
                              rPM$ColorB_O_County,     # idMode = 2 COUNTY
                              rPM$ColorB_O_Tract,      # idMode = 3 TRACT
                              rPM$ColorB_O_Seer,       # idMode = 4 Seer Registry
-                             rPM$ColorB_O_Hdist,      # idMode = 5 Health Districts
+                             rPM$ColorB_O_Hsa,        # idMode = 5 Health Service Areas
                              rPM$ColorB_O_Tract       # default.
                            )
         
@@ -3102,7 +3906,8 @@ SM_Hatching  <- function(rPM) {
         
         #
         #####
-       #cat("Exit SetDef regionB:",rPM$regionID,"  stateB:",rPM$stateB,"  seerB:",rPM$seerB,"  countyB:",rPM$countyB,"  tractB:",rPM$tractB,"\n")
+        #cat("Exit SetDef regionB:",rPM$regionID,"  stateB:",rPM$stateB,"  seerB:",rPM$seerB,
+        #     "  hsaB:",rPM$hsaB,"  countyB:",rPM$countyB,"  tractB:",rPM$tractB,"  clipTo:",rPM$clipTo,"\n")
         
         return(rPM)
    }
@@ -3125,6 +3930,7 @@ SM_Hatching  <- function(rPM) {
 SM_Impl_B <- function(rPM, MV) {
       
       debug <- rPM$debug
+      #cat("Entering SM_Impl_B - \n")
 
       #####
       #
@@ -3140,19 +3946,19 @@ SM_Impl_B <- function(rPM, MV) {
       #     regionPList  --  Region Boundaries
       #     statePList   --  State boundaries
       #     seerPList    --  Seer Registry boundaries
-      #     hdistPList   --  Health District boundaries
+      #     hsaPList     --  Health Service Area boundaries
       #     countyPList  --  county boundaries
       #     tractPList   --  tract boundaries
       #
       #  Lists:
-      #     data   -                                                                             DATA
-      #     region - ALL,                                                                        DATA, NONE
-      #     state  - ALL, REGION w/DATA,                                                         DATA, NONE
-      #     seer   - ALL, REGION w/DATA, STATE w/DATA,                                           DATA, NONE
+      #     data   -                                                                           DATA
+      #     region - ALL,                                                                      DATA, NONE
+      #     state  - ALL, REGION w/DATA,                                                       DATA, NONE
+      #     seer   - ALL, REGION w/DATA, STATE w/DATA,                                         DATA, NONE
       #
-      #     hdist  -                     STATE w/DATA, SEER w/DATA                               DATA, NONE
-      #     county -                     STATE w/DATA, SEER w/DATA, HDIST w/DATA                 DATA, NONE
-      #     tract  -                     STATE w/DATA, SEER w/DATA, HDIST w/DATA, COUNTY w/DATA, DATA, NONE
+      #     hsa    -                     STATE w/DATA, SEER w/DATA                             DATA, NONE
+      #     county -                     STATE w/DATA, SEER w/DATA, HSA w/DATA                 DATA, NONE
+      #     tract  -                     STATE w/DATA, SEER w/DATA, HSA w/DATA, COUNTY w/DATA, DATA, NONE
       #
           
       ####
@@ -3194,11 +4000,11 @@ SM_Impl_B <- function(rPM, MV) {
            #cat("BysaID return:",PList,"\n")
            return (PList)
       }
-      GetIDListByhdID <- function(xx_data, LhdLD) {           # future
+      GetIDListByhsID <- function(xx_data, LhsLD) {           # future
            # for this function the xx_data is the data's 
-           xM    <- !is.na(match(xx_data$hdID, LhdLD))
+           xM    <- !is.na(match(xx_data$HSAID, LhsLD))
            PList <- xx_data[xM,"ID"]
-           #cat("ByhdID return:",PList,"\n")
+           #cat("ByhsaID return:",PList,"\n")
            return (PList)
       }
       GetIDListBystcoID <- function(xx_data, LstcoLD) {       # not used
@@ -3208,8 +4014,8 @@ SM_Impl_B <- function(rPM, MV) {
            return (PList)
       }
       #
-      #   For County and Tract, we only have partial loads and
-      #   they are lower in the heirarchy then Seer Registry.
+      #   For HSA, County and Tract, we only have partial loads and
+      #   they are lower in the hierarchy then Seer Registry.
       #   One of the problems is Registries are not a subset of 
       #   states and do not cover all counties and tracts.
       #
@@ -3223,12 +4029,12 @@ SM_Impl_B <- function(rPM, MV) {
            return (PList)
       }
       #
-      AddIDsByhdID <- function(xx_data, LhdLD, xxxLD) {
-           # Find additional counties or tracts by saID and 
+      AddIDsByhsID <- function(xx_data, LhsLD, xxxLD) {
+           # Find additional counties or tracts by HSAID and 
            #  add them to the xxxxListData list.
-           xM    <- !is.na(match(xx_data$hdID, LhdLD))
+           xM    <- !is.na(match(xx_data$HSAID, LhsLD))
            PList <- sort(unique(c(xx_data[xM,"ID"],xxxLD)))
-           #cat("ByhdID return:",PList,"\n")
+           #cat("ByhsaID return:",PList,"\n")
            return (PList)
       }
       #
@@ -3245,7 +4051,7 @@ SM_Impl_B <- function(rPM, MV) {
       ####
       
       #cat("SM_Impl_B - idMode:",rPM$idMode,"\n")
-      #cat("regionB:",rPM$regionB,"  stateB:",rPM$stateB,"  seerB:",rPM$seerB,"  countyB:",rPM$countyB,"  tractB:",rPM$tractB,"\n")
+      #cat("regionB:",rPM$regionB,"  stateB:",rPM$stateB,"  seerB:",rPM$seerB,"   hsaB:",rPM$hsaB,"  countyB:",rPM$countyB,"  tractB:",rPM$tractB,"\n")
  
       MV$dataPList   <- MV$dataListData
       
@@ -3277,7 +4083,7 @@ SM_Impl_B <- function(rPM, MV) {
       #cat("SM_Impl_B-idMode:",idMode,"\n")
     
       if (idMode == 1) {
-      
+         # state mode
          if (rPM$stateB == "DATA" && rPM$seerB == "ALL") {
             # exception for STATE data, with stataB="DATA" and seerB="ALL", don't do 
             # seer registries in states that will not have boundaries.  So, limit the
@@ -3294,25 +4100,43 @@ SM_Impl_B <- function(rPM, MV) {
          }
       }
       #
-      #   SeerPList is the only list that could be empty!!!
+      #   SeerPList is the only list that could be empty!!!  If none exist in the states being mapped.
       #
-      if (idMode == 4) {
-         # Health Districts
-         MV$hdistPList  <- switch(rPM$hdistB,
+      
+      #   HSAs boundaries apply to HSAs, Counties, Tracts
+      if (idMode == 5 || idMode == 3 || idMode == 2 ) {
+         #cat("hs99_data DF Z-3996 :\n")
+         #print(str(MV$hs99_data))
+         #cat("StateListData : \n")
+         #print(MV$StateListData)
+         
+         # Health Service Areas
+         MV$hsaPList  <- switch(rPM$hsaB,
                           NONE  = NULL,
-                          DATA  = MV$HdistListData,   # health districts around data
-                          SEER  = AddIDsBysaID(MV$hd99_data,MV$SeerRegListData,MV$HdistListData),
-                          STATE = GetIDListBystID(MV$hd99_data,MV$StateListData),
+                          DATA  = MV$HSAListData,   # health service areas around data
+                          SEER  = AddIDsBysaID(MV$hs99_data,MV$SeerRegListData,MV$HSAListData),
+                                             # HSAs in registries around data
+                                             # uses all HSAs list in state(s)
+                                             # may have HSAs not in Registries - keep.
+                                             # we did load all of the registry HSAs
+                                             #  within the SeerRegListData because loaded all within StateListData.
+                          STATE = GetIDListBystID(MV$hs99_data,MV$StateListData),
+                                             # we loaded all HSAs with the StateListData set.
                           NULL
                                )
       }
       
+      #  County boundaries apply to Counties and Tracts
       if (idMode == 2 || idMode == 3) {
          #cat("Setting countyPList\n")
          MV$countyPList <- switch(rPM$countyB,
                           NONE  = NULL,
                           DATA  = MV$CountyListData,    # counties around data
-                          HDIST = AddIDsByhdID(MV$co99_data,MV$HdistListData,MV$CountyListData),
+                          HSA   = GetIDListByhsID(MV$co99_data,MV$HSAListData,MV$CountyListData),
+                                             # we have all HSAs that include the counties,
+                                             # this fills in to the HSA level, no county
+                                             # is lost, because the counties are draw within
+                                             # the HSAs with counties with data.
                           SEER  = AddIDsBysaID(MV$co99_data,MV$SeerRegListData,MV$CountyListData), 
                                              # counties in registries around data
                                              # uses all county list in state(s)
@@ -3325,6 +4149,7 @@ SM_Impl_B <- function(rPM, MV) {
                         )
       }
   
+      # Tract boundaries only apply to tracts
       if (idMode == 3) {
          #cat("Setting tractPList\n")
          MV$tractPList  <- switch(rPM$tractB,
@@ -3334,8 +4159,12 @@ SM_Impl_B <- function(rPM, MV) {
                                             # we have all counties that include the 
                                             # tracts, this fills to the county level
                                             # no tract is lost, because tracts are 
-                                            # draw within the counties with data.
-                          HDIST = AddIDsByhdID(MV$tr99_data,MV$HdistListData,MV$TractListData),
+                                            # draw within the counties with tracts with data.
+                          HSA   = GetIDListByhsID(MV$tr99_data,MV$HSAListData,MV$TractListData),
+                                            # we have all the HSAs that include the 
+                                            # tracts, this fills to the HSA level
+                                            # no tract is lost, because tracts are 
+                                            # draw within the HSAs with tracts with data.
                           SEER  = AddIDsBysaID(MV$tr99_data,MV$SeerRegListData,MV$TractListData),
                                             # Must find the extra tracts in the Seers with data
                                             # but also keep any tracts not in Seers.
@@ -3351,11 +4180,10 @@ SM_Impl_B <- function(rPM, MV) {
       #####
       
       if (debug) {
-         cat("setup up proj_data and proj_mapped for states and seer Z-3331  END of SM_Impl_B","\n")
-         cat("idMode:",rPM$idMode," regionB:",rPM$regionB," stateB:",rPM$stateB," seerB:",rPM$seerB,"  countyB:",rPM$countyB,
-                     " tractB:",rPM$tractB,
-                     " clipTo:",rPM$clipTo,
-                     " dataMapDF Size:",dim(rPM$dataMapDF),"\n")
+         cat("setup up proj_data and proj_mapped for states and seer Z-4071  END of SM_Impl_B","\n")
+         cat("idMode:",rPM$idMode," regionB:",rPM$regionB,"   stateB:",rPM$stateB, "  seerB:",rPM$seerB,
+                                  "    hsaB:",rPM$hsaB,   "  countyB:",rPM$countyB," tractB:",rPM$tractB,
+                                  "  fillTo:",rPM$fillTo, " dataMapDF Size:",dim(rPM$dataMapDF),"\n")
          cat("dataPList   :",length(MV$dataPList)  ," ",paste0(MV$dataPList  ,collapse=", "),"\n")
          if (!is.null(MV$regionPList)) {
             cat("regionPList :",length(MV$regionPList)," ",paste0(MV$regionPList,collapse=", "),"\n")
@@ -3366,8 +4194,8 @@ SM_Impl_B <- function(rPM, MV) {
          if (!is.null(MV$seerPList)) {
             cat("seerPList   :",length(MV$seerPList)  ," ",paste0(MV$seerPList  ,collapse=", "),"\n")
          }
-         if (!is.null(MV$hdistPList)) {
-            cat("hdistPList   :",length(MV$hdistPList)  ," ",paste0(MV$hdistrPList  ,collapse=", "),"\n")
+         if (!is.null(MV$hsaPList)) {
+            cat("hsaPList    :",length(MV$hsaPList)   ," ",paste0(MV$hdaPList  ,collapse=", "),"\n")
          }
          if (!is.null(MV$countyPList)){
            cat("countyPList :",length(MV$countyPList)," ",paste0(MV$countyPList,collapse=", "),"\n")
@@ -3376,6 +4204,7 @@ SM_Impl_B <- function(rPM, MV) {
            cat("tractPList  :",length(MV$tractPList) ," ",paste0(MV$tractPList ,collapse=", "),"\n")
          }
       }
+      #cat("Exiting SM_Impl_B-\n")
   
       return(MV)
    }
@@ -3390,7 +4219,7 @@ SM_Impl_B <- function(rPM, MV) {
    #      Takes the xxxx_proj and xxxxPList and creates a xxxx_proj_sel SPDF 
    #      and a bbox for the space.
    #      Calculates the overall size of the bboxes for all xxxx_proj_sel
-   #      and returns the 'xLim' and 'yLim' values.
+   #      and returns the xLim and yLim values.
    #
    #   Input:  xxxxxPList,  xxxxx_proj
    #
@@ -3404,7 +4233,6 @@ SM_box_sel <- function(rPM, MV) {
       #####
       debug     <- rPM$debug
       idMode    <- rPM$idMode
-      clipToM   <- rPM$clipTo
       dataPList <- MV$dataPList  # dataPList is equal to dataMapDF$ID list.
 
       ####
@@ -3418,16 +4246,21 @@ SM_box_sel <- function(rPM, MV) {
       #  Then the box size of each level can be calculated and the box size of 
       #  the plotting space can be calculated.
       #
+      
       ErrFnd <- FALSE
       
+      dataMapDF <- rPM$dataMapDF
+      
       if (debug) {
-         cat("...PList, proj, and Boxes Z-3398 :", "\n")
+         cat("...PList, proj, and Boxes Z-4143 :", "\n")
          cat("idMode      :", idMode, "\n")
          cat("dataPList   :", dataPList, "\n")
       }
           
-      data_proj_sel  <- MV$data_proj  # (all boundaries at data's level)
+      data_proj_sel  <- MV$data_proj       # (all boundaries at data's level)
       data_data_sel  <- MV$data_data
+      
+      #cat("Create data_proj_sel...   dataPList:",dataPList,"\n")
       
       #  dataPList and data_proj
       if (!is.null(dataPList) && !any(is.na(dataPList))) {
@@ -3436,7 +4269,7 @@ SM_box_sel <- function(rPM, MV) {
          data_proj_sel  <- data_proj_sel[dataPList,]
          data_data_sel  <- data_data_sel[dataPList,]
          data_box       <- bbox(data_proj_sel)                # primary data box.
-         #cat("dataBox Z-3413 : ", data_box, "\n")
+         #cat("dataBox Z-4160 : ", data_box, "\n")
       } else {
          # null dataPList or has an NA in list is a major internal error.
          if (!is.null(dataPList)) {
@@ -3451,31 +4284,49 @@ SM_box_sel <- function(rPM, MV) {
       
       # set up default boxes based on data_proj box (spatial box)
 
+      #cat("Set up default boxes for later...\n")
+
       data_box        <- bbox(data_proj_sel)                # primary space.
                  # set all other levels to the same - until changed.
       tr_box          <- data_box       # tract outlines
       co_box          <- data_box       # county outline
-      hd_box          <- data_box
+      hs_box          <- data_box
       seer_box        <- data_box       # seer outline or data
       states_box      <- data_box       # state data
       regions_box     <- data_box       # region outlines
       #
-
+      tr_box_c        <- data_box       # tract clipped to data
+      Co_box_c        <- data_box       # county clipped to data
+      hs_box_c        <- data_box       # HSA clipped to data
+      sa_box_c        <- data_box       # seer clipped to data
+      st_box_c        <- data_box       # states clipped to data
+      rg_box_c        <- data_box       # regions clipped to data
+      #
+      ## FZ 10/08/2019 remove # in #if #}
       if (debug) {
-         cat("plot size Z-3439 - data_box:", data_box, "\n")
-         cat("regionB:",rPM$regionB," stateB:",rPM$stateB," seerB:",rPM$seerB," countyB:",rPM$countyB," tractB:",rPM$tractB,"\n")
-         cat("regionPList-len:", length(MV$regionPList), "  list:", MV$regionPList, "\n")
-         cat("statePList-len :", length(MV$statePList),  "  list:", MV$statePList,  "\n")
-         cat("seerPList-len  :", length(MV$seerPList),   "  list:", MV$seerPList,   "\n")
-         cat("hdistPList-len :", length(MV$hdistPList),  "  list:", MV$hdistPList,  "\n")
-         cat("countyPList-len:", length(MV$countyPList), "  list:", MV$countyPList, "\n")
-         cat("tractPList-len :", length(MV$tractPList),  "  list:", MV$tractPList,  "\n")
+         cat("plot size Z-4202 - data_box:", data_box, "\n")
+         cat("regionB:",rPM$regionB," stateB:",rPM$stateB," seerB:",rPM$seerB,"  hsaB:",rPM$hsaB," countyB:",rPM$countyB," tractB:",rPM$tractB,"\n")
+         cat("regionPList-len  :", length(MV$regionPList), "  list:", MV$regionPList, "\n")
+         cat("statePList-len   :", length(MV$statePList),  "  list:", MV$statePList,  "\n")
+         cat("seerPList-len    :", length(MV$seerPList),   "  list:", MV$seerPList,   "\n")
+         cat("hsaPList-len     :", length(MV$hsaPList),    "  list:", MV$hsaPList,    "\n")
+         cat("countyPList-len  :", length(MV$countyPList), "  list:", MV$countyPList, "\n")
+         cat("tractPList-len   :", length(MV$tractPList),  "  list:", MV$tractPList,  "\n")
+         cat("rg_proj_sel-len  :", length(MV$rg_proj_sel), "\n")
+         cat("states_proj-len  :", length(MV$states_proj), "\n")
+         cat("SeerRegs_proj-len:", length(MV$SeerRegs_proj), "\n")
+         cat("hs99_proj-len    :", length(MV$hs99_proj), "\n")
+         cat("co99_proj-len    :", length(MV$co99_proj), "\n")
+         cat("tr99_proj-len    :", length(MV$tr99_proj), "\n")
+         
       } 
 
       #  regionPList and regions_Proj
       rg_proj_sel     <- MV$regions_proj
       regionPList     <- MV$regionPList
       rgGO            <- FALSE
+      
+      #cat("Regional - listData and PList...  regionPList:",regionPList,"\n")
       
       if (!is.null(regionPList)) {
          # if list is present and no NAs included
@@ -3485,6 +4336,7 @@ SM_box_sel <- function(rPM, MV) {
             rg_proj_sel    <- rg_proj_sel[regionPList,]       # get selected regions borders to plot
             regions_box    <- bbox(rg_proj_sel)              # get box space for regions boundaries
             rgGO           <- TRUE
+            rg_box_c       <- bbox(rg_proj_sel[unique(dataMapDF$rgID),])
          } else {
             # does contain NA.
             # problem
@@ -3494,7 +4346,7 @@ SM_box_sel <- function(rPM, MV) {
             regionPList    <- NULL
          }
       } else {
-         #cat("regionPList ( Z-3432 ) is NULL.\n")
+         #cat("regionPList ( Z-4237 ) is NULL.\n")
          ErrFnd       <- FALSE
          rg_proj_sel  <- NULL
          # if none - don't change data box used at this level.
@@ -3502,6 +4354,7 @@ SM_box_sel <- function(rPM, MV) {
       MV$rg_proj_sel  <- rg_proj_sel
       MV$regionPList  <- regionPList
       MV$rgGO         <- rgGO
+      
       #
 
       #  statePList and states_proj
@@ -3509,14 +4362,18 @@ SM_box_sel <- function(rPM, MV) {
       statePList      <- MV$statePList
       stGO            <- FALSE
       
+      #cat("States - ListData and PList... statePList:",statePList,"\n")
+      
       if (!is.null(statePList)) {
          # if list is present and no NAs included
          if (!any(is.na(statePList))) {
             # good list
             #  Extra State boundary layer - does not contain NA
-            st_proj_sel   <- st_proj_sel[statePList,]       # get selected states borders to plot
-            states_box    <- bbox(st_proj_sel)              # get box space for state boundaries
-            stGO          <- TRUE
+            st_proj_sel    <- st_proj_sel[statePList,]       # get selected states borders to plot
+            states_box     <- bbox(st_proj_sel)              # get box space for state boundaries
+            stGO           <- TRUE
+            #xID            <- unique(dataMapDF$stID)
+            #st_box_c       <- bbox(st_proj_sel[unique(dataMapDF$stID),])
          } else {
             # does contain NA.
             # problem
@@ -3525,7 +4382,7 @@ SM_box_sel <- function(rPM, MV) {
             statePList    <- NULL
          }
       } else {
-         #cat("statePList  ( Z-3463 ) is NULL.\n")
+         #cat("statePList  ( Z-4273 ) is NULL.\n")
          ErrFnd       <- FALSE
          st_proj_sel  <- NULL
          # if none - don't change data box used at this level.
@@ -3540,22 +4397,38 @@ SM_box_sel <- function(rPM, MV) {
       seerPList       <- MV$seerPList
       saGO            <- FALSE
       
+      #cat("Create SA - ListData and PList...  seerPList:",seerPList,"\n")
+      
       if (!is.null(seerPList)) {
          # is not null
          if (!any(is.na(seerPList))) {
             # good list
             #  seerP list present - BBOX should cover all Seer area
-            sa_proj_sel   <- sa_proj_sel[seerPList,]  # selected Seer area Boundaries
-            seer_box      <- bbox(sa_proj_sel)           # get box space for seer boundaries
-            saGO          <- TRUE
+            sa_proj_sel    <- sa_proj_sel[seerPList,]      # selected Seer area Boundaries
+            #cat("length of sa_proj_sel:",length(sa_proj_sel),"\n")
+            
+            seer_box       <- bbox(sa_proj_sel)            # get box space for seer boundaries for area ploted.
+            saGO           <- TRUE
+            #saDList         <- unique(dataMapDF$saID)       # get stIDs referenced by data.
+            #cat("saDList Z-4308 :",saDList,"\n")
+            
+            #xm             <- match(MV$SeerRegs_data$stID,stsaList)
+            #xmGood         <- !is.na(xm)
+            #saDList        <- MV$SeerRegs_data[xmGood,"saID"]
+            #cat("length saDList:",length(saDList),"  saDList:",saDList,"\n")  # we picked up more seer regs 
+                       # the data has..  So, not in sa_proj_sel.
+            
+            #sa_box_c       <- bbox(sa_proj_sel[saDList,])
+            #cat("sa_box_c:",sa_box_c,"\n")
+            
          } else {
             # problem
             xmsg <- paste0("***386 Internal Error - seerPList contains a NA in list:",paste0(seerPList,collapse=", "))
             stop(xmsg,call.=FALSE)
-            seerPList     <- NULL
+            seerPList      <- NULL
          }
       } else {
-         #cat("seerPList   ( Z-3493 ) is NULL.\n")
+         #cat("seerPList   ( Z-4319 ) is NULL.\n")
          ErrFnd       <- FALSE
          sa_proj_sel  <- NULL
       }
@@ -3563,15 +4436,51 @@ SM_box_sel <- function(rPM, MV) {
       MV$seerPList    <- seerPList
       MV$saGO         <- saGO
       #
-      
+            
       #
-      #  Put in hdistPList processing later.
+      #  hsaPList and hs99_proj  (if no hsProj, the hsaPList should be NULL or NA.
+      #
+      hs_proj_sel     <- MV$hs99_proj
+      hsaPList        <- MV$hsaPList
+      hsGO            <- FALSE
+
+      #cat("Creating hsa proj_sel and PList... hsaPList:",hsaPList,"\n")
+
+      if (!is.null(hsaPList)) {
+         # not null
+         if (!any(is.na(hsaPList))) {
+            # good list
+            #  hsa P List provided
+            hs_proj_sel   <- hs_proj_sel[hsaPList,]  # get county boundries requested
+            hs_box        <- bbox(hs_proj_sel)           #  get box space for counties
+            hsGO          <- TRUE
+            #hs_box_c       <- bbox(hs_proj_sel[unique(dataMapDF$HSAID),])
+            #cat("hsBox Z-4353 : ",hs_box,"\n")
+         } else {
+            # problem
+            xmsg          <- paste0("***389 Internal Error - hsaPList contains a NA in list:",
+                                        paste0(hsaPList,collapse=", "))
+            stop(xmsg,call.=FALSE)
+            hsaPList   <- NULL
+         }
+      } else {
+         #cat("hsaPList ( Z-4362 ) is NULL.\n")
+         ErrFnd       <- FALSE
+         hs_proj_sel  <- NULL
+      }
+      MV$hs_proj_sel  <- hs_proj_sel
+      MV$hsaPList     <- hsaPList
+      MV$hsGO         <- hsGO
       #
 
+      #
       #  countyPList and co99_proj  (if no coProj, the countyPList should be NULL or NA.
+      #
       co_proj_sel     <- MV$co99_proj
       countyPList     <- MV$countyPList
       coGO            <- FALSE
+
+      #cat("Creating county proj_sel and PList... countyPList:",countyPList,"\n")      
 
       if (!is.null(countyPList)) {
          # not null
@@ -3581,7 +4490,7 @@ SM_box_sel <- function(rPM, MV) {
             co_proj_sel   <- co_proj_sel[countyPList,]  # get county boundries requested
             co_box        <- bbox(co_proj_sel)           #  get box space for counties
             coGO          <- TRUE
-            #cat("coBox Z-3551 : ",co_box,"\n")
+            #cat("coBox Z-4381 : ",co_box,"\n")
          } else {
             # problem
             xmsg          <- paste0("***387 Internal Error - countyPList contains a NA in list:",
@@ -3590,7 +4499,7 @@ SM_box_sel <- function(rPM, MV) {
             countyPList   <- NULL
          }
       } else {
-         #cat("countyPList ( Z-3528 ) is NULL.\n")
+         #cat("countyPList ( Z-4397 ) is NULL.\n")
          ErrFnd       <- FALSE
          co_proj_sel  <- NULL
       }
@@ -3603,6 +4512,8 @@ SM_box_sel <- function(rPM, MV) {
       tr_proj_sel     <- MV$tr99_proj
       tractPList      <- MV$tractPList
       trGO            <- FALSE
+
+      #cat("Creating tract proj_sel and PList... tractPList:",tractPList,"\n")      
      
       if (!is.null(tractPList)) {
          # not null
@@ -3612,7 +4523,7 @@ SM_box_sel <- function(rPM, MV) {
             tr_proj_sel   <- tr_proj_sel[tractPList,]    # get county boundries requested
             tr_box        <- bbox(tr_proj_sel)           #  get box space for counties
             trGO          <- TRUE
-            #cat("trBox Z-3582 : ",tr_box,"\n")
+            #cat("trBox Z-4414 : ",tr_box,"\n")
          } else {
             # problem
             xmsg          <- paste0("***388 Internal Error - tractPList contains a NA in list:",
@@ -3621,7 +4532,7 @@ SM_box_sel <- function(rPM, MV) {
             tractPList    <- NULL
          }
       } else {
-         #cat("tractPList  ( Z-3559 ) is null.\n")
+         #cat("tractPList  ( Z-4423 ) is null.\n")
          ErrFnd       <- FALSE
          tr_proj_sel  <- NULL
       }
@@ -3632,70 +4543,80 @@ SM_box_sel <- function(rPM, MV) {
       #
       #  clipTo - controls the spatial box to be used for the grpahics.
       #
-      # regular x and y limits
-      xwl      <- c( NA, NA)   # x limits
-      ywl      <- c( NA, NA)   # y limits
-      # clip To x and y limits
-      xwlct    <- c( NA, NA)   # x limits
-      ywlct    <- c( NA, NA)   # y limits
+      xwl    <- c( NA, NA)   # x limits
+      ywl    <- c( NA, NA)   # y limits
       
-      #
-      #rPM$clipRes   <- switch(rPM$clipTo,
-      #                  #          d d r r s s a a h h c c t t
-      #                  NONE   = c(T,T,T,T,T,T,T,T,T,T,T,T,T,T),   # no clipping use all boxes get biggest range
-      #                  DATA   = c(T,T,F,F,F,F,F,F,F,F,F,F,F,F),   # clip to data.
-      #                  COUNTY = c(T,T,F,F,F,F,F,F,F,F,T,T,T,T),   # clip to county box.
-      #                  HDIST  = c(T,T,F,F,F,F,F,F,T,T,T,T,T,T),
-      #                  SEER   = c(T,T,F,F,F,F,T,T,T,T,T,T,T,T),
-      #                  STATE  = c(T,T,F,F,T,T,T,T,T,T,T,T,T,T),
-      #               NULL
-      #             )
+      if (debug) {
+           cat(" Z-4445 \n")
+           cat("data_box   :",data_box,"\n")
+           cat("regions_box:",regions_box,"\n")
+           cat("states_box :",states_box,"\n")
+           cat("seer_box   :",seer_box,"\n")
+           cat("hs_box     :",hs_box,"\n")
+           cat("co_box     :",co_box,"\n")
+           cat("tr_box     :",tr_box,"\n")
+           #cat("rg_box_c   :",rg_box_c,"\n")
+           #cat("st_box_c   :",st_box_c,"\n")
+           #cat("sa_box_c   :",sa_box_c,"\n")
+           #cat("hs_box_c   :",hs_box_c,"\n")
+           #cat("co_box_c   :",co_box_c,"\n")
+           #cat("tr_box_c   :",tr_box_c,"\n")
+      }
       
-      #  setup x and y limits based on the clipTo request.
-      
-      xwlct  <-   switch(rPM$clipTo,
-                     NONE   = c(data_box[1,],regions_box[1,],states_box[1,],seer_box[1,],hd_box[1,],co_box[1,],tr_box[1,]),
-                     DATA   = c(data_box[1,]),
-                     COUNTY = c(data_box[1,],co_box[1,],tr_box[1,]),
-                     HDIST  = c(data_box[1,],hd_box[1,],co_box[1,],tr_box[1,]),
-                     SEER   = c(data_box[1,],seer_box[1,],hd_box[1,],co_box[1,],tr_box[1,]), 
-                     STATE  = c(data_box[1,],states_box[1,],seer_box[1,],hd_box[1,],co_box[1,],tr_box[1,]),
-                    NULL   = c(data_box[1,],regions_box[1,],states_box[1,],seer_box[1,],hd_box[1,],co_box[1,],tr_box[1,])
-                  )
-      ywlct  <-   switch(rPM$clipTo,
-                     NONE   = c(data_box[2,],regions_box[2,],states_box[2,],seer_box[2,],hd_box[2,],co_box[2,],tr_box[2,]),
-                     DATA   = c(data_box[2,]),
-                     COUNTY = c(data_box[2,],co_box[2,],tr_box[2,]),
-                     HDIST  = c(data_box[2,],hd_box[2,],co_box[2,],tr_box[2,]),
-                     SEER   = c(data_box[2,],seer_box[2,],hd_box[2,],co_box[2,],tr_box[2,]), 
-                     STATE  = c(data_box[2,],states_box[2,],seer_box[2,],hd_box[2,],co_box[2,],tr_box[2,]),
-                    NULL   = c(data_box[2,],regions_box[2,],states_box[2,],seer_box[2,],hd_box[2,],co_box[2,],tr_box[2,])
-                  )
-                  
-      # new way.
-      xwl    <- c(data_box[1,],regions_box[1,],states_box[1,],seer_box[1,],hd_box[1,],co_box[1,],tr_box[1,])
-      ywl    <- c(data_box[2,],regions_box[2,],states_box[2,],seer_box[2,],hd_box[2,],co_box[2,],tr_box[2,])
+      rPM$clipRes   <- switch(rPM$clipTo,
+                        #          d d r r s s a a h h c c t t     # d=data, r=region, s=state, a=registry, h=hsa, c=county, t=tract
+                        NONE   = c(T,T,T,T,T,T,T,T,T,T,T,T,T,T),   # no clipping use all boxes get biggest range
+                        DATA   = c(T,T,F,F,F,F,F,F,F,F,F,F,F,F),   # clip to data box
+                        COUNTY = c(T,T,F,F,F,F,F,F,F,F,T,T,T,T),   # clip to county and tract box.
+                        HSA    = c(T,T,F,F,F,F,F,F,T,T,T,T,T,T),   # clip to hsa, county, tract
+                        SEER   = c(T,T,F,F,F,F,T,T,T,T,T,T,T,T),   # clip to Seer, hsa, county, tract
+                        STATE  = c(T,T,F,F,T,T,T,T,T,T,T,T,T,T),   # clip to state, seer, hsa, county, tract.
+                     NULL
+                   )
+                   
+      #cat("rPM$clipRes Z-4472 :\n")
+      #print(rPM$clipRes)
+      # SET UP FOR clipping - biggest spatial area.
+      xwl       <- c(data_box[1,],regions_box[1,],states_box[1,],seer_box[1,],hs_box[1,],co_box[1,],tr_box[1,])
+      ywl       <- c(data_box[2,],regions_box[2,],states_box[2,],seer_box[2,],hs_box[2,],co_box[2,],tr_box[2,])
 
+      
+      if (rPM$clipToNum > 0) {
+         #  clipping - collect clipped boxes..
+      
+         #xwl       <- c(data_box[1,],rg_box[1,],st_box[1,],
+         #                   sa_box[1,],hs_box[1,],co_box[1,],tr_box[1,])
+         #ywl       <- c(data_box[2,],rg_box[2,],st_box[2,],
+         #                   sa_box[2,],hs_box[2,],co_box[2,],tr_box[2,])
+         #cat("before clip edit\n")
+         #cat("xwl:",xwl,"\n")
+         #cat("ywl:",ywl,"\n")
+     
+         xwl       <- xwl[rPM$clipRes]   # select the clip to set
+         ywl       <- ywl[rPM$clipRes]
+      
+         #cat("after clip edit\n")
+         #cat("xwl:",xwl,"\n")
+         #cat("ywl:",ywl,"\n")
+      
+      } else {
+      
+         # no clipping - biggest spatial area.
+         xwl       <- c(data_box[1,],regions_box[1,],states_box[1,],seer_box[1,],hs_box[1,],co_box[1,],tr_box[1,])
+         ywl       <- c(data_box[2,],regions_box[2,],states_box[2,],seer_box[2,],hs_box[2,],co_box[2,],tr_box[2,])
 
-      #cat("data_box:"   ,data_box,"\n")
-      #cat("regions_box:",regions_box,"\n")
-      #cat("states_box:" ,states_box,"\n")
-      #cat("seer_box:"   ,seer_box,"\n")
-      #cat("hd_box:"     ,hd_box,"\n")
-      #cat("co_box:"     ,co_box,"\n")
-      #cat("tr_box:"     ,tr_box,"\n")
+      }
       
-      xlPlot <- range(xwl)
-      ylPlot <- range(ywl)
+      xlPlot    <- range(xwl)
+      ylPlot    <- range(ywl)
       
-      xlPlotct <- range(xwlct)
-      ylPlotct <- range(ywlct)
+      xyBox     <- matrix(c(xlPlot,ylPlot), ncol=2, byrow=TRUE)
+      colnames(xyBox)   <- c("min","max")
+      row.names(xyBox)  <- c("x","y")
+      MV$xyBox  <- xyBox
       
-      #cat("x-yPlot:",xlPlot,"  ",ylPlot,"\n")
-      #cat("clipTo:",rPM$clipTo,"  x-yPlot:",xlPlotct,"  ",ylPlotct,"\n")
-      
-      MV$xlPlot <- xlPlotct
-      MV$ylPlot <- ylPlotct
+      MV$xlPlot <- xlPlot
+      MV$ylPlot <- ylPlot
       
       #
       #   xx_proj_sel built
@@ -3703,7 +4624,7 @@ SM_box_sel <- function(rPM, MV) {
       #
 
       if (debug) {
-         cat("limits Z-3639 x:",xlPlot,"  y:",ylPlot,"\n")
+         cat("limits Z-4515 x:",xlPlot,"  y:",ylPlot,"\n")
       }
      
       ###
@@ -3720,7 +4641,7 @@ SM_box_sel <- function(rPM, MV) {
 
       AspRatio <- (xlPlot[2] - xlPlot[1]) / (ylPlot[2] - ylPlot[1])
 
-      #print (paste0("Plot Aspect Ratio is Z-3656 ",AspRatio))
+      #print (paste0("Plot Aspect Ratio is Z-4532 ",AspRatio))
 
       #windows(width = 7, height = 7 * (1/AspRatio), xpinch=72) # doesn't work yet.
       
@@ -3735,7 +4656,9 @@ SM_box_sel <- function(rPM, MV) {
       # end of data Location ID validation and row removal.
       #
       #####
-
+      
+      #cat("Exiting SM_box_sel-\n")
+      
       return(list(rPM=rPM, MV=MV))
       
    }
@@ -3760,6 +4683,8 @@ SM_box_sel <- function(rPM, MV) {
    #   For categMode = 1 & 2, the breakpoints are calculated and rounded based on brkPtDigits to provide better
    #   presentation in the legend.  One key to this process is to do the rounding and then take
    #   the rounded numbers and use for the breakpoints.
+   #
+   #   In all cases, NA data should be presented at "white" areas.
    #
    
 SM_Categ <- function(rPM) {
@@ -3883,8 +4808,8 @@ SM_Categ <- function(rPM) {
       #
       RateQuan <- function(brkpt, data) {
          #  generate the quantile list for the break points for Rate data.
-         wRange <- range(data)
-         wQ     <- quantile(data,probs=brkpt,na.rm=T)
+         wRange <- range(data) #,na.rm=TRUE)     # get range and remove any NA
+         wQ     <- quantile(data,probs=brkpt) #,na.rm=T)
          #wQ    <- c(wQ,Inf)    # may not be needed if last break point is the maximum.
          #wQ[1] <- -Inf         # change "0%" value to -Inf
          wQ[1]  <- wRange[1]    # set to minimum
@@ -4054,7 +4979,7 @@ SM_Categ <- function(rPM) {
       
       #  find NA values in data, notify caller and remove.
 
-      naList           <- is.na(mapData) # find NA values in list (not numeric).
+      naList           <- is.na(mapData) # find NA values in list (not numeric - no conversion).
     
       #  if any NAs tell caller and remove NA from data table.  They are acceptable.
       #    applicable to any set of data
@@ -4083,7 +5008,7 @@ SM_Categ <- function(rPM) {
          # categMode = 4 = verify and handle colors  (COLORS)
          #cat("Handling categMode=4\n")
 
-         mapData   <- str_trim(as.character(mapData))
+         mapData   <- stringr::str_trim(as.character(mapData))
          #cat("mapData:",mapData,"\n")
 
          iC        <- unique(mapData)
@@ -4154,7 +5079,7 @@ SM_Categ <- function(rPM) {
                #    parts.  These are removed before conversion to numeric.
                #
     
-               mapData          <- str_trim(mapData)       # trim leading and trailing spaces/blanks/tabs/etc.
+               mapData          <- stringr::str_trim(mapData)       # trim leading and trailing spaces/blanks/tabs/etc.
     
                #goodData        <- unlist(gregexpr(numberTestRegExpr,mapData))      # verify
                      #
@@ -4224,13 +5149,13 @@ SM_Categ <- function(rPM) {
       #             (only for categMode == 1 & 2, single value and breakpoint list)
       #
 
-      #cat("User provided categ parameter Z-4160 :\n")
+      #cat("User provided categ parameter Z-5047 :\n")
       #cat("   ",categ,"\n")
       ErrFnd    <- FALSE
-      CatRange  <- range(mapData)    # data or category numbers
+      CatRange  <- range(mapData) #,na.rm=T)    # data or category numbers
      
       if (debug) {
-         cat("Calculating 'categ' and generate values. Z-4166  categ:",categ,"\n")
+         cat("Calculating 'categ' and generate values. Z-5044  categ:",categ,"\n")
       }
       #cat("CatNumb:",CatNumb,"  categ:",categ,"\n")
       
@@ -4258,7 +5183,7 @@ SM_Categ <- function(rPM) {
          CatDiff    <- diff(CatRange) + 1
 
          if (all(as.integer(mapData) == mapData)) {  #  categories must be integers (compare an integer vector to the one provided.
-            #cat("Z-4173 Categories - CatRange:",CatRange,"  CatBase:",CatBase," diff:",diff(CatRange),"  catMaxNum:",catMaxNum,"\n")
+            #cat("Z-5072 Categories - CatRange:",CatRange,"  CatBase:",CatBase," diff:",diff(CatRange),"  catMaxNum:",catMaxNum,"\n")
             
             if (CatDiff > catMaxNum) {
                # error too many categories
@@ -4279,8 +5204,7 @@ SM_Categ <- function(rPM) {
       	 CatNumb         <- CatDiff
 
          # get colors based on CatNumb
-         CB_Rate_Mid     <- brewer.pal(CatNumb,rPM$palColors)
-         if (rPM$palColorsRev)  rev(CB_Rate_Mid)
+         CB_Rate_Mid     <- rev(RColorBrewer::brewer.pal(CatNumb,rPM$palColors)) 
          rPM$CB_Rate_Mid <- CB_Rate_Mid
 
          dataMapDF$cat   <- dataMapDF$data - (CatBase - 1)       # get to range 1 to "n"
@@ -4367,8 +5291,7 @@ SM_Categ <- function(rPM) {
               # AllRateCatR     <- RateLabel(AllRateQ, formatC(AllRateCutR,format="f")
               # 
               # # get colors based on CatNumb
-              # CB_Rate_Mid     <- brewer.pal(CatNumb,rPM$palColors) 
-              # if (rPM$palColorsRev) CB_Rate_Mid <- rev(CB_Rate_Mid)     
+              # CB_Rate_Mid     <- rev(RColorBrewer::brewer.pal(CatNumb,rPM$palColors)) 
               # rPM$CB_Rate_Mid <- CB_Rate_Mid
               #
               # RTC             <- cut(mapData,breaks=AllRateCutR,labels=FALSE,include.lowest=TRUE)
@@ -4421,7 +5344,7 @@ SM_Categ <- function(rPM) {
          #
 
          #  Adjust break point list and build labels
-         #cat("Data Min and Max Values Z-4355 :",CatRange,"\n")
+         #cat("Data Min and Max Values Z-5233 :",CatRange,"\n")
 
          #cat("\n")
          #cat("Rate Table Quantile Adjusted list used for cut break points :\n")
@@ -4466,15 +5389,14 @@ SM_Categ <- function(rPM) {
 
          AllRateCutR     <- RateRound(AllRateCut$after, Interv, RndDig)
 
-         #cat("  Rounded Rate Data Break Points List (AllRateCutR) Z-4400 :\n")
+         #cat("  Rounded Rate Data Break Points List (AllRateCutR) Z-5278 :\n")
          #cat("    ",AllRateCutR,"\n",sep="  ")
        
          # get labels for categories
          AllRateCatR     <- RateLabel(AllRateCutR,RndDig)
 
          # get colors based on CatNumb
-         CB_Rate_Mid     <- brewer.pal(CatNumb,rPM$palColors) 
-         if (rPM$palColorsRev)  CB_Rate_Mid <- rev(CB_Rate_Mid)
+         CB_Rate_Mid     <- rev(RColorBrewer::brewer.pal(CatNumb,rPM$palColors)) 
          rPM$CB_Rate_Mid <- CB_Rate_Mid
 
          RTC             <- cut(mapData,breaks=AllRateCutR,labels=FALSE,include.lowest=TRUE)
@@ -4493,7 +5415,7 @@ SM_Categ <- function(rPM) {
          # colors have been valided, but not counted.
      
          catColL         <- sort(unique(mapData))   # get list of unique colors sorted.  This is now our key.
-         #cat("Z-4392 sorted cat color list:",catColL,"\n")
+         #cat("Z-5304 sorted cat color list:",catColL,"\n")
 
          rPM$CB_Rate_Mid2 <- catColL                # update the ColorB_Rate_Mid to the color set provided by user.
         
@@ -4546,9 +5468,9 @@ SM_Categ <- function(rPM) {
          cat(c(1:length(CatCount)),"\n")
          cat(CatCount,"\n")
          cat("\n")
-         cat("dataMapDF$col variable- Z-4479 :\n",paste0(dataMapDF$col,collapse=", "),"\n")
+         cat("dataMapDF$col variable- Z-5357 :\n",paste0(dataMapDF$col,collapse=", "),"\n")
          print(str(dataMapDF))
-         print(dataMapDF[,c("ID","data","hData","col","cat","hCol","hDen","hRes")])     # categorize
+         print(dataMapDF[,c("ID","data","hData","h2Data","col","cat","hRes","h2Res")])     # categorize
       }
 
       rPM$dataMapDF  <- dataMapDF
@@ -4575,21 +5497,27 @@ SM_Categ <- function(rPM) {
    #  SM_Mapper - Creates the mapping and hatching of the maps
    #    Input required:  rPM - run parameters and variables
    #                     MV  - collection of boundary SPDFs and data level information.
+   #                     data_data$col - contains the aub-area olor.
    #
          
    SM_Mapper <- function(rPM, MV) {
         
         debug   <- rPM$debug
+        #cat("SM_Mapper Z-5401 startup.\n")
+        
+        dataMapDF <- rPM$dataMapDF       # get data and hatching controls
         
         #
         #  at initialization, make a few copies to help speed things along.
         #
         
-        ##### Mapping Part 1 #####
-        
         ####
         #
-        # Mapping is done using the data_proj_sel and data_data_sel data.frames.
+        #  Mapping Part 1   - Setup defaults
+        #
+        #
+        # Mapping is done using the data_proj_sel and data_data_sel data.frames
+        #    set by SM_box_sel.
         #
         #    All of the data areas and colors are contained in the data_data_sel
         #    Other spstial data frame are used for boundaries at 
@@ -4601,231 +5529,289 @@ SM_Categ <- function(rPM) {
         #
         #  Data Mapping - data areas and overlays
         #
-        #  Area borders line weight must increase as you go up.
+        #  Area borders must increase as you go up.
         #
         #                          Type of data
-        #                          tracts   county  H.Dist  seer   state 
-        #    Data Level          = 0.5      0.5      0.5     0.75   1.0   
-        #    tract Overlay       = NA        NA      NA      NA     NA   
-        #    County Overlay      = 0.75      NA      NA      NA     NA   
-        #    Health Dist Overlay = 0.75     0.75     NA      NA     NA
-        #    Seer Overlay        = 0.85     0.85     0.85    NA     NA   
-        #    State Overlay       = 1.0      1.0      1.0     1.0    1.0 
+        #                          tracts   county   HSA     seer   state 
+        #    Data Level          = 0.1      0.2      0.25    0.3    0.5   
+        #    tract Overlay       = NA       NA       NA      NA     NA   
+        #    County Overlay      = 0.2      NA       NA      NA     NA   
+        #    Health SA   Overlay = 0.3      0.75     NA      NA     NA
+        #    Seer Overlay        = 0.1      0.1      0.1     NA     NA   
+        #    State Overlay       = 0.2      0.2      0.2     0.75   NA  
         #
-        #    idMode    1=State, 2=County, 3=tract, 4=Seer, 5=Health Districts (future)
+        #    idMode    1=State, 2=County, 3=tract, 4=Seer, 5=Health Service Area 6=GROUPs feature
         #
    
         #
         # Plot Data Level for Areas  (State or County or Census Tract or Seer)  (Wrk_proj_df)
         #
    
-        dataLwd    <- 0.25     # always the same
-        
-        tractLwd   <- 0.25
-        countyLwd  <- 0.5
-        seerLwd    <- 0.75
-        stateLwd   <- 1.0
-        regionLwd  <- 1.5
+        # default mapping variables.
    
-        # default colors.
+   
+        # line sizes based on the boundary level
+        
+        dataLwd    <- 0.75     # always the same
+        
+        # boundary line weight if not data level.
+        tractLwd   <- 0.75
+        countyLwd  <- 1.0
+        hsaLwd     <- 1.33
+        seerLwd    <- 1.66
+        stateLwd   <- 2.0
+        regionLwd  <- 2.0
+   
+        # default colors for boundaries - set in SM_GlobInit. 
         data_BCol        <- rPM$ColorB_Data
         Tract_BCol       <- rPM$ColorB_O_Tract
         County_BCol      <- rPM$ColorB_O_County
-        HDist_BCol       <- rPM$ColorB_O_HDist
+        HSA_BCol         <- rPM$ColorB_O_Hsa
         Seer_BCol        <- rPM$ColorB_O_Seer
         State_BCol       <- rPM$ColorB_O_State
         Region_BCol      <- rPM$ColorB_O_Region
   
-        ##  make local some parameters
+        ##  make local some parameters from collected projections
    
-        data_proj        <- MV$data_proj_sel
-        data_data        <- MV$data_data_sel
+        wData_proj       <- MV$data_proj_sel      # sub-areas to map based on Data and Boundary Options
+        wData_data       <- MV$data_data_sel
         dataMapDF        <- rPM$dataMapDF
    
-        vDataBCol        <- rPM$dataBCol
-        vDataBCol_caller <- rPM$dataBCol_caller
-        vidMode          <- rPM$idMode
+        wDataBCol        <- rPM$dataBCol          # data boundary color.
+        wDataBCol_caller <- rPM$dataBCol_caller
+   
+        wIdMode          <- rPM$idMode
+        
+        wDataID          <- row.names(wData_proj)
+        
+        #cat("size wData_proj : ",length(wData_proj),"\n")
+        #cat("size dataMapDF  : ",dim(dataMapDF),"\n")
+        
    
         #cat("loading x and y limits\n")
-           
+        
+        #   x and y limits for all plots
         vxLim            <- MV$xlPlot
         vyLim            <- MV$ylPlot
-   
+   	
         if (debug) {
-           cat("Main plot - Z-4585 - Length data_proj_sel:", length(data_proj),"  length cols:",length(dataMapDF$col),"\n")
-           print("data_data:")
-           print(data_data)
-        
+           cat("Main plot - Z-5494 - Length wData_proj:", length(wData_proj),"  length cols:",length(dataMapDF$col),"\n")
+           print("wData_data:")
+           #print(wData_data)
+           #  Boundary Plot Flags (xxGO) and xxxPList  keys to plot
            cat("rgGO",MV$rgGO," regionPList:",MV$regionPList,"\n")
            cat("stGO",MV$stGO,"  statePList:",MV$statePList, "\n")
            cat("saGO",MV$saGO,"   seerPList:",MV$seerPList,  "\n")
+           cat("hsGO",MV$hsGO,"    hsaPList:",MV$hsaPList,   "\n")
            cat("coGO",MV$coGO," countyPList:",MV$countyPList,"\n")
            cat("trGO",MV$trGO,"  tractPList:",MV$tractPList, "\n")
        
-           cat("Class of data_proj    :",class(MV$data_proj),   "\n")
-           cat("Class of regions_proj :",class(MV$rg_proj_sel), "\n")
-           cat("Class of states_proj  :",class(MV$st_proj_sel), "\n")
-           cat("Class of SeerRegs_proj:",class(MV$sa_proj_sel), "\n")
-           cat("Class of co_proj      :",class(MV$co_proj_sel), "\n")
-           cat("Class of tr_proj      :",class(MV$tr_proj_sel), "\n")
+           #cat("Class of data_proj    :",class(MV$data_proj),   "\n")
+           #cat("Class of wData_proj   :",class(wData_proj),     "\n")
+           #cat("Class of rg_proj_sel  :",class(MV$rg_proj_sel), "\n")
+           #cat("Class of st_proj_sel  :",class(MV$st_proj_sel), "\n")
+           #cat("Class of sa_proj_sel  :",class(MV$sa_proj_sel), "\n")
+           #cat("Class of hs_proj_sel  :",class(MV$hs_proj_sel), "\n")
+           #cat("Class of co_proj_sel  :",class(MV$co_proj_sel), "\n")
+           #cat("Class of tr_proj_sel  :",class(MV$tr_proj_sel), "\n")
         }
    
+        #   
+        #  Step 2 = data mapping   
         #
         #  The basic map and data areas.  
         #
-        #     1) data areas - colored
-        #     2) hatching of data areas (if requested)
-        #     3) boundaries
-        #       tract    if(tract data)
-        #       county   if(county or tract data)
-        #       ha  (future)
-        #       seer
-        #       state
-        #       region
+        #     1) Setup variables
+        #     2) data areas - colored - no borders
+        #     3) hatching of data areas (if requested) (two hatches)
+        #     4) boundaries
+        #         tract    if(tract data)
+        #        county   if(county or tract data)
+        #        hsa
+        #        seer
+        #        state
+        #        region
+        #
         
         #
         #  Start Mapping.
         #
-        par(mar=rPM$Mar)   # adjust margins to get more mapping space.
+        par(mar=c(3.1, 1.1, 3.1, 1.1))   # adjust margins to get more mapping space.
         #         B    L    T    R       #  Don't need space for Axis labels and ticks
          
-        plot.new()   # create new plot.
-        #cat("plot.new()\n")
+        plot.new()                       # create new plot.
         #cat("xlim:",vxLim,"  ylim:",vyLim,"\n")
-        #cat("aspect:",diff(vxLim)/diff(vyLim),"\n")
-        #cat("plot.new -- par(usr):",par("usr"),"  par(plt):",par("plt"),"\n")
            
-        #    could use this value with inset=c(0,x),xpd=FALSE
-        
         #
-        #    plot DATA area and colors layer - no boundaries.
+        #    plot DATA area and colors layer - NO boundaries.
         #       Boundaries added later due to hatching.
+        #
         #cat("Mapping colors layer. No border color.\n")
-   
+        #cat("wData_proj\n")
+        #print(str(wData_proj))
+        #cat("wData_data\n")
+        #print(wData_data)
+        
         par(new=T)
-        plot(data_proj,
-              col    = data_data$col,   # color of areas
+        plot(wData_proj,
+              col    = wData_data$col,   # color of areas
               den    = NA,
               border = NA,
-        #     border = rPM$dataBCol,           # color or area borders
+        #     border = rPM$dataBCol,           # color or area borders  (no borders)
         #     lwd    = dataLwd,                # was 0.01  line weight
         #     lty    = 1,                      # 0 to 6  1=solid
               xlim   = vxLim, ylim   = vyLim
             )
-        #userp <- par("usr")
-        #cat("after plot -- par(usr) aspect:",diff(userp[1:2])/diff(userp[3:4]),"\n")
-      
-        ##### Hatching Overlay #####
+   
+        IDList <- dataMapDF$ID      # get list of Loc ID from the map data DF.
+        
+        ##### Hatching Overlay #####  Hatch # 1 #####
    
         if (rPM$HatchFlag) {
-   
            #
-           # Plot Hatch for data if requested.
+           # Plot Hatch#1 for data
            #
-           #cat("HatchFlag Z-4651 :",rPM$HatchFlag,"\n")
-   
-           Hk <- rPM$hatch
-   
-           # Plot hatched overlay based on P_Value <= 0.05 (hatched)
+           Hk         <- rPM$hatch
+           #  Get everything needed into Hk for hatch # 1
+           Hk$ID      <- dataMapDF$ID
+           Hk$hRes    <- dataMapDF$hRes     # T/F
+           HIDList    <- Hk$ID[Hk$hRes]            # get list of areas to be hatched
+       
+           # Plot hatched overlay based on P_Value <= 0.05 (hatched)(defaults)
    
            if (debug) {
-              cat("Hatching requested Z-4651 -  ", rPM$ndfName, "\n")
+              cat("Hatching #1 requested Z-5565 -  ", rPM$ndfName, "\n")
               cat("hatch:\n")
               print(str(Hk))
-              cat("dim(data_data)\n")
-              print(dim(data_data))
-              cat("str(data_data)\n")
-              print(str(data_data))
            }
     
-           #              H_col is the color used for
-           #              the hatching - default = grey (0.66) a medium grey
-           #              density control the hatch.  If Den=NA (not there) or 0 for no hatching.
-           #              when hatching lwd effect all line drawing (borders and hatch).
-           #              to kill the border overlay by the hatching, border=NA is needed.
+           #    hCol is the color used for the hatching - default = grey (0.66) a medium grey.
+           #    hDen is density control the hatch.  If hDen=NA or 0 for no hatching.
+           #    hLwd is line weight for the hatching (hatch and borders).
+           #    there for hatching does not draw boundaries, border=NA is needed.
            
            # get list of sub-areas to be hatched - nothing else.  ($hRes==TRUE)
-           data_proj2 <- data_proj[data_data$hRes,]
-           data_data2 <- data_data[data_data$hRes,]
-           
-           
-           #cat("map hatching - overlay. color:",Hk$hCol,"\n")
-           #print(str(Hk))
+           xm         <- match(wDataID,HIDList)   # find polygons
+           #print(xm)
+           xmDo       <- !is.na(xm)           # xmDo = polygons to hatch.
+           hData_proj <- wData_proj[xmDo,]    # list of sub projection areas to hatch
            
            par(new=TRUE)
-           plot(data_proj2,                             # area sp
-                    density = data_data2$hDen,          # Density - lines per inche.
+           plot(hData_proj,                             # area sp
+                    density = Hk$hDen,                  # Density - lines per inche.
                     col     = Hk$hCol,                  # hatch color when den!=NA,
-                    lty     = Hk$hLty,                  # 0-6 3=dots line type for border and hatching lines (both - really)
+                    lty     = 1,                        # Solid
                     border  = NA,                       # don't do borders.
                     lwd     = Hk$hLwd,                  # was 0.01     (effects border and hatching.)
                     angle   = Hk$hAngle,                # angle of hatch lines.
-                    add     = TRUE,
                     xlim    = vxLim, ylim    = vyLim
                  )
         }
-   
-        ##### End of Hatching Overlay #####
- 
-        # End of data area color and hatching ###
-        #
-        ###
- 
-        ###
-        #
-        #
-        # Area Boundaries #####
-        #
+        ##### End of Hatching Overlay # 1
         
+        ##### Hatching Overlay #####  Hatch # 2 #####
+   
+        if (rPM$Hatch2Flag) {
+           #
+           # Plot Hatch #2 for data
+           #
+           Hk       <- rPM$hatch2
+           #  Get everything needed into Hk
+           Hk$ID    <- dataMapDF$ID
+           Hk$hRes  <- dataMapDF$h2Res
+           HIDList    <- Hk$ID[Hk$hRes]            # get list of areas to be hatched
+       
+           # Plot hatched overlay based on P_Value <= 0.05 (hatched)(defaults)
+   
+           if (debug) {
+              cat("Hatching requested Z-5609 -  ", rPM$ndfName, "\n")
+              cat("hatch2:\n")
+              print(str(Hk))
+           }
+           
+           #    hCol is the color used for the hatching - default = grey (0.66) a medium grey.
+           #    hDen is density control the hatch.  If hDen=NA or 0 for no hatching.
+           #    hLwd is line weight for the hatching (hatch and borders).
+           #    there for hatching does not draw boundaries, border=NA is needed.
+            
+           # get list of sub-areas to be hatched - nothing else.  ($hRes==TRUE)
+           xm         <- match(wDataID,HIDList)
+           #print(xm)
+           xmDo       <- !is.na(xm)
+           hData_proj <- wData_proj[xmDo,]    # list of areas to hatch
+           #hData_data <- wData_data[xmDo,]
+           
+           par(new=TRUE)
+           plot(hData_proj,                             # area sp
+                    density = Hk$hDen,                  # Density - lines per inche.
+                    col     = Hk$hCol,                  # hatch color when den!=NA,
+                    lty     = 1,                        # Solid
+                    border  = NA,                       # don't do borders.
+                    lwd     = Hk$hLwd,                  # was 0.01     (effects border and hatching.)
+                    angle   = Hk$hAngle,                # angle of hatch lines.
+                    xlim    = vxLim, ylim    = vyLim
+                 )
+        }
+        ##### End of Hatching Overlay # 2 #####
+ 
+        ##### Area Boundaries #####
         #
         #  Now do overlaying of higher level boundaries (County and State) as needed.
         #
+        ##### Mapping Part 2 #####
+        #
+        #cat("Layers - trGO:",MV$trGO,"  coGO:",MV$coGO,"  hsGO",MV$hsGO,"  saGO:",MV$saGO,"  stGO:",MV$stGO,"  rgGO:",MV$rgGO,"\n")
         
-        ##### Mapping Part 2 - boundaries #####
-        
-        #cat("Layers - trGO:",MV$trGO,"  coGO:",MV$coGO,"  saGO:",MV$saGO,"  stGO:",MV$stGO,"  rgGO:",MV$rgGO,"\n")
-           
         #
         #  Plot tract boundary overlay  (if present)
         #
-   
         if (MV$trGO) {
-           #print(str(MV$tr_proj_sel@data))
-           if (vidMode == 3) {
-              if (vDataBCol_caller)  Tract_BCol <- vDataBCol
-              tractLwd <- dataLwd
+           if (wIdMode == 3) {
+              if (wDataBCol_caller)  Tract_BCol <- wDataBCol
+              tractLwd <- dataLwd   # set line weight  (if data=tract use dataLwd not overlay weight.
            }
-           
-           #cat("mapping census tract boundary layer. color:",Tract_BCol,"  lwd:",tractLwd,"\n")
               
-           par(new=T)
+           par(new=TRUE)
            plot(MV$tr_proj_sel,
                  border = Tract_BCol,
                  col    = NA,
                  lwd    = tractLwd,
-                 add    = TRUE,
                  xlim   = vxLim, ylim   = vyLim
-                 )
+               )
         }
    
         #
         #  Plot county boundary overlay (if present)
         #
-   
         if (MV$coGO) {
-           #print(str(MV$co_proj_sel@data))
-           if (vidMode == 2) {
-              if (vDataBCol_caller)  County_BCol <- vDataBCol
+           if (wIdMode == 2) {
+              if (wDataBCol_caller)  County_BCol <- wDataBCol
               countyLwd  <- dataLwd
            }
-           #cat("mapping county boundary layer. color:",County_BCol,"  lwd:",countyLwd,"\n")
            
-           par(new=T)
+           par(new=TRUE)
            plot(MV$co_proj_sel,
                  border = County_BCol,
                  col    = NA,
                  lwd    = countyLwd,
-                 add    = TRUE,
+                 xlim   = vxLim, ylim   = vyLim
+               )
+        }
+   
+        #
+        #  Plot hsa boundary overlay (if present)
+        #
+        if (MV$hsGO) {
+           if (wIdMode == 5) {
+              if (wDataBCol_caller)  HSA_BCol <- wDataBCol
+              hsaLwd  <- dataLwd
+           }
+           
+           par(new=TRUE)
+           plot(MV$hs_proj_sel,
+                 border = HSA_BCol,
+                 col    = NA,
+                 lwd    = hsaLwd,
                  xlim   = vxLim, ylim   = vyLim
                )
         }
@@ -4833,21 +5819,17 @@ SM_Categ <- function(rPM) {
         #
         # plot Seer Area Overlay
         #
-   
         if (MV$saGO) {
-           #print(str(MV$sa_proj_sel@data))
-           if (vidMode == 4) {
-              if (vDataBCol_caller)  Seer_BCol <- vDataBCol
+           if (wIdMode == 4) {
+              if (wDataBCol_caller)  Seer_BCol <- wDataBCol
               seerLwd  <- dataLwd
            }
-           #cat("mapping registry boundary layer. color:",Seer_BCol,"  lwd:",seerLwd,"\n")
            
-           par(new=T)
+           par(new=TRUE)
            plot(MV$sa_proj_sel,
                  border = Seer_BCol,
                  col    = NA,
                  lwd    = seerLwd,
-                 add    = TRUE,
                  xlim   = vxLim, ylim   = vyLim
                )
         }
@@ -4855,20 +5837,17 @@ SM_Categ <- function(rPM) {
         #
         # plot State Area Overlay
         #
-   
         if (MV$stGO) {
-           if (vidMode == 1) {
-              if (vDataBCol_caller)  State_BCol <- vDataBCol
+           if (wIdMode == 1) {
+              if (wDataBCol_caller)  State_BCol <- wDataBCol
               stateLwd  <- dataLwd
            }
-           #cat("mapping state boundary layer. color:",State_BCol,"  lwd:",stateLwd,"\n")
            
-           par(new=T)
+           par(new=TRUE)
            plot(MV$st_proj_sel,
                  border = State_BCol,
                  col    = NA,
                  lwd    = stateLwd,
-                 add    = TRUE,
                  xlim   = vxLim, ylim   = vyLim
                )
         }
@@ -4876,25 +5855,28 @@ SM_Categ <- function(rPM) {
         #
         # plot Regions Area Overlay
         #
-   
         if (MV$rgGO) {
-           #cat("mapping region boundary layer. color:",Region_BCol,"  lwd:",regionLwd,"\n")
            
-           par(new=T)
+           par(new=TRUE)
            plot(MV$rg_proj_sel,
                  border = Region_BCol,
                  col    = NA,
                  lwd    = regionLwd,
-                 add    = TRUE,
                  xlim   = vxLim, ylim   = vyLim
-              )
+               )
         }
    
         ##### category map - done.
-        #cat("about to exit SM_Mapper\n")
+        xyBox <- data.frame(min=numeric(),max=numeric())
+        xyBox <- rbind(xyBox,vxLim)
+        xyBox <- rbind(xyBox,vyLim)
+        colnames(xyBox) <- c("min","max")
+        row.names(xyBox) <- c("x","y")
+        
+        #cat("Exiting SM_Mapper - bbox:\n")
       
         ##### End of Mapping Part 2 #####
-        invisible(list(xlim=vxLim,ylim=vyLim))   
+        invisible(xyBox)   # return plotting box.
    }
    #
    #  End of SM_Mapper
@@ -4935,7 +5917,7 @@ SM_Categ <- function(rPM) {
       tempPch <- Lg$lPch 
    
       if (debug) {
-         cat("Mapping legend Z-4856 \n","  tempCex :",tempCex,"  tempPch:",tempPch,"  CatNumb:",rPM$CatNumb,"\n")
+         cat("Mapping legend Z-5809 \n","  tempCex :",tempCex,"  tempPch:",tempPch,"  CatNumb:",rPM$CatNumb,"\n")
          print(str(Lg))
          cat("CB_Rate_Mid:",rPM$CB_Rate_Mid,"\n")
       }
@@ -4996,30 +5978,35 @@ SeerMapper2000 <- function(...) {
 
 SeerMapper2010 <- function(...) {
      SeerMapper(censusYear="2010",...)
+     
 }
 
-SeerMapper.Version <- function() {return("SeerMapper V1.2.0 2017-05-26 12:00n")}
+SeerMapper.Version <- function() {return("SeerMapper V1.2.2 2019-07-31 03:04pm")}
 
 SeerMapper <- function(ndf,
               censusYear     = NULL,       # default: "2000"  (hidden)
+              proj4          = NULL,       # default: "" (or NULL)   # added 18/03/15
               idCol          = NULL,       # default: "FIPS"
               dataCol        = NULL,       # default: "Rate"
               categ          = NULL,       # default: "5"  categories.
-              mTitle         = NULL,                               # chgd 17/01/08
-              mTitle.cex     = NULL,       # default: 1 multiplier # chgd 17/01/16
-              us48Only       = NULL,       # default: FALSE        # chgd 17/01/08
+              mTitle         = NULL,                             # changed 17/01/08
+              mTitle.cex     = NULL,       # default: 1 multiplier # changed 17/01/16
+              us48Only       = NULL,       # default: FALSE      # changed 17/01/08
               includePR      = NULL,       # default: FALSE
               regionB        = NULL,       # default: "NONE"
               stateB         = NULL,       # default: depends: NONE or DATA
               seerB          = NULL,       # default: depends: NONE or DATA
+              hsaB           = NULL,       # default: depends: NONE or DATA  # added 18/03/15
               countyB        = NULL,       # default: depends: NONE or DATA
               tractB         = NULL,       # default: depenes: NONE or DATA
-              dataBCol       = NULL,       # default: default color for boundary level # added 17/01/15
+              dataBCol       = NULL,       # default: default color for boundary level   # added 17/01/15
+              fillTo         = NULL,       # default: "SEER"
               clipTo         = NULL,       # default: "NONE"
               hatch          = NULL,       # default: FALSE      
-              mLegend        = NULL,       # build legend -> see options for defaults  # changed 17/01/08
+              hatch2         = NULL,       # default: NULL       # added 18/03/15
+              mLegend        = NULL,       # build legend -> see options for defaults    # changed 17/01/08
               brkPtDigits    = NULL,       # default: 2
-              palColors      = NULL,       # default: "-RdYlBu"  - RColorBrewer palette # New 5/16
+              palColors      = NULL,       # default: "RdYlBu"  - RColorBrewer palette   # New 5/16
               debug          = NULL        # default: FALSE
               )
       {
@@ -5032,8 +6019,6 @@ SeerMapper <- function(ndf,
       ###
       #
       # CheckColnn - Check Column Name or Number function to verify a column name or number.
-      #
-      #    used by : idCol, dataCol and hatch:dataCol
       #
 
       CheckColnn <- function(varName, msgNums, varValue, stDat, stDatName) {
@@ -5063,7 +6048,7 @@ SeerMapper <- function(ndf,
             }
          } else {
             if (is.character(varValue)) {
-               varValue  <- str_trim(varValue)
+               varValue  <- stringr::str_trim(varValue)
                if (nchar(varValue) < 1) {
                   ErrFnd <- TRUE
                   xmsg   <- paste0("***",msgNums[4]," ",varName," parameter is a character string, but is empty.")
@@ -5140,18 +6125,21 @@ SeerMapper <- function(ndf,
             #
             #       seerB  - Validate for "NONE", "DATA", "STATE", "REGION", "ALL"
             #
-            #       hdistB - Validate for "NONE", "DATA", "SEER", "STATE"
+            #       hsaB   - Validate for "NONE", "DATA", "SEER", "STATE"
             #
-            #       countyB- Validate for "NONE", "DATA", "HDIST", "SEER", "STATE"
+            #       countyB- Validate for "NONE", "DATA", "HSA", "SEER", "STATE"
             #
-            #       tractB - Validate for "NONE", "DATA", "COUNTY", "HDIST", "SEER", "STATE"
+            #       tractB - Validate for "NONE", "DATA", "COUNTY", "HSA", "SEER", "STATE"
             #
-            #       clipTo - Validate for "NONE", "DATA", "COUNTY", "HDIST", "SEER", "STATE", or "FALSE", "TRUE"  (def: FALSE/NONE)
+            #       fillTo - Validate for "NONE", "COUNTY", "SEER", "STATE"
+            #
+            #       clipTo - Validate for "NONE", "DATA", "HSA", "SEER", "STATE", "REGION", or "FALSE", "TRUE"  (def: FALSE/NONE)
+            #                 Basic syntax.
             #
             #       dataBCol  a) check for valid color
             #
             #       hatching - all parameter, no content on H:dataCol
-            #       hatching- a) angle, lwd, lty, den, col, ops, <value>, rest of parameters.
+            #       hatch     a) angle, lwd, den, col, ops, <value>, rest of parameters.
             #
             #       mLegend   a) categories and colors used for categorization, need categ, 
             #                    data categorization
@@ -5165,6 +6153,7 @@ SeerMapper <- function(ndf,
             #                 b) can get column names
             #                 c) can get row.names
             #
+            #
             #   Part 2
             #   1st Level dependent parameters  (have rPM and cVL
             #
@@ -5172,20 +6161,26 @@ SeerMapper <- function(ndf,
             # 
             #       idCol   - a) value (column name/number)
             #                 b) Validate content and set idMode
+            #
             #       dataCol   a) value (column name/number)
             #                 b) validate Contect
+            #
             #                    - Rate/Data    # categMode = 1 or 2
             #                    - Category     # categMode = 3
             #                    - Color        # categMode = 4
             #
             #       dataBCol  a) reset - color - depended on idMode
             #
-            #       hatching- a) hDataCol - name/number verification
+            #       clipTo    a) adjust based on data level 
             #
-            #   Wrk_Data  <-  ID, stID, stcoID, saID, Data, Cat, Col, hData, Col, Den (row.names <- ID)
+            #       hatching- a) hatch:hDataCol - name/number verification
+            #                 b) hatch2:hDataCol
+            #                 c) Store data for hatching in dataMapDF$hData and $h2Data
+            #
+            #   Wrk_Data(dataMapDF)  <-  ID, stID, stcoID, saID, Data, Cat, Col, hData, Col, Den (row.names <- ID)
             #
             #   update rPM
-            #   build  rRM$Wrk_Data  (matchs ndf order)
+            #   build  rRM$Wrk_Data  (matchs ndf order)??  dataMapDF
             #
             #
             #  Stage 1 Done - Parameters have pass check # 1   - cVL is done (initial pass)
@@ -5196,8 +6191,7 @@ SeerMapper <- function(ndf,
             #
             #       Input:   rPM
             #         idCol
-            #         stateB, seerB, hdistB, countyB, tractB, regionB, 
-            #         clipTo,
+            #         stateB, seerB, hdistB, countyB, tractB, regionB, fillTo
             #         RegionListAll, StateListAll, SeerListAll 
             #
             #       idCol   - b) contents - defines the geographic space we are working with.
@@ -5217,10 +6211,8 @@ SeerMapper <- function(ndf,
             #
             #       ## load county and tract (as needed) -> boundaries needed loaded.
             #
-            #       regionB, stateB, seerB, hdistB, countyB, tractB - boundary controls 
-            #           - needs to know the geographic space to know how to set their defaults. 
-            #       clipTo - boundary clipping.
-            #              
+            #       regionB, stateB, seerB, hdistB, countyB, tractB, fillTo - boundary controls - needs to know the 
+            #                 geographic space to know how to set their defaults.
             #                 a) relates to which geographic areas are active.  (US, all/state, all/seer, and data)
             #                 b) effects the drawing levels within up to ALL, But not lower then DATA.
             #
@@ -5310,14 +6302,20 @@ SeerMapper <- function(ndf,
       #   Main Code Body
       #
       ##  entry point for inline code debug.
+      #cat("Call SM_GlobInit\n")
       
-      rPM <- SM_GlobInit()
+      rPM            <- SM_GlobInit()
+    
       rPM$debugFlag  <- FALSE
+      
+      #cat("Return from SM_GlobInit\n")
       
       #####
       #
       #    execute:
-      #     rPM$debugFlag <- TRUE # if running testing line code and not the package at this point.
+           #rPM$debugFlag <- TRUE # if running testing line code and not the package at this point.
+           rPM$debugFlag <- FALSE # run package ##FZ.
+
       #
       #####
 
@@ -5368,18 +6366,21 @@ SeerMapper <- function(ndf,
       if (debugFlag) {
          callVL       <- list(ndf=I(ndf), 
                               censusYear = censusYear_def,
+                              proj4      = NULL,
                               idCol      = "FIPS",
                               dataCol    = "Rate",
                               categ      = 5,
                               hatch      = FALSE, 
+                              hatch2     = NULL,
                               mLegend    = NULL,
                               regionB    = "NONE",
                               stateB     = "DATA",
                               seerB      = "DATA",
-                              hdistB     = "NONE",
+                              hsaB       = "NONE",
                               countyB    = "NONE", 
                               tractB     = "NONE", 
                               regions    = FALSE,
+                              fillTo     = "NONE", 
                               clipTo     = "NONE",
                               dataBCol   = NULL,
                               us48Only   = FALSE, 
@@ -5393,9 +6394,9 @@ SeerMapper <- function(ndf,
           #callVarList <- as.list(callVL)     # convert data.frame to list.
           callVarList  <- callVL              # convert data.frame to list.
       }
-      ndfName      <- callVarList$ndfName                   # get variable name of data.frame with the data.
+      ndfName      <- callVarList$ndfName     # get variable name of data.frame with the data.
 
-      #cat("Call arguments Z-5314 - ndf:", ndfName, "\n")
+      #cat("Call arguments Z-6286 - ndf:", ndfName, "\n")
       
       callVarList$ndfName  <- ndfName
       rPM$ndfName          <- ndfName
@@ -5428,12 +6429,13 @@ SeerMapper <- function(ndf,
          }
       }
       callVarList$debug <- debug    # add to cVL list.
+      rPM$debug         <- debug
       #
       ####
       
       ####
       #
-      #  Step 2 - censusYear Parameter  (010-014)
+      #  Step 2.1 - censusYear Parameter  (010-012)
       #
       #  Which census year are we mapping?
       #
@@ -5447,7 +6449,7 @@ SeerMapper <- function(ndf,
             # use default
             censusYear <- censusYear_def
          }
-         censusYear    <- str_trim(toupper(censusYear))
+         censusYear    <- stringr::str_trim(toupper(censusYear))
          if (!(censusYear == "2000" || censusYear == "2010")) {
             # invalid value in censusYear
             ErrFnd     <- TRUE
@@ -5456,17 +6458,74 @@ SeerMapper <- function(ndf,
             censusYear <- censusYear_def
          }
       }
-      cYear                  <- str_sub(censusYear,-2,-1)  # get last two digits
+      cYear                  <- stringr::str_sub(censusYear,-2,-1)  # get last two digits
 
       callVarList$censusYear <- censusYear
       rPM$censusYear         <- censusYear
       rPM$cYear              <- cYear
-      cY                     <- ""
+      cY                     <- ""                   # test for file names.
       if (censusYear != "2000") { cY <- censusYear }
       rPM$cY                 <- cY
       
       if (debug) {
-         cat("censusYear Z-5385 :",censusYear,"  cYear:",cYear,"  cY:",cY,"\n")
+         cat("censusYear Z-6358 :",censusYear,"  cYear:",cYear,"  cY:",cY,"\n")
+      }
+      #
+      ####
+    
+      ####
+      #
+      #  Step 2.2 - proj4 Parameter  (013-014)
+      #
+      proj4_def <- NULL
+      CRSproj4  <- NULL
+      #
+      #  Override the default map projection with the user's projection..
+      #  The projection string is provided in proj 4 format and must 
+      #  be convertable by CRS to a usable projection.  It must also be 
+      #  reversable back to the proj 4 string as a validation.
+      #
+      #  The transformation is done right before printing the maps.
+      #  The projection of the maps is returned to the SeerMapper caller.
+      #
+      if (is.null(proj4)) {
+         # no proj4 string specified.  Set default of NULL
+         proj4    <- proj4_def
+      } else {
+         # have proj 4 string parameter, check for proj4 string 
+         proj4    <- proj4[[1]][1]
+         if (is.na(proj4)) {
+            # use default
+            proj4 <- proj4_def
+         } else {
+            proj4 <- stringr::str_trim(proj4)
+         }
+      }
+      if (!is.null(proj4)) {
+      
+         res <- convertPROJ4(proj4)
+         
+         if (class(res) == "CRS") {
+            # got a conversion to CRS - looks good.
+            CRSproj4 <- res
+         } else {
+            # Error found and reported.
+            EffFnd = TRUE
+            CRSproj4 <- NULL
+            xmsg <- paste0("***909 Error on processing proj4 parameter.  No user specified projection will be done.")
+            warning(xmsg,call.=FALSE)
+         }
+     
+      }
+     
+      callVarList$proj4      <- proj4
+      rPM$proj4              <- proj4
+      callVarList$CRSproj4   <- CRSproj4
+      rPM$CRSproj4           <- CRSproj4
+      
+      if (debug) {
+         cat("proj 4  Z-6420 : proj4:",proj4,"\n")
+         if (!is.null(proj4)) print(CRSproj4)
       }
       #
       ####
@@ -5486,7 +6545,7 @@ SeerMapper <- function(ndf,
       CatNumb       <- 0     # not determined
       categ_def     <- 5
       ErrFnd        <- FALSE
-      #cat("User provided categ parameter Z-5405 :\n")
+      #cat("User provided categ parameter Z-6441 :\n")
       #cat("   ",categ,"\n",sep="  ")
 
       #
@@ -5543,7 +6602,7 @@ SeerMapper <- function(ndf,
                if (is.character(wCateg)) {
                   # of character - possibly number, word or series - not a big help.
                   
-                  wCateg <- str_trim(wCateg)   # convert to uppercase
+                  wCateg <- stringr::str_trim(wCateg)   # convert to uppercase
                   
                   if (nchar(wCateg)>0) {
                      # we have a string to work with.
@@ -5770,9 +6829,7 @@ SeerMapper <- function(ndf,
       #  Step 4 - palColors  and brkPt
       #
       palColors_def        <- "RdYlBu"
-      palColorsRev_def     <- TRUE
       brkPtDigits_def      <- 2
-      rPM$palColorsRev     <- FALSE
       
       if (categMode != 4) {
          # only checked if categMode is not 4.
@@ -5785,36 +6842,25 @@ SeerMapper <- function(ndf,
          # only check for this parameter and validate it if categ <> "COLORS".
          
          if ( ( is.null(palColors) || any(is.na(palColors)) || length(palColors)==0) ) {
-            palColors        <- palColors_def
-            if (palColorsRev_def)  palColors <- paste0("-",palColors)
+            palColors       <- palColors_def
             # set the default
          }
          #
-         
-         if (str_sub(palColors,1,1) == "-") {
-            # request for reversal of colors.
-            rPM$palColorsRev <- TRUE
-            palColors        <- str_sub(palColors,2)
-            #cat("palColors REVERSE :",palColors,"\n")
-         }
-         
          wPmatch          <- match(toupper(palColors),rPM$RCBrewerDF$Name)  # check for match ALL CAPS
       
          if (is.na(wPmatch)) {
             # no match
             xmsg          <- paste0("***015 The palColors parameter value of ",palColors,
                                 " is not valid in the RColorBrewer package. ",
-                                "The default of '-RdYlBu' will be used."
+                                "The default of 'RdYlBu' will be used."
                                 )
             warning(xmsg,call.=FALSE)
-            palColors        <- palColors_def
-            rPM$palColorsRev <- palColorsRev_def
+            palColors    <- palColors_def
          } else {
-            palColors        <- rPM$RCBrewerDF[wPmatch,"PName"]   # get name of palette
+            palColors     <- rPM$RCBrewerDF[wPmatch,"PName"]
          }
          #
          #####
-         #cat("palColors:",palColors,"  palColorsRev:",rPM$palColorsRev,"\n")
       
          #####
          #
@@ -5851,7 +6897,6 @@ SeerMapper <- function(ndf,
       } else {
          # if categMode = 4, ignore and set placeholders for these parameters (they should not be used.)
          palColors       <- palColors_def
-         rPM$palColorsRev<- palColorsRev_def
          brkPtDigits     <- brkPtDigits_def
       }
       
@@ -5860,7 +6905,6 @@ SeerMapper <- function(ndf,
     
       callVarList$brkPtDigits     <- brkPtDigits
       callVarList$palColors       <- palColors
-      callVarList$palColorsRev    <- rPM$palColorsRev
       callVarList$palColorsMaxNum <- palColorsMaxNum
 
       rPM$palColors               <- palColors
@@ -5906,7 +6950,8 @@ SeerMapper <- function(ndf,
          #  remove -Inf or Inf if in the list  (list has been sorted)
          if (wCateg[lCat] == Inf)  wCateg <- wCateg[-lCat]
          if (wCateg[1] == -Inf)    wCateg <- wCateg[-1]
-         # end Inf values will be added backk later.
+         # end Inf values will be added back later.
+         cat("wCateg:",wCateg,"\n")
          
          lCat  <- length(wCateg)
          if (lCat < 3 ) {
@@ -6046,7 +7091,7 @@ SeerMapper <- function(ndf,
       #    xxxxB = "NONE"   -> (all) do not draw boundary
       #    xxxxB = "DATA"   -> (all) draw boundary if it or any sublayers contains data
       #    xxxxB = "COUNTY" -> (tract) draw all xxxx boundaries in county if county contains data.
-      #    xxxxB = "HDIST"  -  (county/tract) draw all xxxx boundaries in health district containing data.
+      #    xxxxB = "HSA"    -> (county/tract) draw all xxxx boundaries in health service area containing data.
       #    xxxxB = "SEER"   -> (all) draw all xxxx boundaries in Seer Reg if Reg contains data.
       #    xxxxB = "STATE"  -> (all) draw all xxxx boundaries in State if State contains data.
       #    stateB or seerB = "REGION"  - draw boundaries up to regional boundary
@@ -6054,6 +7099,16 @@ SeerMapper <- function(ndf,
       #
       #    Contains data is defined as the area or any sub area has data associated with it
       #    in the user provided data.frame.
+      #
+      #  Index Values:
+      #    1 = NONE
+      #    2 = DATA
+      #    3 = COUNTY
+      #    4 = STATE
+      #    5 = REGION
+      #    7 = HSA
+      #    8 = RESERVED   
+      #    9 = ALL
       #
       #####
  
@@ -6063,7 +7118,11 @@ SeerMapper <- function(ndf,
       #  Used with all types of data (state, seer, county, tract)
       #  Default is "NONE".
       #
-      #  Validates and then reflects on idCol.
+      #  Validates and then reflects on idCol.   
+      #     
+      #  COMMON code thoughts - parameters xxxxxB, xxxxxB_def, xxxxxB_caller, xxxxxB_lwd, GoodValues, ErrorNum, ErrFnd 
+      #       return:  xxxxxB, xxxxxxB_caller, xxxxxB_lwd, ErrFnd
+      #  errornumber would have to be a pair - one for xxxxB value wrong and one for xxxxB_lwd out of range.
       #
       regionB_def     <- "NONE"
       regionB_caller  <- FALSE
@@ -6073,7 +7132,7 @@ SeerMapper <- function(ndf,
          regionB     <- regionB_def
   
       } else {
-         regionB    <- str_trim(toupper(regionB[[1]]))
+         regionB    <- stringr::str_trim(toupper(regionB[[1]]))
          if (regionB == "") regionB = "NONE"
   
          SMatch    <- match(regionB,c("NONE","DATA", NA, NA, NA, NA, NA, NA, "ALL"))
@@ -6111,7 +7170,7 @@ SeerMapper <- function(ndf,
          stateB     <- stateB_def
   
       } else {
-         stateB    <- str_trim(toupper(stateB[[1]]))
+         stateB    <- stringr::str_trim(toupper(stateB[[1]]))
          if (stateB == "") stateB = "NONE"
   
          SMatch    <- match(stateB,c("NONE","DATA", NA, NA, NA, "REGION", NA, NA, "ALL"))
@@ -6134,7 +7193,7 @@ SeerMapper <- function(ndf,
       #
       ###
       #
-      #  Step 8.2 - seerB Parameter  (084-085)
+      #  Step 8.2 - seerB Parameter  (084)
       #
       #  Used with all types of data (state, seer, county, tract)
       #  Default for Registry data is "DATA", otherwise default is "NONE"
@@ -6147,7 +7206,7 @@ SeerMapper <- function(ndf,
          seerB           <- seerB_def
   
       } else {
-         seerB    <- str_trim(toupper(seerB[[1]][1]))
+         seerB    <- stringr::str_trim(toupper(seerB[[1]][1]))
          if (seerB == "")  seerB = seerB_def
   
          SMatch   <- match(seerB,c("NONE", "DATA", NA, NA, "STATE", "REGION", NA, NA, "ALL"))
@@ -6172,13 +7231,45 @@ SeerMapper <- function(ndf,
       #
       ###
       #
-      #  Future step 8.x  - hdistB Parameter 
+      #  Future step 8.3a  - hsaB Parameter    (085-086) 
+      #
+      #  Used with HSA, county and tract data  "NONE", "DATA", "SEER", "STATE"
+      #  Default for county data is "DATA", otherwise the default is "NONE"
+      #
+      hsaB_def     <- "NONE"
+      hsaB_caller  <- FALSE
+  
+      if (is.null(hsaB) || any(is.na(hsaB)) || length(hsaB) == 0) {
+         # not provided - set default
+         hsaB               <- hsaB_def
+  
+      } else {
+         hsaB            <- stringr::str_trim(toupper(hsaB[[1]][1]))
+         hsaB_caller     <- TRUE
+         
+         SMatch             <- match(hsaB,c("NONE", "DATA", NA, "SEER", "STATE", NA, NA, NA, NA))
+         #                                      1       2    3    4       5       6   7   8   9
+         if (is.na(SMatch)) {
+            ErrFnd          <- TRUE
+            xmsg            <- paste0("***085 The hsaB call parameter is ",hsaB,
+                                         " and must be NONE, DATA, SEER, or STATE. The default of ",hsaB_def," will be used.")
+            warning(xmsg, call.=FALSE)
+            hsaB            <- hsaB_def
+         } else {
+            # good value
+            hsaB_caller     <- TRUE   # indicate user provided parameters
+         }
+      }
+      callVarList$hsaB        <- hsaB
+      callVarList$hsaB_caller <- hsaB_caller
+      rPM$hsaB                <- hsaB
+      rPM$hsaB_caller         <- hsaB_caller
       #
       ###
       #
-      #  Step 8.3 - countyB Parameter  (086-088)
+      #  Step 8.3b - countyB Parameter  (087-088)
       #
-      #  Used with only county and tract type data   "NONE", "DATA", "SEER", "STATE"
+      #  Used with only county and tract type data   "NONE", "DATA", "HSA", "SEER", "STATE"
       #  Default for county data is "DATA", otherwise the default is "NONE"
       #
       countyB_def     <- "NONE"
@@ -6189,15 +7280,15 @@ SeerMapper <- function(ndf,
          countyB            <- countyB_def
   
       } else {
-         countyB            <- str_trim(toupper(countyB[[1]][1]))
+         countyB            <- stringr::str_trim(toupper(countyB[[1]][1]))
          countyB_caller     <- TRUE
          
-         SMatch             <- match(countyB,c("NONE", "DATA", NA, "SEER", "STATE", NA, NA, NA, NA))
-         #                                      1       2      3    4       5       6   7   8   9
+         SMatch             <- match(countyB,c("NONE", "DATA", NA, "SEER", "STATE", NA, "HSA", NA, NA))
+         #                                      1       2      3    4       5       6    7     8   9
          if (is.na(SMatch)) {
             ErrFnd          <- TRUE
-            xmsg            <- paste0("***086 The countyB call parameter is ",countyB,
-                                         " and must be NONE, DATA, SEER, or STATE. The default of DATA will be used.")
+            xmsg            <- paste0("***087 The countyB call parameter is ",countyB,
+                                         " and must be NONE, DATA, HSA, SEER, or STATE. The default of DATA will be used.")
             warning(xmsg, call.=FALSE)
             countyB         <- countyB_def
          } else {
@@ -6214,7 +7305,7 @@ SeerMapper <- function(ndf,
       #
       #  Step 8.4 - tractB Parameter  (089-091)
       #
-      #  Used with only tract data.   "NONE", "DATA", "COUNTY", "SEER", "STATE"
+      #  Used with only tract data.   "NONE", "DATA", "HSA", "COUNTY", "SEER", "STATE"
       #  default is "DATA" when there is tract data, otherwise it's "NONE"
       #
       tractB_def          <- "NONE"
@@ -6225,15 +7316,15 @@ SeerMapper <- function(ndf,
          tractB           <- tractB_def
   
       } else {
-         tractB           <- str_trim(toupper(tractB[[1]][1]))
+         tractB           <- stringr::str_trim(toupper(tractB[[1]][1]))
          if (tractB == "") tractB=tractB_def
   
-         SMatch           <- match(tractB,c("NONE", "DATA", "COUNTY", "SEER", "STATE", NA, NA, NA, NA))
-         #                                    1       2       3         4       5      6   7   8   9
+         SMatch           <- match(tractB,c("NONE", "DATA", "COUNTY", "SEER", "STATE", NA, "HSA", NA, NA))
+         #                                    1       2       3         4       5      6    7     8   9
          if (is.na(SMatch)) {
             ErrFnd        <- TRUE
             xmsg          <- paste0("***089 tractB call parameter is ",tractB,
-                                        " and must be DATA, SEER or STATE. The default of DATA will be used.")
+                                        " and must be DATA, COUNTY, HSA, SEER or STATE. The default of DATA will be used.")
             warning(xmsg, call.=FALSE)
             tractB        <- tractB_def
          } else {
@@ -6250,50 +7341,90 @@ SeerMapper <- function(ndf,
 
       ####
       #
+      #  Step 9.1 - fillTo Parameter  (092-093)  (defunct - remove.))
+      #
+      #    Values:  "NONE", "COUNTY", "SEER", "STATE"
+      #    Default: "NONE"
+      #
+      fillTo_def      <- "NONE"
+      fillTo_caller   <- FALSE
+
+      if ( is.null(fillTo) || any(is.na(fillTo)) || length(fillTo) == 0 ) {
+         # not provided - set default
+         fillTo    <- fillTo_def
+
+      } else {
+         fillTo           <- stringr::str_trim(toupper(fillTo))
+         SMatch           <- match(fillTo,c("NONE", NA, "COUNTY", "SEER", "STATE", NA, NA, NA, NA))
+         #                             1     2     3         4       5      6   7   8   9
+         if (is.na(SMatch)) {
+            ErrFnd        <- TRUE
+            xmsg          <- paste0("***092 The fillTo call parameter is ",fillTo,
+                                      " and must be 'NONE', 'COUNTY', 'SEER', or 'STATE'.",
+                                      " The default of 'NONE' will be used.")
+            warning(xmsg, call.=FALSE)
+            fillTo        <- fillTo_def
+         } else {
+            # good value
+            fillTo_caller <- TRUE
+         }
+      }
+      callVarList$fillTo         <- fillTo
+      callVarList$fillTo_caller  <- fillTo_caller
+      rPM$fillTo         <- fillTo
+      rPM$fillTo_caller  <- fillTo_caller
+
+      #
+      ####
+
+      ####
+      #
       #  Step 9.2 - clipTo Parameter  (094-095)
       #
-      #    Values:  "NONE", "DATA", "SEER", "STATE"
+      #    Values:  "NONE", "DATA", "HSA", "SEER", "STATE", "REGION", "TRUE", "FALSE"
       #    Default: "NONE"
+      #
+      #   No upgraded to work on HSA boundaries.
       #
       clipTo_def      <- "NONE"
       clipTo_caller   <- FALSE
       clipToNum       <- 1
       
       vClipTo         <- clipTo[[1]][1]
-      vClipTo         <- str_trim(toupper(vClipTo))
+      vClipTo         <- stringr::str_trim(toupper(vClipTo))
 
       if ( is.null(clipTo) || any(is.na(clipTo)) || length(clipTo) == 0 ) {
          # not provided - set default
          clipTo    <- clipTo_def
 
       } else {
-         SList            <- c("NONE", "DATA", NA, "SEER", "STATE", NA, NA, "TRUE","FALSE")
-         #                      1       2      3     4       5      6   7    8      9
+         SList            <- c("NONE", "DATA", NA, "SEER", "STATE", "REGION", "HSA", "TRUE","FALSE")
+         #                      1       2      3     4       5       6         7      8      9
          SMatch           <- match(vClipTo,SList)
-        if (is.na(SMatch)) {
-           ErrFnd        <- TRUE
-           xmsg          <- paste0("***094 The clipTo call parameter is ",clipTo,
-                                   " and must be 'NONE', 'DATA', 'SEER', 'STATE' or 'TRUE'/'FALSE'.",
+         if (is.na(SMatch)) {
+            ErrFnd        <- TRUE
+            xmsg          <- paste0("***094 The clipTo call parameter is ",fillTo,
+                                   " and must be 'NONE', 'DATA', 'HSA', 'SEER', 'STATE', 'REGION' or 'TRUE'/'FALSE'.",
                                    " The default of 'NONE' will be used.")
-           warning(xmsg, call.=FALSE)
-           clipTo        <- clipTo_def
-        } else {
-           # good value
-           clipTo        <- SList[SMatch]
-           clipToNum     <- SMatch
-           if (SMatch == 8) {
-              # If TRUE set to "DATA"
-              clipTo     <- "DATA"
-              clipToNum  <- 2
-           }
-           if (SMatch == 9) {
-              # If FALSE turn off - set to "NONE"
-              clipTo     <- "NONE"
-              clipToNum  <- 1
-           }
-           # caller did specify this parameter.
-           clipTo_caller <- TRUE
-        }
+            warning(xmsg, call.=FALSE)
+            clipTo        <- clipTo_def
+         } else {
+            # good value
+            clipTo        <- SList[SMatch]
+            clipToNum     <- SMatch
+            if (SMatch == 8) {
+               # "TRUE"   ->  "DATA"
+               clipTo     <- "DATA"
+               clipToNum  <- 2
+            }
+            if (SMatch == 9) {
+               # "FALSE" turn off  -> "NONE"
+               clipTo     <- "NONE"
+               clipToNum  <- 1
+            }
+            # caller did specify this parameter.
+            clipTo_caller <- TRUE
+         }
       }
       callVarList$clipTo         <- clipTo
       callVarList$clipToNum      <- clipToNum
@@ -6301,12 +7432,14 @@ SeerMapper <- function(ndf,
       rPM$clipTo                 <- clipTo
       rPM$clipToNum              <- clipToNum
       rPM$clipTo_caller          <- clipTo_caller
-
+      #
+      #
+      #   Later check the value against the data level.
+      #
       #
       ####
 
-
-      #####
+      ####
       #
       #  Step 10 - dataBCol Parameter  (100-102)
       #
@@ -6321,7 +7454,7 @@ SeerMapper <- function(ndf,
          dataBCol           <- dataBCol_def
     
       } else {
-         dataBCol           <-  str_trim(dataBCol)
+         dataBCol           <-  stringr::str_trim(dataBCol)
          iR                 <-  is.Color(dataBCol)   # test to see if it is a color value
          if (!iR) {
             # not a color
@@ -6416,46 +7549,56 @@ SeerMapper <- function(ndf,
       #  Step 14 - Hatch Parameters
       #
       #  Step 14.1 - Verify user provided hatch parameter (logical or list)  (110-141)
+      #    hatch and hatch2
     
-      HatchFlag   <- FALSE     # disable hatching.
-      ErrFnd      <- FALSE
-      hatch_caller<- FALSE
-
+      HatchFlag    <- FALSE     # disable hatching.
+      Hatch2Flag   <- FALSE
+      ErrFnd       <- FALSE
+      hatch_caller <- FALSE
+ 
       # Set default settings
    
-      H_dataColName <- "pValue"
-      H_dataColNum  <- 0       # indicate it has not been looked up.
-      H_dataCol     <- "pValue"   # set to default value - if not present this provides a value
-      H_col         <- rPM$ColorB_hatching
-      H_lwd         <- 0.85
-      H_lty         <- 1       # "solid"
-      H_den         <- 25      # pattern density
-      H_angle       <- 45      # pattern angle = 45 degree CCW
-      H_value       <- 0.05
-      H_range       <- NA      # default if not present
-      H_range_def   <- c(0,1)  # default if TRUE
-      H_ops         <- ">"
-      H_SettingList <- c("dataCol", "ops", "value", "col" ,"lwd", "lty", "density", "den", "angle", "range",
-                         "hDataCol","hOps","hValue","hCol","hLwd","hLty","hDensity","hDen","hAngle","hRange")
-      H_SettingTrans<- c( 1       ,  2  ,   3     ,  4    , 5   ,  6    , 8        , 8   ,  9     ,  10    ,
-                          1       ,  2    , 3      , 4    , 5    , 6    , 8        , 8    , 9      , 10)     
-
-      HOpsList      <- c("eq","ne","lt","le","gt","ge")  # char form
+      H_SettingList <- c("dataCol", "ops", "value", "col" ,"lwd",  "density", "den", "angle", "range","incAngle","lab",
+                         "hDataCol","hOps","hValue","hCol","hLwd", "hDensity","hDen","hAngle","hRange","")
+ 
+      HOpsList      <- c("eq","ne","lt","le","gt","ge")  # char form Used twice UC and LC.
       HOpsList2     <- c("=", "<>","<", "=<",">", "=>")  # odd forms
       HOpsCode      <- c("==","!=","<", "<=",">" ,">=")  # good R forms
       HOpsTest      <- c(HOpsList,HOpsList2,HOpsCode)
       HOpsRCode     <- c(HOpsCode,HOpsCode, HOpsCode)
       
       #  Types of lines and equivalent number values.
-      HLtyTypes     <- c("blank","solid","dashed","dotted","dotdash","longdash","twodash","0","1","2","3","4","5","6")
-                 #        0     , 1     , 2      , 3      , 4       , 5        , 6
+      #HLtyTypes     <- c("blank","solid","dashed","dotted","dotdash","longdash","twodash","0","1","2","3","4","5","6")
+      #           #        0     , 1     , 2      , 3      , 4       , 5        , 6
+
+      # hatch # 1 specific
+      H_dataColName <- "pValue"
+      H_dataColNum  <- 0       # indicate it has not been looked up.
+      H_dataCol     <- "pValue"   # set to default value - if not present this provides a value
+      H_data        <- c()
+      H_ops         <- ">"
+      H_value       <- 0.05
+      H_range       <- NA      # default if not present
+      H_range_def   <- c(0,1)  # default if TRUE
+      H_lab         <- "hatch#1"
+
+      # hatch generic
+      H_col         <- rPM$ColorB_hatching
+      H_lwd         <- 0.85
+      #H_lty         <- 1       # solid
+      H_den         <- 25      # pattern density
+      H_angle       <- 45      # pattern angle = 45 degree CCW
+      H_incAngle    <- 60      # incremental angle for additional hatchs.
 
       if (debug) {
-         cat("Hatching default setting Z-6393 Flag:",HatchFlag,"\n")
+         cat("Hatching default setting Z-7480 \n")
          cat("   parameters -- dataCol:",H_dataColName," #:",H_dataColNum,"  ops:",H_ops,"  value:",H_value,"\n")
-         cat("  range:",H_range,"\n")
-         cat("  col  :",H_col,"  lwd:",H_lwd,"  lty:",H_lty,"  den:",H_den,"  angle:",H_angle,"\n")
+         cat("  range:",H_range,"  label:",H_lab,"\n")
+         cat("  col  :",H_col,"  lwd:",H_lwd,"  den:",H_den,"  angle:",H_angle,
+             "  IncAngle:",H_incAngle,"\n")
       }
+
+      # hatch=list()
 
       if ( !(is.null(hatch) || any(is.na(hatch)) || length(hatch) == 0) ) {
 
@@ -6473,7 +7616,7 @@ SeerMapper <- function(ndf,
                # Have entries in list that are not valid
                HBadList    <- HatchColNames[HMatch1]  # get list of bad entries
                ErrFnd      <- TRUE
-               xmsg        <- paste0("***115 The following hatch settings are not valid and be ignored:",
+               xmsg        <- paste0("***115 The following hatch options are not valid and be ignored:",
                                          paste0(HBadList,collapse=", "))
                warning(xmsg, call.=FALSE)
                HList       <- hatch[!HMatch1]         # keep only good entries
@@ -6532,7 +7675,7 @@ SeerMapper <- function(ndf,
                            # neither a numeric or character (not a number of column name)
                            #cat("not char or numeric\n")
                            
-                           xmsg <- paste0("***119 Hatching dataCol is not a character vector or numeric. The default value of ",H_dataCol," will be used.")
+                           xmsg <- paste0("***116 The hatch option dataCol is not a character vector or numeric. The default value of ",H_dataCol," will be used.")
                            warning(xmsg, call.=FALSE)
                            ErrFnd    <- TRUE
                            
@@ -6581,7 +7724,7 @@ SeerMapper <- function(ndf,
                                  # range values are out of order.
                                  # if low and high are reverse - fix it.  Tell caller if debug set.
                                  if (debug) {
-                                    xmsg <- paste0("***117 Hatching range values are out of order.  First value must be",
+                                    xmsg <- paste0("***117 The hatch option range values are out of order.  First value must be",
                                                       " less than second value. Reversed.")
                                     warning(xmsg,call.=FALSE)
                                  }
@@ -6603,7 +7746,7 @@ SeerMapper <- function(ndf,
                      
                      #  check if any errors indicating the option was not good.
                      if (InvParm) {
-                        xmsg       <- paste0("***118 The hatching range option is not valid. It must be NA or a",
+                        xmsg       <- paste0("***118 The hatch option range is not valid. It must be NA or a",
                                                  " vector containing 2 numeric values (low and high limits) for the range.",
                                                  " Range checking is disabled.")
                         warning(xmsg, call.=FALSE)
@@ -6630,12 +7773,13 @@ SeerMapper <- function(ndf,
                   if (nam == "ops" || nam == "hOps") {
                     
                     H_ops        <- as.character(var[[1]][1])  # get first element and make character
+                    H_ops        <- tolower(H_ops)
                     HMatch       <- match(H_ops,HOpsTest)      # check character "ge", "lt".
                     
                     if (is.na(HMatch)) {
                        # no match with operation list
                        ErrFnd    <- TRUE
-                       xmsg      <- paste0("***120 The hatch logical operator provided in the hatch ops setting - ", H_ops,
+                       xmsg      <- paste0("***119 The comparison operator provided in the hatch ops options - ", H_ops,
                                                " - is not valid. Hatching disabled.")
                        warning(xmsg, call.=FALSE)
                        HatchFlag <- FALSE
@@ -6654,7 +7798,7 @@ SeerMapper <- function(ndf,
                      wCol       <- var[[1]][1]
                      if (!is.Color(wCol)) {
                         ErrFnd    <- TRUE
-                        xmsg      <- paste0("***123 The hatch col setting is not a valid color : ",wCol,
+                        xmsg      <- paste0("***125 The hatch col option is not a valid color : ",wCol,
                                                    ". The default of ",H_col," will be used.")
                         warning(xmsg, call.=FALSE)
                         wCol      <- H_col  # get default
@@ -6673,7 +7817,7 @@ SeerMapper <- function(ndf,
                      if (is.na(wLwd)) {
                         # not a numeric or can't be converted to numeric.
                         ErrFnd       <- TRUE
-                        xmsg         <- paste0("***126 The hatch lwd setting is not numeric - ",vLwd,".",
+                        xmsg         <- paste0("***126 The hatch lwd option is not numeric - ",vLwd,".",
                                                 " The default will be used.")
                         warning(xmsg, call.=FALSE)
                         wLwd         <- H_lwd
@@ -6683,7 +7827,7 @@ SeerMapper <- function(ndf,
                         if ( wLwd < 0 || wLwd > 5 ) {
                            #  Out of range
                            ErrFnd    <- TRUE
-                           xmsg      <- paste0("***128 The hatch lwd setting is ",wLwd,
+                           xmsg      <- paste0("***127 The hatch lwd option is ",wLwd,
                                                    " and is out of the range  ( > 0 to <= 5).",
                                                    " The default value of 0.85 will be used.")
                            warning(xmsg, call.=FALSE)
@@ -6698,50 +7842,51 @@ SeerMapper <- function(ndf,
                   #
                   #  lty - option
                   #
-                  if (nam == "lty" || nam == "hLty") {
-                     vLty    <- var[[1]][1]          # get first value
-                     suppressWarnings( wLty    <- as.numeric(vLty) )    # is it a number
-                     if (is.na(wLty)) {
-                        # not a number (NA)
-                        if (is.character(vLty)) {
-                           # character type - check for name of type
-                           vLtyMatch    <- match(vLty,HLtyTypes)   # is it a valid string type?
-                           if (is.na(vLtyMatch)) {
-                              # bad value in option
-                              ErrFnd    <- TRUE
-                              xmsg      <- paste0("***130 The hatch lty setting is not valid - ",vLty,
-                                                      " Check the par(lty) variable for acceptable values.",
-                                                      " The default value of 'solid' will be used.")
-                              warning(xmsg, call.=FALSE)
-                              rm(xmsg)
-                           } else {
-                              # have a good value - match is the number to use.
-                              H_lty      <- vLtyMatch - 1   # convert char to num
-                           }
-                        } else {
-                           # not numeric or character
-                           ErrFnd    <- TRUE
-                           xmsg      <- paste0("***131 The hatch lty setting is not numeric.",
-                                                   " The default will be used.")
-                           warning(xmsg, call.=FALSE)
-                           rm(xmsg)
-                        }
-                     } else {
-                        # it's a number
-                        if ( wLty < 0 || wLty > 6 ) {
-                           #  Out of range
-                           ErrFnd    <- TRUE
-                           xmsg      <- paste0("***133 The hatch lty setting is ",wLty,
-                                                   " and is out of the range (0 to 6).",
-                                                   " The default valve of 'solid' will be used.")
-                           warning(xmsg, call.=FALSE)
-                           rm(xmsg)
-                        } else {
-                           H_lty  <- as.integer(wLty)
-                        }
-                     }
-                     rm(vLty,wLty)
-                  } # end of lty verification
+                  #if (nam == "lty" || nam == "hLty") {
+                  #   vLty    <- var[[1]][1]          # get first value
+                  #   suppressWarnings( wLty    <- as.numeric(vLty) )    # is it a number
+                  #   if (is.na(wLty)) {
+                  #      # not a number (NA)
+                  #      if (is.character(vLty)) {
+                  #         # character type - check for name of type
+                  #         vLtyMatch    <- match(vLty,HLtyTypes)   # is it a valid string type?
+                  #         if (is.na(vLtyMatch)) {
+                  #            # bad value in option
+                  #            ErrFnd    <- TRUE
+                  #            xmsg      <- paste0("***1xx The hatch lty setting is not valid - ",vLty,
+                  #                                    " Check the par(lty) variable for acceptable values.",
+                  #                                    " The default value of 'solid' will be used.")
+                  #            warning(xmsg, call.=FALSE)
+                  #            rm(xmsg)
+                  #         } else {
+                  #            # have a good value - match is the number to use.
+                  #            H_lty      <- vLtyMatch - 1   # convert char to num
+                  #         }
+                  #      } else {
+                  #         # not numeric or character
+                  #         ErrFnd    <- TRUE
+                  #         xmsg      <- paste0("***1xx The hatch lty setting is not numeric.",
+                  #                                 " The default will be used.")
+                  #         warning(xmsg, call.=FALSE)
+                  #         rm(xmsg)
+                  #      }
+                  #   } else {
+                  #      # it's a number
+                  #      if ( wLty < 0 || wLty > 6 ) {
+                  #         #  Out of range
+                  #         ErrFnd    <- TRUE
+                  #         xmsg      <- paste0("***1xx The hatch lty setting is ",wLty,
+                  #                                 " and is out of the range (0 to 6).",
+                  #                                 " The default valve of 'solid' will be used.")
+                  #         warning(xmsg, call.=FALSE)
+                  #         rm(xmsg)
+                  #      } else {
+                  #         H_lty  <- as.integer(wLty)
+                  #      }
+                  #   }
+                  #   rm(vLty,wLty)
+                  #} # end of lty verification
+                  #
                   
                   #
                   #  density (den) - option (lines per inch)
@@ -6751,7 +7896,7 @@ SeerMapper <- function(ndf,
                      suppressWarnings(wDen    <- as.numeric(vDen))     # is it a number (lines per inch)
                      if (is.na(wDen)) {
                         ErrFnd       <- TRUE
-                        xmsg         <- paste0("***135 The hatch density setting is not numeric - ",vDen,
+                        xmsg         <- paste0("***128 The hatch density setting is not numeric - ",vDen,
                                                 " The default value of 25 will be used.")
                         warning(xmsg, call.=FALSE)
                         wDen         <- H_den
@@ -6760,7 +7905,7 @@ SeerMapper <- function(ndf,
                         if ( wDen < 5 || wDen > 64 ) {
                            #  Out of range
                            ErrFnd    <- TRUE
-                           xmsg      <- paste0("***136 The hatch density setting is ",wDen,
+                           xmsg      <- paste0("***129 The hatch density setting is ",wDen,
                                                    " and is out of the range of > 4 to <= 64 lines per inch.",
                                                    " The default value of 25 will be used.")
                            warning(xmsg, call.=FALSE)
@@ -6780,7 +7925,7 @@ SeerMapper <- function(ndf,
                      suppressWarnings(wAng    <- as.numeric(vAng))     # is it a number (lines per inch)
                      if (is.na(wAng)) {
                         ErrFnd       <- TRUE
-                        xmsg         <- paste0("***137 The hatch angle setting is not numeric.",
+                        xmsg         <- paste0("***130 The hatch angle option is not numeric.",
                                                 " The default will be used.")
                         warning(xmsg, call.=FALSE)
                         wAng         <- H_angle
@@ -6789,7 +7934,7 @@ SeerMapper <- function(ndf,
                         if ( wAng < -360 || wAng > 360 ) {
                            #  Out of range
                            ErrFnd    <- TRUE
-                           xmsg      <- paste0("***138 The hatch angle setting is out of the range of => -360 to <= 360 degrees.",
+                           xmsg      <- paste0("***131 The hatch angle option is out of the range of => -360 to <= 360 degrees.",
                                                    " The default will be used.")
                            warning(xmsg, call.=FALSE)
                            wAng      <- H_angle
@@ -6800,13 +7945,57 @@ SeerMapper <- function(ndf,
                      rm(vAng, wAng)
                   } # end of angle verification
 
+                  #
+                  #  incAngle - option (degrees)
+                  #
+                  if (nam == "incAngle" ) {
+                     vIncAng    <- var[[1]][1]          # get first value
+                     suppressWarnings(wIncAng    <- as.numeric(vIncAng))     # is it a number (lines per inch)
+                     if (is.na(wIncAng)) {
+                        ErrFnd       <- TRUE
+                        xmsg         <- paste0("***132 The hatch incremental angle option (incAngle) is not numeric.",
+                                                " The default will be used.")
+                        warning(xmsg, call.=FALSE)
+                        wIncAng         <- H_incAngle
+                        rm(xmsg)
+                     } else {
+                        if ( wIncAng < -120 || wIncAng > 120 ) {
+                           #  Out of range
+                           ErrFnd    <- TRUE
+                           xmsg      <- paste0("***133 The hatch incremental angle setting is out of the range of => -120 to <= 120 degrees.",
+                                                   " The default will be used.")
+                           warning(xmsg, call.=FALSE)
+                           wIncAng      <- H_angle
+                           rm(xmsg)
+                        }
+                     }
+                     H_incAngle    <- wIncAng
+                     rm(vIncAng, wIncAng)
+                  } # end of angle verification
+
+                  #
+                  #  hatching label
+                  #
+                  hLab_def <- "hatch1"
+                  
+                  if (nam == "lab" ) {
+                     vLab    <- var[[1]][1]          # get first value
+                     wLab    <- as.character(vLab)     # make sure it's characters
+                     if (is.null || is.na(wLab)) {
+                        # no label - ignore parameter
+                        H_lab <- hLab_def
+                     }
+                     H_lab    <- hLab_def
+                  } # end of Label verification for what it is.
+
+
                }  # end of options "for" loop.
  
             }  # end of hatch option verification
 
             if (!HatchFlag) {
-               xmsg <- paste0("***139 Hatching parameter error detected.",
-                                  "  Hatching disable. See previous messages for details.")
+               xmsg <- paste0("***134 A hatch call parameter error was detected.",
+                                  "  The hatch parameter is disabled. See previous messages for details.")
                warning(xmsg,call.=FALSE)
             }
             # end of hatching "list" of options check
@@ -6819,7 +8008,7 @@ SeerMapper <- function(ndf,
             } else {
                # not a list or logical
                ErrFnd       <- TRUE
-               xmsg         <- paste0("***140 The hatch call parameter must be a logical value (T/F)",
+               xmsg         <- paste0("***135 The hatch call parameter must be a logical value (T/F)",
                                           " or a list of options. Parameter is ignored.")
                warning(xmsg, call.=FALSE)
                HatchFlag    <- FALSE
@@ -6833,25 +8022,314 @@ SeerMapper <- function(ndf,
       } # end of hatch parameter processing.
       
       #
-      #  End of validation of user provided parameter
+      #  End of validation of user provided parameter hatch
       #
       rPM$HatchFlag    <- HatchFlag
       rPM$hatch_caller <- hatch_caller
+      #             Specific
       callVarList$hatch  <- list(hDataCol     = H_dataCol,
                                  hDataColName = H_dataColName,
                                  hDataColNum  = H_dataColNum,
+                                 hData        = H_data,
                                  hOps         = H_ops, 
                                  hValue       = H_value,
+                                 hRange       = H_range,
+                                 hLab         = H_lab,
+                          # Generic
                                  hCol         = H_col, 
                                  hLwd         = H_lwd, 
-                                 hLty         = H_lty,
                                  hDen         = H_den,
                                  hAngle       = H_angle,
-                                 hRange       = H_range
+                                 hIncAngle    = H_incAngle
                                 )
       rPM$hatch <- callVarList$hatch
+      hatch     <- rPM$hatch
       # print(str(rPM$hatch))
    
+      #
+      #####
+      
+      #####
+      #
+      #   hatch2=list()
+      #
+      Hatch2Flag   <- FALSE     # disable hatching.
+      hatch2_caller<- FALSE
+
+      # set default values.
+      H_dataColName <- "pValue"
+      H_dataColNum  <- 0       # indicate it has not been looked up.
+      H_dataCol     <- "pValue"   # set to default value - if not present this provides a value
+      H_data        <- c()
+      H_ops         <- ">"
+      H_value       <- 0.05
+      H_range       <- NA      # default if not present
+      H_range_def   <- c(0,1)  # default if TRUE
+      H_lab         <- "hatch#2"
+
+      # calculated from harch not in options list.
+      H_angle       <- H_angle + H_incAngle   # base off of hatch= options.
+ 
+      H2_SettingList <- c("dataCol", "ops", "value", "range","lab")
+  
+      if ( !(is.null(hatch2) || any(is.na(hatch2)) || (length(hatch2) == 0)) ) {
+
+         # Hatch value present - process it (logical or list)
+         if (is.list(hatch2)) {
+
+            # is a list - process named entries
+            HatchColNames  <- names(hatch2)            # get list of settings
+            HMatch         <- match(HatchColNames, H2_SettingList)
+            HList          <- hatch2                   # get the list of settings.
+
+            #  Check name list
+            HMatch1        <- is.na(HMatch)           # Get T/F for bad setting names in list.
+            if (any(HMatch1)) {
+               # Have entries in list that are not valid
+               HBadList    <- HatchColNames[HMatch1]  # get list of bad entries
+               ErrFnd      <- TRUE
+               xmsg        <- paste0("***120 The following hatch2 options are not valid and be ignored:",
+                                         paste0(HBadList,collapse=", "))
+               warning(xmsg, call.=FALSE)
+               HList       <- hatch[!HMatch1]         # keep only good entries
+               rm(HBadList, xmsg)
+            }
+            
+            rm(HMatch1)
+
+            if (length(HList)>0) {
+
+               # still have values
+               hatch2_caller <- TRUE
+               Hatch2Flag    <- TRUE                     # enable hatching.
+                  # from this point on, if error HatchFlag would be set to FALSE.
+                  # If so at the end, tell caller.
+
+               HMatch       <- match(H2_SettingList,names(HList))
+               HMatch       <- HMatch[!is.na(HMatch)]   # get new order  (H_SettingsList order), an NA means setting is not in list.
+               HList        <- HList[HMatch]            # reorder
+
+               numHList     <- length(HList)
+               namHList     <- names(HList)
+
+               # step through lists in HList and check values and assign to settings.
+               for (ind in c(1:numHList)) {
+
+                  var      <- HList[[ind]]      # get the value of the list
+                  nam      <- namHList[ind]     # get name of list
+                  
+                 #cat("hatch:",nam," <- ",var,"   \n")
+                  
+                  if (is.factor(var)) var <- as.character(var)   # get rid of factors, but it will create character values.
+                  
+                  if (debug) {
+                     cat("Parsing hatch2 List - name:",nam,"  value:",var,"\n")
+                  }
+
+                  ErrFnd   <- FALSE
+                  
+                  #
+                  #   hatching dataCol optin 
+                  #
+                  if (nam == "dataCol") {
+                    #cat("hatch:dataCol  nam:",nam,"  var:",var,"\n")
+                     
+                     # ignore value on dataCol if NA - let default show through
+                     if (!is.na(var)) {
+                        #cat("h:var is not an NA.\n")
+                        if (class(var) == "character" || class(var) == "numeric") {
+                           ##cat("h:var is char or num.\n")
+                           # either numeric or character (number or name)
+                           H_dataCol    <- var[[1]][1]      # no tests, value checked later.
+                           #cat("H_dataCol:",H_dataCol,"\n")
+                           
+                        } else {
+                           # neither a numeric or character (not a number of column name)
+                           #cat("not char or numeric\n")
+                           
+                           xmsg <- paste0("***121 The hatch2 option dataCol is not a character vector or numeric. The default value of ",H_dataCol," will be used.")
+                           warning(xmsg, call.=FALSE)
+                           ErrFnd    <- TRUE
+                           
+                        }  # end of type check
+                     }  # end of NA check              
+                  }  # end of hatch dataCol verification
+                  #  The hatch:dataCol is checked against the ndf data.frame later.
+                  #cat("hitch: dataCol - Done - H_dataCol:",H_dataCol,"\n")
+                  
+                  #
+                  #   range option
+                  #      values:   NA      no check range to be applied
+                  #      c(l,h):   vector of low and high values
+                  #
+                  if (nam == "range") {    # should be c(l,h) or NA?  (default - NA)
+                     InvParm  <- FALSE
+                     lenVar   <- length(var)
+                     
+                     if (lenVar == 1) {
+                        # if length = 1, must be an NA.  (An NA is a logical value.)
+                        if (!is.na(var)) {
+                           # invalid form
+                           InvParm <- TRUE
+                           lenVar  <- -1
+                        }
+                        H_Range <- NA       # disable range checking
+                     }  # end of len=1 check
+                     
+                     if (lenVar == 2) {
+                        # OK! a vector with two elements - good form.
+                        
+                        if (class(var) == "numeric" || class(var) == "character") {
+                        
+                           #  one of the value may be NA, but let it go. Convert to numeric.
+                           suppressWarnings(wVal <- as.numeric(var[1:2]))        # only take first two just to make sure.
+                           
+                           # possible range c(l,h) vector form (can be an NA)
+                           # check for possible NA values.
+                           if (any(is.na(wVal))) {
+                              #  one of the values is an NA. Was an NA to start with or could not be converted to numeric.
+                              #    Disable range change.
+                              InvParm <- TRUE   # indicate invalid option format.  Tell them at the end.
+                           } else {
+                              # got length of two with numeric values.
+                              if (wVal[1] > wVal[2]) {
+                                 # range values are out of order.
+                                 # if low and high are reverse - fix it.  Tell caller if debug set.
+                                 if (debug) {
+                                    xmsg <- paste0("***122 The hatch2 range option values are out of order.  First value must be",
+                                                      " less than second value. Reversed.")
+                                    warning(xmsg,call.=FALSE)
+                                 }
+                                 wVal <- rev(wVal)  # reverse the out of order values.
+                              }
+                              H_range <- wVal   # save the two range values.
+                           }  # done 2 value NA check.       
+                        } else {
+                           #  Not a character or numeric value (even though it has a length of 2)
+                           #  Could be all NAs and logical, but that's not good.
+                           InvParm <- TRUE     # set flag.
+                        } # end of len=2 type check
+                     } # end of len=2 check.
+                     
+                     if (lenVar > 2) {
+                        # invalid length of vector > 2.
+                        InvParm  <- TRUE    # set flag
+                     }
+                     
+                     #  check if any errors indicating the option was not good.
+                     if (InvParm) {
+                        xmsg       <- paste0("***123 The hatch2 range option is not valid. It must be NA or a",
+                                                 " vector containing 2 numeric values (low and high limits) for the range.",
+                                                 " Range checking is disabled.")
+                        warning(xmsg, call.=FALSE)
+                        H_range <- NA
+                        rm(xmsg)
+                     }
+                  }  # end of range verification
+                  
+                  #
+                  #   value option
+                  #
+                  if (nam == "value") {
+                     # can be any type of variable.
+                     wVal       <- var[[1]][1]
+                  
+                     if (is.factor(wVal))  wVal <- as.character(wVal)
+                     H_value    <- wVal     # no tests. could be a string or numeric in the "range"
+                  
+                  }  # end of value verification
+                  
+                  #
+                  #   ops option
+                  #
+                  if (nam == "ops" ) {
+                    
+                    H_ops        <- as.character(var[[1]][1])  # get first element and make character
+                    H_ops        <- tolower(H_ops)
+                    HMatch       <- match(H_ops,HOpsTest)      # check character "ge", "lt".
+                    
+                    if (is.na(HMatch)) {
+                       # no match with operation list
+                       ErrFnd    <- TRUE
+                       xmsg      <- paste0("***124 The comparison operator provided in the hatch2 ops option - ", H_ops,
+                                               " - is not valid. Hatching disabled.")
+                       warning(xmsg, call.=FALSE)
+                       InvParm   <- TRUE
+                       Hatch2Flag <- FALSE
+                       rm(xmsg)
+                    } else {
+                       H_ops     <- HOpsRCode[HMatch]
+                    }
+                    rm(HMatch)
+                  }  #  end of ops verification
+                  
+                  #
+                  #  hatching label
+                  #
+                  hLab_def <- "hatch1"
+                    
+                    if (nam == "lab" ) {
+                       vLab    <- var[[1]][1]          # get first value
+                       wLab    <- as.character(vLab)     # make sure it's characters
+                       if (is.null || is.na(wLab)) {
+                          # no label - ignore parameter
+                          H_lab <- hLab_def
+                       }
+                       H_lab    <- hLab_def
+                    } # end of Label verification for what it is.
+
+
+               }  # end of options "for" loop for hatch2
+ 
+            }  # end of hatch option verification
+
+            if (!Hatch2Flag) {
+               xmsg <- paste0("***136 A hatch2 call parameter error was detected.",
+                                  "  The hatch2 parameter is disabled. See previous messages for details.")
+               warning(xmsg,call.=FALSE)
+            }
+            # end of hatching "list" of options check
+         } else {
+            # not a list, nothing else is value on this one.
+            # not a list or logical
+            ErrFnd       <- TRUE
+            xmsg         <- paste0("***137 The hatch2 call parameter must be a list of options.",
+                                       " Parameter is ignored.")
+            warning(xmsg, call.=FALSE)
+               Hatch2Flag    <- FALSE
+               rm(xmsg)
+           
+         }  # end of hatch parameter check
+      } else {
+         # hatch list or T/E  is NULL or NA or empty (length=0)
+         Hatch2Flag <- FALSE   # disable hatching.
+      
+      } # end of hatch2 parameter processing.
+      
+      #
+      #  End of validation of user provided parameter hatch2
+      #
+      rPM$Hatch2Flag      <- Hatch2Flag
+      rPM$hatch2_caller   <- hatch2_caller
+      #                Specific 
+      callVarList$hatch2  <- list(hDataCol    = H_dataCol,
+                                 hDataColName = H_dataColName,
+                                 hDataColNum  = H_dataColNum,
+                                 hData        = H_data,     
+                                 hOps         = H_ops, 
+                                 hValue       = H_value,
+                                 hRange       = H_range,
+                                 hLab         = H_lab,
+                     # Generic
+                                 hCol         = H_col,      # copy from hatch  
+                                 hLwd         = H_lwd,      # copy from hatch 
+                                 hDen         = H_den,      # copy from hatch
+                                 hAngle       = H_angle     # calculated from hatch
+                              )
+      rPM$hatch2 <- callVarList$hatch2
+      hatch2 <- rPM$hatch2
+      #print(str(rPM$hatch2))
+            
       #
       #####
 
@@ -6867,14 +8345,14 @@ SeerMapper <- function(ndf,
       mLegend_caller <- FALSE
       mLegendFlag    <- TRUE
       mLegendOpt     <- mLegend
-      lSize         <- 0.85
-      lNoValue      <- FALSE
-      lNumCols      <- 3
-      lCounts       <- FALSE
-      lPos          <- "left"
-      lPosv         <- "bottomleft"
-      lPch          <- 22
-      lLabels       <- ""   # no override labels for categories.  # future implementation 
+      lSize          <- 0.85
+      lNoValue       <- FALSE
+      lNumCols       <- 3
+      lCounts        <- FALSE
+      lPos           <- "left"
+      lPosv          <- "bottomleft"
+      lPch           <- 22
+      lLabels        <- ""   # no override labels for categories.  # future implementation 
       
       L_SettingList  <- c("counts",   "size",     "numCols","pos",      "noValue",    "pch",    "labels")
 
@@ -6885,7 +8363,7 @@ SeerMapper <- function(ndf,
       L_ResList      <- c(L_SettingList,L_SettingMap)
 
       if (debug) {
-        cat("Legend Def Settings Z-6830 flag:",mLegendFlag,
+        cat("Legend Def Settings Z-8259 flag:",mLegendFlag,
                 " size:",   lSize,  " numCols:",  lNumCols,
                 " pos:",    lPos,   " ", lPosv, 
                 " pch:",    lPch, 
@@ -7010,7 +8488,7 @@ SeerMapper <- function(ndf,
                      lCounts_def    <- FALSE      # set default
                      if (!is.null(optValue)) {
                         if (!is.logical(optValue)) {
-                           xmsg        <- paste0("***156 The mLegend parameter 'counts' must a a logical variable.",
+                           xmsg        <- paste0("***156 The mLegend parameter 'counts' must a logical variable.",
                                                         " Set to FALSE.")
                            warning (xmsg, call.=FALSE)
                            ErrFnd      <- TRUE
@@ -7052,10 +8530,11 @@ SeerMapper <- function(ndf,
                            rm(xmsg)
                         } else {
                            # we have a good number
-                           if (optValue <= 0 || optValue >= 5) {
+                           ####changed####
+                           if (optValue <= 0.1 || optValue >= 5) {
                               ErrFnd    <- TRUE
                               xmsg      <- paste0("***160 The mLegend parameter 'size' option must be in the",
-                                                      " range from 0 to 5. Set to 0.85.")
+                                                      " range from 0.1 to 5. Set to 0.85.")
                               warning(xmsg, call.=FALSE)
                               lSize    <- 0.85  # set to default
                               rm(xmsg)
@@ -7111,7 +8590,7 @@ SeerMapper <- function(ndf,
                      if (!is.null(optValue)) {
                         # have a value to evaluate
                      
-                        optValue    <- tolower(str_trim(optValue))  # option now character no matter what it was.
+                        optValue    <- tolower(stringr::str_trim(optValue))  # option now character no matter what it was.
                      
                         mPosInx     <- match(optValue,ValidPos)             # find match - validate
                         lPosHere    <- !is.na(mPosInx)                      # found an answer?
@@ -7243,7 +8722,7 @@ SeerMapper <- function(ndf,
       if (mLegendFlag) {
          # print out legend settings:
          if (debug) {
-           cat("mLegend Settings Z-7188 counts:", lCounts, " size:", lSize,
+           cat("mLegend Settings Z-8610 counts:", lCounts, " size:", lSize,
                     " numCols:", lNumCols,
                     " pos:", lPos, " ", lPosv, " pch:", lPch, " noValue:", lNoValue,"\n")
          }
@@ -7267,6 +8746,7 @@ SeerMapper <- function(ndf,
                                  )
 
       rPM$mLegend <- callVarList$mLegend
+      mLegend     <- rPM$mLegend
       
       #print(callVarList$mLegend)
 
@@ -7339,7 +8819,7 @@ SeerMapper <- function(ndf,
       ndfColNames  <- colnames(ndf)  # get list of column names
 
       if (debug) {
-         cat("ndfColNames Z-7284 ",paste0(ndfColNames,collapse=", "),"\n")
+         cat("ndfColNames Z-8707 ",paste0(ndfColNames,collapse=", "),"\n")
          cat("ndf dim:",dim(ndf),"\n")
          str(ndf)
       }
@@ -7355,7 +8835,7 @@ SeerMapper <- function(ndf,
 
       #####
       #
-      #  Step 17 - Validate and process column references (idCol, dataCol and H:dataCol
+      #  Step 17 - Validate and process column references (idCol, dataCol, H:dataCol and H2:dataCol
       #
      
       ErrFnd          <- FALSE
@@ -7364,7 +8844,7 @@ SeerMapper <- function(ndf,
       #
       #  Step 17.1 - idCol parameter and column  (040-045)
       #
-      #cat("Step 17\n")
+      #cat("Step 17  - Z-8732 \n")
      
       #  Changed 16/10/02 - added support for idCol as the column number.
       #   Also correct code to validate idCol as column name and to access
@@ -7415,14 +8895,16 @@ SeerMapper <- function(ndf,
       rPM$idColName         <- idCol
       rPM$idColNum          <- idColNum
       
-      idList                <- ndf[,idCol]
+      idList                <- ndf[,idCol]    # get list of IDs
       if (is.factor(idList)) idList <- as.character(idList)
           
 
       #cat("idCol:",idCol,"  idColName:",idColName,"  idColNum:",idColNum, "\n")
       #cat("idList:",idList,"\n")
       #
-      ###
+      ####
+      
+      ####
       #
       #  Step 17.2 - data column (dataCol) (080-085)
       #
@@ -7464,28 +8946,34 @@ SeerMapper <- function(ndf,
       rPM$dataColName          <- dataCol
       rPM$dataColNum           <- dataColNum
       
-      dataList                 <- ndf[,dataCol]
+      dataList                 <- ndf[,dataCol]   # get data.
       if (is.factor(dataList))  dataList <- as.character(dataList)
       
-      #cat("dataColName Z-7412 :",dataColName,"   dataColNum:",dataColNum," len(data):",length(dataList),"  categMode:",categMode,"\n")
+      #cat("dataColName Z-8837 :",dataColName,"   dataColNum:",dataColNum," len(data):",length(dataList),"  categMode:",categMode,"\n")
       #cat("dataList:",dataList,"\n")
       
       #
-      ###
+      ####
+      
+      #cat("Step17.3 - Hatching dataCol Z-8851 \n")
+      ####
       #
-      #  Step 17.3 - hatching dataCol 
+      #  Step 17.3a - hatching #1 dataCol 
       #       If default hatching dataCol name used, validate it exists. (110-114)
       #
-      #  Empty hDataList. 
-      hDataList                <- rep(NA,length(dataList))
+      H_data                   <- rep(NA,length(dataList))
+      hatch                    <- rPM$hatch
      
       if (HatchFlag) {
-         H_dataCol                <- rPM$hatch$hDataCol   # get value from initial checks
-                                              # if needed the default has been set
+         #  Empty hDataList. 
+
+         H_dataCol                <- hatch$hDataCol   # get value from initial checks
+         
+                           # if needed the default has been set
          #cat("checking hatch dataCol:",H_dataCol,"\n")
          
-         #H_dataColName            <- "pValue"
-         #H_dataColNum             <- 0
+         #H_dataColName           <- "pValue"
+         #H_dataColNum            <- 0
       
          # H:dataCol is a little different, it's not a call parameter,
          #  but named list item under hatch=list().
@@ -7500,8 +8988,8 @@ SeerMapper <- function(ndf,
          xxr            <- CheckColnn("hatch:dataCol",c("110","111","112","113"),H_dataCol,ndf,ndfName)
 
          if (xxr$Err) {
-            xmsg        <- paste0("***993 The data column for the hatching comparison could not be found. ",
-                           " Hatching has been disabled.") 
+            xmsg        <- paste0("***114 The data column for the hatch comparison could not be found. ",
+                           " The hatch parameter has been disabled.") 
             warning(xmsg, call.=FALSE)
             HatchFlag      <- FALSE
          } else {
@@ -7509,73 +8997,133 @@ SeerMapper <- function(ndf,
             H_dataColNum   <- xxr$colNum
             H_dataColName  <- H_dataCol
            
-            hDataList      <- ndf[,H_dataCol]
-            if (is.factor(hDataList)) hDataList <- as.character(hDataList)   # get rid of factors.
+            H_data         <- ndf[,H_dataCol]
+            if (is.factor(H_data)) H_data <- as.character(H_data)   # get rid of factors.
          }
-         #cat("H_dataCol:",H_dataCol,"  len-hDataList:",length(hDataList),"\n")
+         #cat("H_dataCol:",H_dataCol,"  len-H_data:",length(H_data),"\n")
 
+         hatch$hDataCol     <- H_dataCol
+         hatch$hDataColName <- H_dataColName
+         hatch$hDataColNum  <- H_dataColNum
       }
       
+      hDataList              <- H_data
+
       #
       #  Re-Save final set of hatching parameters
       # 
-      
-      hatch          <- list(hDataCol    = H_dataCol,
-                             hDataColName= H_dataColName,
-                             hDataColNum = H_dataColNum,
-                             hOps        = H_ops, 
-                             hValue      = H_value,
-                             hCol        = H_col, 
-                             hLwd        = H_lwd, 
-                             hLty        = H_lty,
-                             hDen        = H_den,
-                             hAngle      = H_angle,
-                             hRange      = H_range
-                            )
       
       callVarList$HatchFlag  <- HatchFlag
       callVarList$hatch      <- hatch
       
       rPM$HatchFlag          <- HatchFlag
       rPM$hatch              <- hatch
+       
+      #  end Hatching #1 option check
+      
+      #
+      ####
+      
+      ####
+      #
+      #
+      #  Empty H_data for hatch 2
+      #
+ 
+      H_data                   <- rep(NA,length(dataList))
+      hatch2                   <- rPM$hatch2
+      
+      if (Hatch2Flag) {
+    
+         H_dataCol                <- hatch2$hDataCol   # get value from initial checks
+                                              # if needed the default has been set
+         #cat("checking hatch2 dataCol:",H_dataCol,"\n")
+         
+         #H_dataColName            <- "pValue"
+         #H_dataColNum             <- 0
+      
+         # H:dataCol is a little different, it's not a call parameter,
+         #  but named list item under hatch=list().
+         # It's variable (H_dataCol) has already been set to the default
+         # and changed if user provided alternative.
+         # But is it a valid name for this ndf?
+         #
+         save_H2_dataCol <- H_dataCol
+      
+         #cat("ndf:",dim(ndf),"  ndfName:",ndfName,"\n")
+      
+         xxr            <- CheckColnn("hatch2:dataCol",c("141","142","143","144"),H_dataCol,ndf,ndfName)
+
+         if (xxr$Err) {
+            xmsg        <- paste0("***145 The data column for the hatch2 comparison could not be found. ",
+                           " The hatch2 parameter has been disabled.") 
+            warning(xmsg, call.=FALSE)
+            Hatch2Flag      <- FALSE
+         } else {
+            H_dataCol      <- xxr$colName
+            H_dataColNum   <- xxr$colNum
+            H_dataColName  <- H_dataCol
+           
+            H_data         <- ndf[,H_dataCol]
+            if (is.factor(H_data)) H_data <- as.character(H_data)   # get rid of factors.
+         }
+         #cat("H_dataCol :",H_dataCol,"  len-H_data:",length(H_data),"\n")
+
+         hatch2$hDataCol    <- H_dataCol
+         hatch2$hDataColName<- H_dataColName
+         hatch2$hDataColNum <- H_dataColNum
+      }
+      
+      h2DataList   <- H_data
+
+      #
+      #  Re-Save final set of hatching parameters
+      # 
+      
+      callVarList$Hatch2Flag  <- Hatch2Flag
+      rPM$Hatch2Flag          <- Hatch2Flag
+
+      callVarList$hatch2      <- hatch2
+      rPM$hatch2              <- hatch2      
       
       #  end Hatching option check
       
       #
       ####
-      
+
+      #cat("Build dataMapDF Z-8979 \n")
       ####
       #
-      #  The three column names/numbers are validated and good or
+      #  The three/four column names/numbers are validated and good or
       #  adjustments made (stop or hatching disabled.)
-      #    idList, dataList, hDataList...
+      #    idList, dataList, hDataList, h2DataList...
       #
-      dataMapDF  <- NULL
-      dataMapDF  <- data.frame(ID=idList,data=dataList, hData=hDataList, 
+      dataMapDF      <- NULL
+      dataMapDF      <- data.frame(ID=idList,data=dataList, hData=hDataList, h2Data=h2DataList,
                      stringsAsFactors=FALSE)
 
-      lenDataMapDF <- dim(dataMapDF)[1]
+      lenDataMapDF   <- dim(dataMapDF)[1]
 
       dataMapDF$rSeq     <- seq(1,lenDataMapDF)   # row seq number for error messages.
                                  # if a row is deleted, the seq number will still be 
                                  # reported correctly and reference original DF.
-      cNA                <- as.character(NA)
+      cNA                <- rep(as.character(NA),lenDataMapDF)
       dataMapDF$good     <- TRUE      # all rows are valid at this time.
       dataMapDF$rgID     <- cNA       # region ID
       dataMapDF$stID     <- cNA       # state  ID
       dataMapDF$saID     <- cNA       # Seer Registry ID
-      dataMapDF$haID     <- cNA       # health district ID
+      dataMapDF$HSAID    <- cNA       # health Service Area ID
       dataMapDF$stcoID   <- cNA       # state/county ID
       dataMapDF$stcotrID <- cNA       # state/county/tract ID
       dataMapDF$cat      <- 0         # data category #
       dataMapDF$col      <- "white"   # color
-      dataMapDF$hCol     <- "grey50"  # hatching color
-      dataMapDF$hRes     <- FALSE     # hatching T/F  (test results)
-      dataMapDF$hDen     <- as.integer(NA)  # hatching density
-
+      
+      dataMapDF$hRes     <- FALSE
+      dataMapDF$h2Res    <- FALSE
+ 
       rPM$dataMapDF      <- dataMapDF
 
-      #cat("dataMapDF:\n")
+      #cat("dataMapDF Z-9011 :\n")
       #print(str(dataMapDF))
       #
       ####
@@ -7590,7 +9138,7 @@ SeerMapper <- function(ndf,
       #
       ##### End of Stage 1
 
-      #print("At end of parameter checks Z-7535 ")
+      #print("At end of parameter checks Z-9019 ")
 
       #
       #  End of parameter checking.  All column names have been confirmed.
@@ -7604,16 +9152,18 @@ SeerMapper <- function(ndf,
       #print("End of Stage 1 - call parameter analysis.")
       
       ####################################
+      
+      
       ####################################
       
       ##### Stage 2 - build SPDFs. & Validate ID
 
-      #print("Call SM_Build")
+      #cat("Call SM_Build\n")
       xRes   <- SM_Build(rPM)
       MV     <- xRes$MV
       rPM    <- xRes$rPM
 
-      #print("SM_Build Completed.")
+      #cat("SM_Build Completed.\n")
       #
       #   At this point:
       #     a) All boundary files loaded, 
@@ -7627,11 +9177,11 @@ SeerMapper <- function(ndf,
       #
       #  defaults on regionB, stateB, seerB, countyB, and tractB change based on
       #  the level of data provided by the user.
-      #  a) if state data:    regionB=NONE, stateB=ALL,   seerB=NONE,                           hdB,  countyB and tractB are not used.
-      #  b) if seer reg data: regionB=NONE, stateB=NONE,  seerB=DATA,  hdB,                     countyB and tractB are not used.
-      #  c) if Health D data: regionB=NONE, stateB=NONE,  seerB=NONE,  hdB=DATA,  countyB and   tractB are not used.
-      #  d) if county data:   regionB=NONE, stateB=NONE,  seerB=NONE,  hdB=NONE,  countyB=DATA  and tractB is not used.
-      #  e) if tract data:    regionB=NONE, stateB=NONE,  seerB=NONE,  hdB=NONE,  countyB=NONE, tractB=DATA.
+      #  a) if state data   : regionB=NONE, stateB=DATA,  seerB=NONE,  hdaB, countyB and tractB are not used.
+      #  b) if seer reg data: regionB=NONE, stateB=NONE,  seerB=DATA,  hsaB, countyB and tractB are not used.
+      #  c) if hsa data     : regionB=NONE, stateB=NONE,  seerB=NONE,  hsaB=DATA,  countyB and tractB are not used.
+      #  d) if county data  : regionB=NONE, stateB=NONE,  seerB=NONE,  hsaB=NONE,  countyB=DATA  and tractB is not used.
+      #  e) if tract data   : regionB=NONE, stateB=NONE,  seerB=NONE,  hsaB=NONE,  countyB=NONE, tractB=DATA.
       #
       ####
 
@@ -7641,10 +9191,10 @@ SeerMapper <- function(ndf,
             
       ##### Stage 3 - Inspect Data & Categorization & Colors
 
-      #print("Call SM_Categ")
+      #cat("Call SM_Categ\n")
       rPM  <- SM_Categ(rPM)
       
-      #print("Back from SM_Categ")
+      #cat("Returned from SM_Categ.\n")
       
       ###
       #
@@ -7675,8 +9225,8 @@ SeerMapper <- function(ndf,
       
       ##### Stage 4 - Set up Hatching.
       
-      if (rPM$HatchFlag) {
-         #print("Calling SM_Hatching.")
+      if (rPM$HatchFlag || rPM$Hatch2Flag ) {
+         #cat("Calling SM_Hatching.\n")
          rPM <- SM_Hatching(rPM)
       
          #str(rPM$dataMapDF)
@@ -7685,19 +9235,18 @@ SeerMapper <- function(ndf,
       
       ##### Stage 5 - Final Prep for Mapping 
  
-      HatchFlag <- rPM$HatchFlag
+      HatchFlag   <- rPM$HatchFlag
+      Hatch2Flag  <- rPM$Hatch2Flag
       
       #####
       #
       #   Prep for mapping  - table size, colors, 
       #
       
-      idDataList        <- row.names(rPM$dataMapDF)    # get new list of ids.
-
       dataMapDFLen      <- dim(rPM$dataMapDF)[1]
 
       if (debug) {
-         xmsg <- paste0("***295 Number of locations found in the Rate Table with borders:",dataMapDFLen)
+         xmsg <- paste0("***295 Number of locations found in the Rate Table with borders: ",dataMapDFLen)
          print(xmsg)
       }
       
@@ -7706,62 +9255,66 @@ SeerMapper <- function(ndf,
 
          #  Have data to map. SETUPs
   
-         ##### Look at data and set hatching variables in dataMapDF$hDen
+         ##### Look at data and set hatching variables in xxxx$hDen
 
          #
          #  Step 2 - set up data for SPDF - area colors (categories) and hatching from RateTable (dataMapDF)
          #
-         #print("Step 2 - set up Colors Z-7656 ")
+         #print("Step 2 - set up Colors Z-9150 ")
          #
          # color vector for polygon drawing (one per polygon.) (rate classification.
          #  DF  - Col=area color,  Rel=area reliability (density for hatching.
          #  Order matches the dataProj/Wrk_proj sequence.
 
          dataMapDF      <- rPM$dataMapDF
-         data_data_sel  <- MV$data_data_sel
+         data_data_sel  <- MV$data_data_sel # {save as dataMapDF???) (Get copy of structure)
          
-         data_data_sel$col  <- #FFFFFF
+         # set up spaces for data.
+         data_data_sel$col  <- "white"
          data_data_sel$cat  <- 0
-         data_data_sel$hDen <- 0
          data_data_sel$hRes <- FALSE
+         data_data_sel$h2Res <- FALSE
          
          # Transfer from RateWork to WrkCol
          #       Fill Color and Hatching information into SPDF element - dataMapDF - transfer info.
 
-         data_data_sel[dataMapDF$ID,"col"]  <- dataMapDF$col
-         data_data_sel[dataMapDF$ID,"cat"]  <- dataMapDF$cat
-         data_data_sel[dataMapDF$ID,"hDen"] <- dataMapDF$hDen
-         data_data_sel[dataMapDF$ID,"hRes"] <- dataMapDF$hRes
+         data_data_sel[dataMapDF$ID,"col"]   <- dataMapDF$col
+         data_data_sel[dataMapDF$ID,"cat"]   <- dataMapDF$cat
+         data_data_sel[dataMapDF$ID,"hRes"]  <- dataMapDF$hRes
+         data_data_sel[dataMapDF$ID,"h2Res"] <- dataMapDF$h2Res
          
          if (debug) {
-           cat("Number of polygons in areas with data Z-7679: ", length(data_data_sel), "\n")
+           cat("Number of polygons in areas with data Z-9174 : ", dim(data_data_sel)[1], "\n")
          }
          
          MV$data_data_sel <- data_data_sel
          #
          ####
 
-     ##### structures are set for mapping.  Only thing that may change for SaTScanMapper is the 
-     #####   data_proj_seldata$col field for different maps.
+         ##### structures are set for mapping.  Only thing that may change for SaTScanMapper is the 
+         #####   data_proj_seldata$col field for different maps.
      
          if (debug) {
-            cat("Color and dataMapDF table Z-7690 :\n")
+            cat("Color and dataMapDF table Z-9185 :\n")
             cat("data_data_sel:\n")
-            print(head(data_data_sel,40))
+            print(data_data_sel)
+            #print(head(data_data_sel,40))
             cat("dataMapDF:\n")
-            print(head(dataMapDF,40))
+            #print(head(dataMapDF,40))
+            print(dataMapDF)
          
          }
 
      ##### Data Structures Required #####
      
-     #  boundary data and coloring.
+         #  boundary data and coloring.
     
          #
          #  data_proj_sel   - data sp
          #  data_data_sel   - data sub-area hatching and col.
          #  tr_proj_sel     - tract sp
          #  co_proj_sel     - county sp
+         #  hs_proj_sel     - hsa sp
          #  sa_proj_sel     - seer registry sp
          #  st_proj_sel     - state sp
          #  rg_proj_sel     - regional sp 
@@ -7781,45 +9334,54 @@ SeerMapper <- function(ndf,
          #  Map areas with color.
          
          #cat("Calling SM_Mapper\n")
-         xyLim <- SM_Mapper(rPM, MV)
+         wbox <- SM_Mapper(rPM, MV)    # do mapping.
+
+         MV$MapBox <- wbox
          
-         #cat("SM_Mapper results-x:",xyLim$xlim," y:",xyLim$ylim,"\n")
+         #cat("SM_Mapper results-plot box:\n")
+         #print(wbox)
          
-         rPM$BotRm <- xyLim$BotRm
-       
-         #cat("mLegendFlag Z-7732 :",mLegendFlag,"\n")
+         #cat("mLegendFlag Z-9235 :",mLegendFlag,"\n")
 
          if (mLegendFlag) {
             # overlay legend
-            SM_Legend(rPM, MV)
+            SM_Legend(rPM, MV)          # draw legend
          }
      
      ##### Title #####
-         #cat("Title:",mTitle,"  cex:",mTitle.cex,"\n")
+        #cat("Title:",mTitle,"  cex:",mTitle.cex,"\n")
 
          #  When writing to files, put on separate page for reference.
-         if (!(is.null(mTitle) || is.na(mTitle))) {
-            title(main=mTitle, cex = mTitle.cex)
+         if (!(is.null(mTitle) || any(is.na(mTitle)))) {
+            title(main=mTitle, cex = mTitle.cex)     # kast item - title
          }
          
-     ##### End of Title #####    
-     
-         #cat("Final print of working lists.\n")
-         #cat("cVL:\n")
-         #print(names(callVarList))
-         #cat("rPM:\n")
-         #print(names(rPM))
-         #cat("MV:\n")
-         #print(names(MV))
+         #cat("End of Title.. Z-9242 \n")
          
-         Lim <- matrix(c(MV$xlPlot,MV$ylPlot),ncol=2,byrow=TRUE,dimnames=list(c("x","y"), c("min","max")))
-         xRes <- list(rPM=rPM, MV=MV, Lim=Lim)
+     ##### End of Title #####    
+             
+         if (debug) {
+             xRes <- list(lim=wbox, proj4=rPM$CRSproj4, rPM=rPM, MV=MV)
+         } else {
+             xRes <- list(lim=wbox, proj4=rPM$CRSproj4)
+         }
          invisible(xRes)
       } else {
-         invisible(list(xlim=NA, ylim=NA))
+         #  no data lines to plot.
+         wbox2 <- matrix(c(MV$xlPlot,MV$ylPlot),ncol=2,byrow=TRUE,dimnames=list(c("x","y"), c("min","max")))
+         if (debug) {
+            xRes <- list(lim=wbox2, proj4=rPM$CRSproj4, rPM=rPM, MV=MV)
+         } else {
+            xRes <- list(lim=wbox2, proj4=rPM$CRSproj4)
+         }
+         invisible(xRes)
       }  # end of test for data - Rlen > 0
       
       ##### End of Mapping #####
+      
+      #
+      #  return box and coordinate information same as SM_Mapper
+      #
       
    }  # end of function.
   
