@@ -1,4 +1,4 @@
-NciMapper - Release 1.2.2 - Feb 27, 2019
+SeerMapper - Release 1.2.3 - Jun 17, 2019
 
 First packaged version release of the MiniNciMapper 
 function package with U.S. 18 Seer Area boundary data for use by
@@ -29,4 +29,12 @@ February 27, 2019 -
 	  value in list.  All values are the top value of the category xxx].
 	  The last category is ended by Inf or the largest value in the data.
 	  
+June 8, 2020 - updated for public release
+  - Moved the census tract data for NY, MA, ID, IO, and WI from the East and West boundary packages to the Regs package.
+  - Fixed the inconsistency issues in .rda boundary data files
+  - transformed the centroids based on user-defined proj4 parameter.
+  
+June 17, 2020 - updated for public release
+  - Converted the centroids in boundary data files from character type to double type.
+  - Modified the documentations. 
 	  

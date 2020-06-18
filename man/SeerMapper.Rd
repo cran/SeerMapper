@@ -124,7 +124,7 @@ installed and are loaded as required by \var{SeerMapper}.
   \item{proj4}{is a character vector specifying the proj4 parameters for the 
     projection transformation of the map and hatching prior to drawning. 
     By default the map projection is \cr
-    CRS("+proj=eqdc +lat_1=33 +lat_2=45 +lat_0=39 +lon_0=96w +units=m")\cr
+    CRS("+proj=aea +lat_1=33 +lat_2=49 +lat_0=39 +lon_0=96W +ellps=WGS84")\cr
     The \option{proj4} parameter would be set as follows:\cr
     proj4 = "+proj=utm +zone=15"
    }
@@ -832,173 +832,153 @@ SeerMapper(USStates_P,
               )
 dev.off()
 
+#####
+#
+#  Example # s05 - Partial States Mapping with pValue Hatching 
+#         No state boundaries, but boundaries for all Registries
+#           stateB=NONE and seerB=ALL
+#
+
+TT   <- c("Ex-s05 Partial States Map w hatching, cat=7",
+          "No State boundaries, All Regs, w/column names")
+
+ex.f<-"SM-Ex-s05 Partial States Map w hatching cat-7 stB-N srB-A w column names.pdf"
+save.f<-tempfile(pattern = "", fileext = ex.f)
+pdf(save.f, width=8, height=10.5)
+
+SeerMapper(USStates_P,
+           idCol   = "FIPS",dataCol="AA_Rate",
+           stateB  = "NONE",        # no state outlines
+           seerB   = "ALL",         # all registries
+           categ   = 7,             # number of categories to generate and use.
+           hatch   = TRUE,          # test pValue column for < 0.05 
+           mTitle  = TT
+)
+dev.off()
+
 #
 ####
 
-# 
+######
+#
+#  Generate Seer Regs data.frame for 17 of the 20 registries and 
+#    a smaller Seer Regs data.frame for the original 12 registries
+#    All of the registry data.frames serve as partial data sets.
+#    The 12 registry data.frame shows the features the best.
+#
+#  The following script creates the dataset for use in examples sr30-sr41.
+#  Since it is not re-created in the code for each examples, this code
+#  must be run or copied to the example as needed.
+#
+
+data(SeerRegs_CM_Data,envir=environment())
+str(SeerRegs_CM_Data)
+
+# Get US rate for "All_Both" sexes and races.
+USRate <- SeerRegs_CM_Data[2,"All_Both"]
+cat("USRate:",USRate,"\n")
+
+# strip off first to rows as required
+SeerRegs_CM_Data <- SeerRegs_CM_Data[c(-1,-2),]   
+# this gets ride of Seer Reg and U.S data.
+
+#  Select data for the original Seer 13 Registries without Alaska.
+srList <- c("CT", "MI-DET", "GA-ATL", "GA-RUR", 
+            "CA-SF", "CA-SJ", "CA-LA", "HI", "IA", 
+            "NM", "WA-SEA", "UT")
+SeerRegs_CM_Data_12 <- SeerRegs_CM_Data[srList,]
+
+#
+
+#####
+#
+#  Example # sr10 - Seer Registry 12 Mapping
+#
+#  Of the 21 NCI Seer Registries, most mapping occurs using the 
+#  12 primary registries. They include: Connecticut, Detroit, 
+#  Atlanta, Rural Georgia, Hawaii, Iowa, Utah, New Mexico,
+#  Greater California, Greater Georgia, New Jersey, 
+#  Kentucky, Louisiana, San Francisco/Oakland, San Jose/Monterey, 
+#  Los Angeles, and Seattle-Puget Sound.  
+#  The default stateB and seerB call parameter values for 
+#  for Seer Registry data are:  stateB="NONE" and seerB="DATA".  
+#  The countyB and tractB parameters are ignored.
+#
+#  This example drawn boundaries for Seer Registries with data,
+#  but does not include any state boundaries.  The registries
+#  jsut float.  This is useful when you are mapping a few
+#  Seer Registries, like Georgia Rural and AtLanta Metro.
+#
+TT   <- c("Ex-sr10 Seer Reg 12 Map-Cancer Mort. Rates All Both",
+          "cat=6, def: stateB-NONE, seerB-DATA" )
+
+ex.f<-"SM-Ex-sr10 Seer Reg 12 Map cat-6 stB-N srB-D.pdf"
+save.f<-tempfile(pattern = "", fileext = ex.f)
+pdf(save.f, width=8, height=10.5)
+
+SeerMapper(SeerRegs_CM_Data_12,
+           idCol   ="Registry",dataCol="All_Both",
+           categ   =6,
+           mTitle  =TT
+)
+dev.off()
+
+#
+####
+
+#####
+#
+#  Example # sr11 - Seer Reg All States Map w Hatching
+#                 stateB=DATA   seerB=DATA 
+#
+#  If stateB = "DATA", the boundaries for the states/DC are drawn that 
+#  contain Seer Registries with data.
+#  This provides the state outlines around Registries with data.
+#  Since only a few of the Seer Registries have data, nott all of the 
+#  state boundaries are drawn.  A partial U.S. map appears.
+#
+
+TT   <- c("Ex-sr11 Seer Reg 12 Map Seer wD and States wD", 
+          "stateB=DATA, seerB=DATA")
+
+ex.f<-"SM-Ex-sr11 Seer Reg 12 Map-stB-D, srB-D.pdf"
+save.f<-tempfile(pattern = "", fileext = ex.f)
+pdf(save.f, width=8, height=10.5)
+
+SeerMapper(SeerRegs_CM_Data_12,
+           idCol   = "saID",dataCol="All_Both",
+           stateB  = "DATA",  # drawn boundaries for all states.
+           mTitle  = TT
+)
+dev.off()
+
+
+#####
+#
+#  Example # sr12 - Seer Reg All States Map w Hatching
+#                    stateB=ALL   seerB=ALL 
+#
+#  With stateB = "ALL", the boundaries for all of the states/DC are drawn.
+#  This provides a full U.S. map.  To add the boundaries for all of the 
+#  Seer Registries, seerB = "ALL" is set.  
+#
+
+TT   <- c("Ex-sr12 Seer Reg 12 Map Seer-A and States-A", 
+          "stateB=ALL, seerB=ALL")
+ex.f<-"SM-Ex-sr12 Seer Reg 12 Map-stB-A, srB-A.pdf"
+save.f<-tempfile(pattern = "", fileext = ex.f)
+pdf(save.f, width=8, height=10.5)
+
+SeerMapper(SeerRegs_CM_Data_12,
+           idCol   = "saID",dataCol="All_Both",  # specify the column names.
+           stateB  = "ALL",  # drawn boundaries for all states.
+           seerB   = "ALL",
+           mTitle  = TT
+)
+dev.off()
+
 # #####
-# #
-# #  Example # s05 - Partial States Mapping with pValue Hatching 
-# #         No state boundaries, but boundaries for all Registries
-# #           stateB=NONE and seerB=ALL
-# #
-# 
-# TT   <- c("Ex-s05 Partial States Map w hatching, cat=7",
-#           "No State boundaries, All Regs, w/column names")
-# 
-# pdf("SM-Ex-s05 Partial States Map w hatching cat-7 stB-N srB-A w column names.pdf",
-#     width=8,height=10.5)
-# 
-# SeerMapper(USStates_P,
-#            idCol   = "FIPS",dataCol="AA_Rate",
-#            stateB  = "NONE",        # no state outlines
-#            seerB   = "ALL",         # all registries
-#            categ   = 7,             # number of categories to generate and use.
-#            hatch   = TRUE,          # test pValue column for < 0.05 
-#            mTitle  = TT
-# )
-# dev.off()
-# 
-# #
-# ####
-# 
-# ######
-# #
-# #  Generate Seer Regs data.frame for 17 of the 20 registries and 
-# #    a smaller Seer Regs data.frame for the original 12 registries
-# #    All of the registry data.frames serve as partial data sets.
-# #    The 12 registry data.frame shows the features the best.
-# #
-# #  The following script creates the dataset for use in examples sr30-sr41.
-# #  Since it is not re-created in the code for each examples, this code
-# #  must be run or copied to the example as needed.
-# #
-# 
-# data(SeerRegs_CM_Data,envir=environment())
-# str(SeerRegs_CM_Data)
-# 
-# # Get US rate for "All_Both" sexes and races.
-# USRate <- SeerRegs_CM_Data[2,"All_Both"]
-# cat("USRate:",USRate,"\n")
-# 
-# # strip off first to rows as required
-# SeerRegs_CM_Data <- SeerRegs_CM_Data[c(-1,-2),]   
-# # this gets ride of Seer Reg and U.S data.
-# 
-# #  Select data for the original Seer 13 Registries without Alaska.
-# srList <- c("CT", "MI-DET", "GA-ATL", "GA-RUR", 
-#             "CA-SF", "CA-SJ", "CA-LA", "HI", "IA", 
-#             "NM", "WA-SEA", "UT")
-# SeerRegs_CM_Data_12 <- SeerRegs_CM_Data[srList,]
-# 
-# #
-# 
-# #####
-# #
-# #  Example # sr10 - Seer Registry 12 Mapping
-# #
-# #  Of the 21 NCI Seer Registries, most mapping occurs using the 
-# #  12 primary registries. They include: Connecticut, Detroit, 
-# #  Atlanta, Rural Georgia, Hawaii, Iowa, Utah, New Mexico,
-# #  Greater California, Greater Georgia, New Jersey, 
-# #  Kentucky, Louisiana, San Francisco/Oakland, San Jose/Monterey, 
-# #  Los Angeles, and Seattle-Puget Sound.  
-# #  The default stateB and seerB call parameter values for 
-# #  for Seer Registry data are:  stateB="NONE" and seerB="DATA".  
-# #  The countyB and tractB parameters are ignored.
-# #
-# #  This example drawn boundaries for Seer Registries with data,
-# #  but does not include any state boundaries.  The registries
-# #  jsut float.  This is useful when you are mapping a few
-# #  Seer Registries, like Georgia Rural and AtLanta Metro.
-# #
-# TT   <- c("Ex-sr10 Seer Reg 12 Map-Cancer Mort. Rates All Both",
-#           "cat=6, def: stateB-NONE, seerB-DATA" )
-# 
-# pdf("SM-Ex-sr10 Seer Reg 12 Map cat-6 stB-N srB-D.pdf",
-#     width=8, height=10.5)
-# 
-# SeerMapper(SeerRegs_CM_Data_12,
-#            idCol   ="Registry",dataCol="All_Both",
-#            categ   =6,
-#            mTitle  =TT
-# )
-# dev.off()
-# 
-# #
-# ####
-# 
-# #####
-# #
-# #  Example # sr11 - Seer Reg All States Map w Hatching
-# #                 stateB=DATA   seerB=DATA 
-# #
-# #  If stateB = "DATA", the boundaries for the states/DC are drawn that 
-# #  contain Seer Registries with data.
-# #  This provides the state outlines around Registries with data.
-# #  Since only a few of the Seer Registries have data, nott all of the 
-# #  state boundaries are drawn.  A partial U.S. map appears.
-# #
-# 
-# TT   <- c("Ex-sr11 Seer Reg 12 Map Seer wD and States wD", 
-#           "stateB=DATA, seerB=DATA")
-# 
-# pdf("SM-Ex-sr11 Seer Reg 12 Map-stB-D, srB-D.pdf",
-#     width=8, height=10.5)
-# 
-# SeerMapper(SeerRegs_CM_Data_12,
-#            idCol   = "saID",dataCol="All_Both",
-#            stateB  = "DATA",  # drawn boundaries for all states.
-#            mTitle  = TT
-# )
-# dev.off()
-# 
-# #
-# ####
-# 
-# #####
-# #
-# #  Example # sr12 - Seer Reg All States Map w Hatching
-# #                    stateB=ALL   seerB=ALL 
-# #
-# #  With stateB = "ALL", the boundaries for all of the states/DC are drawn.
-# #  This provides a full U.S. map.  To add the boundaries for all of the 
-# #  Seer Registries, seerB = "ALL" is set.  
-# #
-# 
-# TT   <- c("Ex-sr12 Seer Reg 12 Map Seer-A and States-A", 
-#           "stateB=ALL, seerB=ALL")
-# 
-# pdf("SM-Ex-sr12 Seer Reg 12 Map-stB-A, srB-A.pdf",
-#     width=8, height=10.5)
-# 
-# SeerMapper(SeerRegs_CM_Data_12,
-#            idCol   = "saID",dataCol="All_Both",  # specify the column names.
-#            stateB  = "ALL",  # drawn boundaries for all states.
-#            seerB   = "ALL",
-#            mTitle  = TT
-# )
-# dev.off()
-# 
-# #
-# ####
-# 
-# 
-# #####
-# #
-# #   Create a list of Seer Registry Data for only Western States.
-# #
-# data(SeerRegs_CM_Data,envir=environment())
-# 
-# srList <- c("CA-OTH", "CA-LA", "CA-SF", "CA-SJ", 
-#             "WA-SEA", "UT",    "NM")    # list of western Seer Registries. 
-# 
-# SeerRegs_CM_Data_West <- SeerRegs_CM_Data[srList,]   
-# # extract from sample data.
-# 
-# #
-# #####
-# 
+# The below examples are uncommented due to the example running time limit on CRAN
 # #####
 # #
 # #  Example # sr20 - Seer Registry West - Level Mapping
@@ -2588,8 +2568,8 @@ dev.off()
 }
 
 \author{
-James B Pearson, Jr \email{jpearson@statnetconsulting.com} and 
-Linda W Pickle \email{lpickle@statnetconsulting.com}\cr 
-Maintainer: "James B. Pearson Jr." \email{jpearson@statnetconsulting.com}\cr 
-Package compiled by "James B, Pearson, Jr." \email{jpearson@statnetconsulting.com}
+James B Pearson, Jr \email{jbpearson353@gmail.com} and 
+Linda W Pickle \email{lwpickle353@gmail.com}\cr 
+Maintainer: "Fanni Zhang" \email{zhangf@imsweb.com}\cr 
+Package compiled by "Fanni Zhang" \email{zhangf@imsweb.com}
 }

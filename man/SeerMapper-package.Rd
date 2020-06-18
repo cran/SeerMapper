@@ -78,8 +78,8 @@ Seer registry areas, county or census tract levels}
     \tabular{ll}{
       Package:  \tab SeerMapper\cr
       Type:     \tab Package\cr
-      Version:  \tab 1.2.2\cr
-      Date:     \tab 2020-05-20\cr
+      Version:  \tab 1.2.3\cr
+      Date:     \tab 2020-06-17\cr
       License:  \tab GPL (>=2)\cr
       LazyLoad: \tab no\cr
     } 
@@ -169,25 +169,25 @@ The base package contains boundary information for:
    \item all Health Service Areas (HSA) for all states and DC,   
    \item counties in all states,
 }
-The "Regs" boundary package contains the 2000 or 2010 census tract boundary data for 15 states: 
+The "Regs" boundary package contains the 2000 or 2010 census tract boundary data for 19 states: 
 
    Alaska, Arizona, California, Connecticut, Georgia, 
-   Hawaii, Iowa, Kentucky, Louisiana, Michigan, 
-   New Jersey, New Mexico, Oklahoma, Utah, and Washington.
+   Hawaii, Idaho, Iowa, Kentucky, Louisiana, Massachusetts, 
+   Michigan, New Jersey, New Mexico, New York, Oklahoma, 
+   Utah, Washington, and Wisconsin.
 
-The "East" boundary package contains the 2000 or 2010 census tract boundary data for 21 states and DC:
+The "East" boundary package contains the 2000 or 2010 census tract boundary data for 20 states and DC:
 
    Alabama, Delaware, District of Columbia, Florida, Illinois, 
-   Indiana, Maine, Maryland, Massachusetts, Mississippi, 
-   New Hampshire, New York, North Carolina, Ohio, Pennsylvania, 
-   Rhode Island, South Carolina, Tennessee, Vermont, Virginia, 
-   West Virginia, and Wisconsin, 
+   Indiana, Maine, Maryland, Mississippi, New Hampshire, 
+   North Carolina, Ohio, Pennsylvania, Rhode Island, South Carolina, 
+   Tennessee, Vermont, Virginia, West Virginia, and Puerto Rico.
    
-The "West" boundary package contains the 2000 or 2010 census tract boundary data for 14 states:
+The "West" boundary package contains the 2000 or 2010 census tract boundary data for 13 states:
 
-   Arkansas, Colorado, Idaho, Kansas, Minnisota, 
-   Missouri, Montana, Nebraska, Nevada, North Dakota, 
-   Oregon, South Dakota, Texas, and Wyoming. 
+   Arkansas, Colorado, Kansas, Minnisota, Missouri, 
+   Montana, Nebraska, Nevada, North Dakota, Oregon, 
+   South Dakota, Texas, and Wyoming. 
    
 To do census tract mapping, the package automatically loaded needed census tract boundary 
 packages according to the census year and location IDs in data.frame provided during the call.  
@@ -199,9 +199,9 @@ If a package is missing or cannot be loaded, the caller will be given a message 
 and all of the boundary information is will be available.
 }  
 \author{
-James B Pearson, Jr \email{jpearson@statnetconsulting.com}\cr 
-Maintainer: "James B. Pearson Jr." \email{jpearson@statnetconsulting.com}\cr 
-Package compiled by "James B, Pearson, Jr." \email{jpearson@statnetconsulting.com}
+James B Pearson, Jr \email{jbpearson353@gmail.com}\cr 
+Maintainer: "Fanni Zhang" \email{zhangf@imsweb.com}\cr 
+Package compiled by "James B, Pearson, Jr." \email{jbpearson353@gmail.com}
 }
 
 

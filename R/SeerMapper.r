@@ -1061,6 +1061,8 @@
 #               (see R program "modify_package_rdafiles.R")
 #             - update centroids for county-level and hsa-level data based on the user-specified proj if any  
 #
+#   06/17/20 Fanni Zhang
+#             - remove code for transforming the centroids for regions data files
 #   
 # Plans:
 #   1) convert legend to list vector format
@@ -2368,9 +2370,9 @@ SM_Hatching  <- function(rPM) {
         regions_proj <- sp::spTransform(regions_set,CRSobj=rPM$CRSproj) ## FZ 01/06/2020
         
         ## FZ 03/26/2020 update centroids based on the user-specified proj
-        c_XY<-t(sapply(slot(regions_proj,"polygons"), function(x) c(x@ID,x@labpt[1],x@labpt[2])))
-        colnames(c_XY)<-c("ID","c_X","c_Y")
-        regions_proj@data[,c("c_X","c_Y")]<-c_XY[,c("c_X","c_Y")]   
+        #c_XY<-t(sapply(slot(regions_proj,"polygons"), function(x) c(x@ID,x@labpt[1],x@labpt[2])))
+        #colnames(c_XY)<-c("ID","c_X","c_Y")
+        #regions_proj@data[,c("c_X","c_Y")]<-c_XY[,c("c_X","c_Y")]   ## FZ 06/17/2020 remove c_X and c_Y
       } 
        
       RegionListAll        <- as.character(row.names(regions_proj))
