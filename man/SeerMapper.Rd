@@ -2570,6 +2570,5 @@ dev.off()
 \author{
 James B Pearson, Jr \email{jbpearson353@gmail.com} and 
 Linda W Pickle \email{lwpickle353@gmail.com}\cr 
-Maintainer: "Fanni Zhang" \email{zhangf@imsweb.com}\cr 
-Package compiled by "Fanni Zhang" \email{zhangf@imsweb.com}
+Maintainer: "Joe Zou" \email{zouj@imsweb.com}
 }

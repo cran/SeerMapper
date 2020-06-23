@@ -1,12 +1,12 @@
 Package: SeerMapper
 Type: Package
-Version: 1.2.3
-Date: 2020-6-17
+Version: 1.2.4
+Date: 2020-6-22
 Title: A Quick Way to Map U.S. Rates and Data of U.S. States, Counties,
         Census Tracts, or Seer Registries using 2000 and 2010 U.S.
         Census Boundaries
 Author: Jim Pearson <jbpearson353@gmail.com>
-Maintainer: Fanni Zhang <zhangf@imsweb.com>
+Maintainer: Joe Zou <zouj@imsweb.com>
 Imports: graphics, maptools, RColorBrewer, rgdal, sp, stats, stringr,
         methods, SeerMapperRegs, SeerMapperEast, SeerMapperWest,
         SeerMapper2010Regs, SeerMapper2010East, SeerMapper2010West
@@ -40,6 +40,6 @@ LazyLoad: no
 BuildResaveData: yes
 ByteCompile: yes
 NeedsCompilation: no
-Packaged: 2020-06-17 14:49:56 UTC; zhangf10
+Packaged: 2020-06-22 14:06:34 UTC; zhangf
 Repository: CRAN
-Date/Publication: 2020-06-18 11:10:12 UTC
+Date/Publication: 2020-06-23 05:30:57 UTC

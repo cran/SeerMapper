@@ -78,8 +78,8 @@ Seer registry areas, county or census tract levels}
     \tabular{ll}{
       Package:  \tab SeerMapper\cr
       Type:     \tab Package\cr
-      Version:  \tab 1.2.3\cr
-      Date:     \tab 2020-06-17\cr
+      Version:  \tab 1.2.4\cr
+      Date:     \tab 2020-06-22\cr
       License:  \tab GPL (>=2)\cr
       LazyLoad: \tab no\cr
     } 
@@ -200,8 +200,7 @@ and all of the boundary information is will be available.
 }  
 \author{
 James B Pearson, Jr \email{jbpearson353@gmail.com}\cr 
-Maintainer: "Fanni Zhang" \email{zhangf@imsweb.com}\cr 
-Package compiled by "James B, Pearson, Jr." \email{jbpearson353@gmail.com}
+Maintainer: "Joe Zou" \email{zouj@imsweb.com}
 }
 
 

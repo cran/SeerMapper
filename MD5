@@ -1,6 +1,6 @@
-ceb019d112100a4ebff2c4d4b779a4d4 *DESCRIPTION
+86c1fbde17f3201457beeb1f344dd7f9 *DESCRIPTION
 f08e140209bbdeaf4aa38c60a8618295 *NAMESPACE
-93eea5867b82436f47f957efae6f140c *R/SeerMapper.R
+e831a2a53048beea93808c0cb8d8ed4a *R/SeerMapper.R
 2960171b8ea647043b63056d45f6c60c *data/California_CM_Co_Data.rda
 d1e836c195afbf0597abe02881143dc7 *data/GA_Dem10_Co_Data.rda
 1da4ed03d854b2fd01dafabe8cb16992 *data/GA_Dem_Co_Data.rda
@@ -132,10 +132,10 @@ d5a4334c8aa852f33c63952c9e30c1d0 *data/hs51_d00.rda
 297428575c54b25e940dd07413af6b60 *data/rg99_d00.rda
 9e6248165783db455e9da91206d201af *data/sa99_d00.rda
 ca9945d9277bcff1cfc62ac044aa92f6 *data/st99_d00.rda
-c264874dc9c1401ab1e53d3fc84a73b8 *inst/doc/NEWS
+753e052d2e6f2d316a0e3f890e0b2216 *inst/doc/NEWS
 dab0dfebf8b7046e6638fe7f347dbbb8 *man/SM_XXXXX.Rd
-603b44040353647559c722396146224e *man/SeerMapper-package.Rd
-6fee6806077a9aff429b3971d7cc0c5e *man/SeerMapper.Rd
+cfe79fdc137879c7fcffc958beb9eaea *man/SeerMapper-package.Rd
+84b399984c8ea401755cede4cc313467 *man/SeerMapper.Rd
 634d0daed22851ddbbd3066f90aaaf40 *man/SeerMapper.Version.Rd
 15e8b22e84754f42b3ce1184e4e75353 *man/SeerMapper2010.Rd
 2bccd4931e4a8b972dc2f417a2f149b1 *man/SeerRegs_CM_Data.Rd

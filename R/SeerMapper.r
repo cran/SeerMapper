@@ -1063,6 +1063,7 @@
 #
 #   06/17/20 Fanni Zhang
 #             - remove code for transforming the centroids for regions data files
+#             - add code to address the rgdal and sp corrections
 #   
 # Plans:
 #   1) convert legend to list vector format
@@ -2067,7 +2068,9 @@ SM_Hatching  <- function(rPM) {
                # if first structure loaded - just copy to base structure
                work_set        <- new_spdf
             } else {
-               # else append to existing structure
+               # else append to existing structure *assumption - no duplicate IDs.
+               # add following line as workaround  by FZ 06172020
+               work_set@proj4string   <-  new_spdf@proj4string   # rgdal and sp workaround. ****
                work_set        <- spRbind(work_set,new_spdf)
             }
             
@@ -2485,8 +2488,6 @@ SM_Hatching  <- function(rPM) {
       #     county_10      - Integer number of counties in region in 2010
       #     tracts_00      - integer number of tracts in region in 2000
       #     tracts_10      - integer number of tracts in region in 2010
-      #     c_X, c_Y       - centroid X, Y (after load and transform) for 2000 and 2010
-      #
       #
       #         from hs99_d00.rda
       #  hs99_mapr

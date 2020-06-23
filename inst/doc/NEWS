@@ -38,3 +38,6 @@ June 17, 2020 - updated for public release
   - Converted the centroids in boundary data files from character type to double type.
   - Modified the documentations. 
 	  
+June 22, 2020 - updated for public release
+  - Modified the function code to address the rgdal and sp corrections.
+  - Changed the maintainer.
