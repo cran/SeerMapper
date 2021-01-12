@@ -1,4 +1,4 @@
-SeerMapper - Release 1.2.3 - Jun 17, 2019
+SeerMapper - Release 1.2.5 - January 8, 2021
 
 First packaged version release of the MiniNciMapper 
 function package with U.S. 18 Seer Area boundary data for use by
@@ -41,3 +41,6 @@ June 17, 2020 - updated for public release
 June 22, 2020 - updated for public release
   - Modified the function code to address the rgdal and sp corrections.
   - Changed the maintainer.
+
+January 8, 2021 - updated for public release
+  - Rebuilt the CRS objects to meet the requirements of the rgdal and sp.

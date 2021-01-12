@@ -1,7 +1,7 @@
 Package: SeerMapper
 Type: Package
-Version: 1.2.4
-Date: 2020-6-22
+Version: 1.2.5
+Date: 2021-01-08
 Title: A Quick Way to Map U.S. Rates and Data of U.S. States, Counties,
         Census Tracts, or Seer Registries using 2000 and 2010 U.S.
         Census Boundaries
@@ -40,6 +40,6 @@ LazyLoad: no
 BuildResaveData: yes
 ByteCompile: yes
 NeedsCompilation: no
-Packaged: 2020-06-22 14:06:34 UTC; zhangf
+Packaged: 2021-01-06 16:17:11 UTC; wangz
 Repository: CRAN
-Date/Publication: 2020-06-23 05:30:57 UTC
+Date/Publication: 2021-01-12 21:00:17 UTC
